@@ -4,107 +4,326 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agents and Tool Use - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Agents and Tool Use</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>AI Agents & Tool Use</h1>
+            <p class="subtitle">Autonomous AI that takes action</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Agents and Tool Use?</h2>
-                    <p>AI that can take actions in the real world - browsing the web, running code, sending emails, and completing complex tasks.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>Agents represent the next frontier of AI - systems that can autonomously accomplish goals.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see agents in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>AI assistants booking flights</li><li>Code execution agents</li><li>Research agents</li><li>Workflow automation</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Agent architectures, ReAct pattern, function calling, tool APIs, planning and reasoning, and multi-agent systems.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of agents.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../07_prompt_engineering/html_demo/index.html">Prompt Engineering</a><a href="../11_RAG_and_knowledge_integration/html_demo/index.html">RAG and Knowledge Integration</a><a href="../18_deployment_and_apis/html_demo/index.html">Deployment and APIs</a>
+        <!-- Section 1: Agent vs Chatbot -->
+        <section class="demo-section">
+            <h2>Step 1: Agents vs Chatbots</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>A chatbot can only talk. An agent can actually DO things - search the web, send emails, run code, and more. Watch the difference when you ask them to complete a real task!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Agents extend LLMs with tool-use capabilities. They follow a ReAct (Reasoning + Acting) pattern: think about what to do, select and execute a tool, observe results, and iterate until the goal is achieved.</p>
+            </div>
+
+            <div class="animation-canvas" id="comparisonCanvas">
+                <div class="agent-comparison">
+                    <div class="compare-column chatbot-col">
+                        <h4>Regular Chatbot</h4>
+                        <div class="chat-window">
+                            <div class="chat-message user">
+                                <span class="avatar">👤</span>
+                                <span class="text">Book me a flight to NYC for Friday</span>
+                            </div>
+                            <div class="chat-message bot">
+                                <span class="avatar">🤖</span>
+                                <span class="text">I can't book flights, but I can suggest you visit airline websites like Delta, United, or use Expedia to search for flights.</span>
+                            </div>
+                        </div>
+                        <div class="capability-badge limited">Can only talk</div>
+                    </div>
+                    
+                    <div class="vs-badge">VS</div>
+                    
+                    <div class="compare-column agent-col">
+                        <h4>AI Agent</h4>
+                        <div class="chat-window">
+                            <div class="chat-message user">
+                                <span class="avatar">👤</span>
+                                <span class="text">Book me a flight to NYC for Friday</span>
+                            </div>
+                            <div class="chat-message bot thinking">
+                                <span class="avatar">🤖</span>
+                                <span class="text">Let me search for flights and book the best option...</span>
+                            </div>
+                            <div class="action-log">
+                                <div class="action-item">🔍 Searching flights...</div>
+                                <div class="action-item">💳 Booking Delta #1234...</div>
+                                <div class="action-item">📧 Sending confirmation...</div>
+                            </div>
+                            <div class="chat-message bot">
+                                <span class="avatar">🤖</span>
+                                <span class="text">Done! I've booked Delta flight #1234 departing at 9am. Confirmation sent to your email.</span>
+                            </div>
+                        </div>
+                        <div class="capability-badge capable">Can take action</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: ReAct Loop -->
+        <section class="demo-section">
+            <h2>Step 2: The ReAct Loop</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Agents follow a simple loop: Think about what to do, Act by using a tool, Observe the result, then repeat until the task is done. Watch the agent reason through a task!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>ReAct (Reasoning + Acting) interleaves chain-of-thought reasoning with tool execution. Each step includes: Thought (reasoning), Action (tool call with parameters), Observation (tool output). This enables complex multi-step task completion.</p>
+            </div>
+
+            <div class="animation-canvas" id="reactCanvas">
+                <div class="react-demo">
+                    <div class="task-input">
+                        <label>Task:</label>
+                        <select id="taskSelect">
+                            <option value="weather">What's the weather in Tokyo and should I bring an umbrella?</option>
+                            <option value="math">What is 15% tip on a $47.50 bill?</option>
+                            <option value="research">Find the latest news about AI</option>
+                        </select>
+                        <button class="action-btn primary" id="runAgentBtn">Run Agent</button>
+                    </div>
+                    
+                    <div class="react-loop">
+                        <div class="loop-step" data-step="think">
+                            <div class="step-icon">🧠</div>
+                            <div class="step-label">Think</div>
+                            <div class="step-content" id="thinkContent">Agent reasoning...</div>
+                        </div>
+                        <div class="loop-arrow">→</div>
+                        <div class="loop-step" data-step="act">
+                            <div class="step-icon">⚡</div>
+                            <div class="step-label">Act</div>
+                            <div class="step-content" id="actContent">Tool execution...</div>
+                        </div>
+                        <div class="loop-arrow">→</div>
+                        <div class="loop-step" data-step="observe">
+                            <div class="step-icon">👁️</div>
+                            <div class="step-label">Observe</div>
+                            <div class="step-content" id="observeContent">Results...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="scratchpad" id="scratchpad">
+                        <h4>Agent Scratchpad</h4>
+                        <div class="scratchpad-content">
+                            <div class="scratch-placeholder">Run the agent to see its reasoning process...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Available Tools -->
+        <section class="demo-section">
+            <h2>Step 3: Agent Tools</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Agents have access to different tools like a Swiss Army knife. Each tool does something specific - search the web, do math, send messages, or run code. The agent picks the right tool for each task.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Tools are defined with name, description, and parameter schema. The LLM uses function calling to select tools and provide arguments. Tool outputs are parsed and fed back into the context for the next reasoning step.</p>
+            </div>
+
+            <div class="animation-canvas" id="toolsCanvas">
+                <div class="tools-demo">
+                    <div class="toolbox">
+                        <h4>Agent Toolbox</h4>
+                        <div class="tools-grid">
+                            <div class="tool-card" data-tool="search">
+                                <div class="tool-icon">🔍</div>
+                                <h5>Web Search</h5>
+                                <p>Find information online</p>
+                            </div>
+                            <div class="tool-card" data-tool="calculator">
+                                <div class="tool-icon">🧮</div>
+                                <h5>Calculator</h5>
+                                <p>Perform calculations</p>
+                            </div>
+                            <div class="tool-card" data-tool="email">
+                                <div class="tool-icon">📧</div>
+                                <h5>Email</h5>
+                                <p>Send messages</p>
+                            </div>
+                            <div class="tool-card" data-tool="code">
+                                <div class="tool-icon">💻</div>
+                                <h5>Code Runner</h5>
+                                <p>Execute programs</p>
+                            </div>
+                            <div class="tool-card" data-tool="calendar">
+                                <div class="tool-icon">📅</div>
+                                <h5>Calendar</h5>
+                                <p>Manage events</p>
+                            </div>
+                            <div class="tool-card" data-tool="database">
+                                <div class="tool-icon">🗄️</div>
+                                <h5>Database</h5>
+                                <p>Query data</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-demo-area">
+                        <h4>Try a Tool</h4>
+                        <div class="tool-input">
+                            <select id="toolSelect">
+                                <option value="search">Web Search</option>
+                                <option value="calculator">Calculator</option>
+                                <option value="email">Email</option>
+                            </select>
+                            <input type="text" id="toolInput" placeholder="Enter input...">
+                            <button class="action-btn primary" id="runToolBtn">Execute</button>
+                        </div>
+                        <div class="tool-output" id="toolOutput">
+                            <span class="placeholder">Tool output will appear here...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Multi-Agent Systems -->
+        <section class="demo-section">
+            <h2>Step 4: Multi-Agent Collaboration</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Multiple agents can work together like a team. One agent researches, another analyzes, another writes - each specializing in what they do best. Watch them collaborate!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Multi-agent systems use orchestration patterns: sequential (pipeline), parallel (concurrent tasks), or hierarchical (manager-worker). Agents communicate through shared memory or message passing. Frameworks like CrewAI and AutoGen enable this.</p>
+            </div>
+
+            <div class="animation-canvas" id="multiAgentCanvas">
+                <div class="multi-agent-demo">
+                    <div class="team-task">
+                        <h4>Team Task: Create a Market Report</h4>
+                        <button class="action-btn primary" id="runTeamBtn">Start Team</button>
+                    </div>
+                    
+                    <div class="agent-team">
+                        <div class="agent-node" data-agent="researcher">
+                            <div class="agent-avatar">🔬</div>
+                            <div class="agent-name">Researcher</div>
+                            <div class="agent-status">Idle</div>
+                            <div class="agent-output"></div>
+                        </div>
+                        <div class="team-arrow">→</div>
+                        <div class="agent-node" data-agent="analyst">
+                            <div class="agent-avatar">📊</div>
+                            <div class="agent-name">Analyst</div>
+                            <div class="agent-status">Idle</div>
+                            <div class="agent-output"></div>
+                        </div>
+                        <div class="team-arrow">→</div>
+                        <div class="agent-node" data-agent="writer">
+                            <div class="agent-avatar">✍️</div>
+                            <div class="agent-name">Writer</div>
+                            <div class="agent-status">Idle</div>
+                            <div class="agent-output"></div>
+                        </div>
+                        <div class="team-arrow">→</div>
+                        <div class="agent-node" data-agent="reviewer">
+                            <div class="agent-avatar">✅</div>
+                            <div class="agent-name">Reviewer</div>
+                            <div class="agent-status">Idle</div>
+                            <div class="agent-output"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="team-result" id="teamResult">
+                        <h4>Final Output</h4>
+                        <div class="result-content">
+                            <span class="placeholder">Run the team to see the collaborative result...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚡</div>
+                    <h4>Action-Oriented</h4>
+                    <p>Agents don't just talk - they take real actions using tools</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔄</div>
+                    <h4>ReAct Loop</h4>
+                    <p>Think, Act, Observe - repeat until the task is complete</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🛠️</div>
+                    <h4>Tool Use</h4>
+                    <p>Agents select the right tool for each subtask</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">👥</div>
+                    <h4>Collaboration</h4>
+                    <p>Multiple agents can work together as a team</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Thinking / Planning</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Tool Execution</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Success / Complete</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Agent / Processing</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../11_RAG_and_knowledge_integration/html_demo/">← Previous: RAG</a> | <a href="../13_evaluation_and_safety/html_demo/">Next: Evaluation & Safety →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

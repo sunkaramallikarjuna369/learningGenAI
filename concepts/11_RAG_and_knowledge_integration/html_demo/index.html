@@ -4,107 +4,339 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAG and Knowledge Integration - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>RAG and Knowledge Integration</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>RAG & Knowledge Integration</h1>
+            <p class="subtitle">Grounding AI in real knowledge</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is RAG and Knowledge Integration?</h2>
-                    <p>Giving AI access to your own documents and data - combining the power of LLMs with your specific knowledge.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>RAG solves the knowledge cutoff problem and enables AI to work with private, up-to-date information.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see rag in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>Chatbots with company knowledge</li><li>Document Q&A systems</li><li>Research assistants</li><li>Customer support</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Retrieval-augmented generation, vector databases, chunking strategies, reranking, and hybrid search.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of rag.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../04_autoencoders_and_embeddings/html_demo/index.html">Autoencoders and Embeddings</a><a href="../06_large_language_models/html_demo/index.html">Large Language Models (LLMs)</a><a href="../12_agents_and_tool_use/html_demo/index.html">Agents and Tool Use</a>
+        <!-- Section 1: What is RAG -->
+        <section class="demo-section">
+            <h2>Step 1: Understanding RAG</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>RAG gives AI access to external knowledge. Instead of answering from memory alone, the AI first searches for relevant information, then uses it to give better answers. Watch the difference!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>RAG combines retrieval (vector similarity search) with generation (LLM). Query is embedded, similar documents are retrieved from a vector store, and the LLM generates a response conditioned on the retrieved context.</p>
+            </div>
+
+            <div class="animation-canvas" id="ragCompareCanvas">
+                <div class="rag-comparison">
+                    <div class="compare-side without-rag">
+                        <h4>Without RAG</h4>
+                        <div class="compare-flow">
+                            <div class="flow-item question">
+                                <span class="icon">❓</span>
+                                <span>"What's our refund policy?"</span>
+                            </div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-item llm">
+                                <span class="icon">🧠</span>
+                                <span>LLM (Memory Only)</span>
+                            </div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-item answer bad">
+                                <span class="icon">❌</span>
+                                <span>"I don't have access to your specific refund policy..."</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vs-divider">VS</div>
+                    
+                    <div class="compare-side with-rag">
+                        <h4>With RAG</h4>
+                        <div class="compare-flow">
+                            <div class="flow-item question">
+                                <span class="icon">❓</span>
+                                <span>"What's our refund policy?"</span>
+                            </div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-item retrieve">
+                                <span class="icon">🔍</span>
+                                <span>Search Documents</span>
+                            </div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-item context">
+                                <span class="icon">📄</span>
+                                <span>Found: "Refunds within 30 days..."</span>
+                            </div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-item llm">
+                                <span class="icon">🧠</span>
+                                <span>LLM + Context</span>
+                            </div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-item answer good">
+                                <span class="icon">✓</span>
+                                <span>"Our refund policy allows returns within 30 days..."</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: RAG Pipeline -->
+        <section class="demo-section">
+            <h2>Step 2: The RAG Pipeline</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>RAG works in steps: First, your question is converted to a searchable format. Then, relevant documents are found. Finally, the AI uses those documents to answer. Watch each step!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Pipeline: Query → Embedding (dense vector) → Vector similarity search (cosine/dot product) → Top-K retrieval → Context augmentation → LLM generation. Embeddings typically 384-1536 dimensions.</p>
+            </div>
+
+            <div class="animation-canvas" id="pipelineCanvas">
+                <div class="pipeline-demo">
+                    <div class="pipeline-input">
+                        <label>Your Question:</label>
+                        <input type="text" id="ragQuery" value="What is the return policy?" placeholder="Ask a question...">
+                    </div>
+                    
+                    <div class="pipeline-stages">
+                        <div class="stage" data-stage="1">
+                            <div class="stage-number">1</div>
+                            <div class="stage-content">
+                                <h4>Embed Query</h4>
+                                <div class="stage-visual" id="embedVisual">
+                                    <div class="embedding-bars">
+                                        <div class="embed-bar"></div>
+                                        <div class="embed-bar"></div>
+                                        <div class="embed-bar"></div>
+                                        <div class="embed-bar"></div>
+                                    </div>
+                                </div>
+                                <p>Convert to vector</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stage-arrow">→</div>
+                        
+                        <div class="stage" data-stage="2">
+                            <div class="stage-number">2</div>
+                            <div class="stage-content">
+                                <h4>Search</h4>
+                                <div class="stage-visual" id="searchVisual">
+                                    <div class="search-animation">
+                                        <div class="search-dot"></div>
+                                        <div class="search-ring"></div>
+                                    </div>
+                                </div>
+                                <p>Find similar docs</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stage-arrow">→</div>
+                        
+                        <div class="stage" data-stage="3">
+                            <div class="stage-number">3</div>
+                            <div class="stage-content">
+                                <h4>Retrieve</h4>
+                                <div class="stage-visual" id="retrieveVisual">
+                                    <div class="doc-stack">
+                                        <div class="doc-item">📄</div>
+                                        <div class="doc-item">📄</div>
+                                        <div class="doc-item">📄</div>
+                                    </div>
+                                </div>
+                                <p>Get top documents</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stage-arrow">→</div>
+                        
+                        <div class="stage" data-stage="4">
+                            <div class="stage-number">4</div>
+                            <div class="stage-content">
+                                <h4>Generate</h4>
+                                <div class="stage-visual" id="generateVisual">
+                                    <div class="generate-icon">🧠</div>
+                                </div>
+                                <p>LLM + Context</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-output">
+                        <h4>Retrieved Documents:</h4>
+                        <div class="retrieved-docs" id="retrievedDocs">
+                            <div class="doc-placeholder">Run the pipeline to see retrieved documents...</div>
+                        </div>
+                        
+                        <h4>Generated Answer:</h4>
+                        <div class="generated-answer" id="generatedAnswer">
+                            <span class="placeholder">Answer will appear here...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-controls">
+                        <button class="action-btn primary" id="runPipelineBtn">Run RAG Pipeline</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Vector Search -->
+        <section class="demo-section">
+            <h2>Step 3: Vector Similarity Search</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Documents are converted to numbers (vectors) that capture their meaning. Similar documents have similar vectors. When you search, we find documents whose vectors are closest to your question's vector.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Embeddings map text to dense vectors in high-dimensional space. Similarity is computed via cosine similarity: cos(θ) = (A·B)/(||A||||B||). Vector databases use ANN algorithms (HNSW, IVF) for efficient search.</p>
+            </div>
+
+            <div class="animation-canvas" id="vectorCanvas">
+                <div class="vector-demo">
+                    <div class="vector-space">
+                        <canvas id="vectorSpaceCanvas" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="vector-controls">
+                        <div class="query-selector">
+                            <label>Query:</label>
+                            <select id="vectorQuerySelect">
+                                <option value="refund">Refund policy</option>
+                                <option value="shipping">Shipping times</option>
+                                <option value="contact">Contact support</option>
+                            </select>
+                        </div>
+                        <button class="action-btn primary" id="searchVectorBtn">Search</button>
+                    </div>
+                    
+                    <div class="similarity-results" id="similarityResults">
+                        <h4>Similarity Scores:</h4>
+                        <div class="similarity-bars">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Chunking Strategies -->
+        <section class="demo-section">
+            <h2>Step 4: Document Chunking</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Long documents are split into smaller pieces (chunks) so the AI can find exactly the right part. Different chunking strategies work better for different types of content.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Chunking strategies: Fixed-size (token count), sentence-based, semantic (topic boundaries), recursive (hierarchical). Overlap (10-20%) preserves context. Chunk size affects retrieval precision vs. context completeness.</p>
+            </div>
+
+            <div class="animation-canvas" id="chunkingCanvas">
+                <div class="chunking-demo">
+                    <div class="sample-document">
+                        <h4>Sample Document</h4>
+                        <div class="document-text" id="documentText">
+                            Our company offers a 30-day return policy for all products. Items must be in original condition with tags attached. Refunds are processed within 5-7 business days. For damaged items, please contact support immediately. We also offer free exchanges for size issues. International returns may have different policies.
+                        </div>
+                    </div>
+                    
+                    <div class="chunking-options">
+                        <label>Chunking Strategy:</label>
+                        <div class="strategy-buttons">
+                            <button class="strategy-btn active" data-strategy="fixed">Fixed Size</button>
+                            <button class="strategy-btn" data-strategy="sentence">Sentence</button>
+                            <button class="strategy-btn" data-strategy="semantic">Semantic</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chunks-display" id="chunksDisplay">
+                        <!-- Chunks will be displayed here -->
+                    </div>
+                    
+                    <div class="chunk-stats">
+                        <span>Chunks: <strong id="chunkCount">0</strong></span>
+                        <span>Avg Size: <strong id="avgChunkSize">0</strong> chars</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📚</div>
+                    <h4>External Knowledge</h4>
+                    <p>RAG gives AI access to documents, databases, and current information</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔍</div>
+                    <h4>Semantic Search</h4>
+                    <p>Vector embeddings find documents by meaning, not just keywords</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">✓</div>
+                    <h4>Grounded Answers</h4>
+                    <p>Responses are based on real sources, reducing hallucinations</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📄</div>
+                    <h4>Chunking Matters</h4>
+                    <p>How documents are split affects retrieval quality</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Query / Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Retrieved / Success</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Documents</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../10_multimodal_models/html_demo/">← Previous: Multimodal Models</a> | <a href="../12_agents_and_tool_use/html_demo/">Next: Agents & Tool Use →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

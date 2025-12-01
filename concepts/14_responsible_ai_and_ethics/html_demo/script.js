@@ -1,181 +1,195 @@
-// Generative AI 360° - Interactive Demo Script
+/**
+ * Responsible AI and Ethics - Interactive Demo Script
+ * 
+ * This demo shows key principles of responsible AI including
+ * fairness, transparency, and ethical considerations.
+ */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Track switching
-    const trackBtns = document.querySelectorAll('.track-btn');
-    const trackContents = document.querySelectorAll('.track-content');
-    
-    trackBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const track = btn.dataset.track;
-            
-            trackBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            trackContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === track + '-content') {
-                    content.classList.add('active');
-                }
-            });
-        });
-    });
-    
-    // Canvas setup for "Everyone" demo
-    const canvasEveryone = document.getElementById('canvas-everyone');
-    const ctxEveryone = canvasEveryone.getContext('2d');
-    
-    // Canvas setup for "Technical" demo
-    const canvasTech = document.getElementById('canvas-technical');
-    const ctxTech = canvasTech.getContext('2d');
-    
-    // Demo state
-    let isRunning = false;
-    let animationFrame = null;
-    let step = 0;
-    
-    // Draw initial state
-    function drawInitialState(ctx, canvas) {
-        ctx.fillStyle = '#0a0a1a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#4a90d9';
-        ctx.font = '20px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Click "Start Demo" to begin', canvas.width/2, canvas.height/2);
+// Principle details
+const principleDetails = {
+    fairness: {
+        title: 'Fairness',
+        description: 'AI systems should treat all people equitably, without discrimination based on race, gender, age, or other protected characteristics. This requires measuring and mitigating bias in training data and model outputs.'
+    },
+    transparency: {
+        title: 'Transparency',
+        description: 'AI decisions should be explainable and understandable. Users have the right to know how AI systems work and why they made specific decisions, especially for high-stakes applications.'
+    },
+    privacy: {
+        title: 'Privacy',
+        description: 'AI systems must protect personal data and respect user privacy. This includes data minimization, secure storage, and giving users control over their information.'
+    },
+    accountability: {
+        title: 'Accountability',
+        description: 'There must be clear responsibility for AI outcomes. Organizations should document decisions, maintain audit trails, and have processes for addressing AI failures or harms.'
+    },
+    safety: {
+        title: 'Safety',
+        description: 'AI systems should be reliable and secure, with safeguards against misuse. This includes testing for edge cases, implementing guardrails, and monitoring for unexpected behavior.'
+    },
+    human: {
+        title: 'Human-Centered',
+        description: 'AI should augment human capabilities, not replace human judgment for critical decisions. Humans should remain in control, especially for high-stakes applications affecting people\'s lives.'
     }
-    
-    drawInitialState(ctxEveryone, canvasEveryone);
-    drawInitialState(ctxTech, canvasTech);
-    
-    // Animation for "Everyone" demo
-    function animateEveryone() {
-        ctxEveryone.fillStyle = '#0a0a1a';
-        ctxEveryone.fillRect(0, 0, canvasEveryone.width, canvasEveryone.height);
-        
-        // Draw animated elements representing ethics
-        const centerX = canvasEveryone.width / 2;
-        const centerY = canvasEveryone.height / 2;
-        
-        // Input
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(100, centerY, 30 + Math.sin(step * 0.05) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.font = '12px Arial';
-        ctxEveryone.textAlign = 'center';
-        ctxEveryone.fillText('Input', 100, centerY + 50);
-        
-        // Process (animated)
-        ctxEveryone.fillStyle = '#50c878';
-        const processX = 100 + (step % 200) * 2;
-        if (processX < 500) {
-            ctxEveryone.beginPath();
-            ctxEveryone.arc(processX, centerY, 20, 0, Math.PI * 2);
-            ctxEveryone.fill();
-        }
-        
-        // Arrow
-        ctxEveryone.strokeStyle = '#8892b0';
-        ctxEveryone.lineWidth = 2;
-        ctxEveryone.beginPath();
-        ctxEveryone.moveTo(140, centerY);
-        ctxEveryone.lineTo(460, centerY);
-        ctxEveryone.stroke();
-        
-        // Output
-        ctxEveryone.fillStyle = '#ff6b6b';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(500, centerY, 30 + Math.sin(step * 0.05 + 1) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.fillText('Output', 500, centerY + 50);
-        
-        // Title
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.font = 'bold 18px Arial';
-        ctxEveryone.fillText('Responsible AI and Ethics', centerX, 40);
-        
-        step++;
-        
-        if (isRunning) {
-            animationFrame = requestAnimationFrame(animateEveryone);
-        }
+};
+
+// Mitigation data
+const mitigationData = {
+    none: {
+        groupA: 75,
+        groupB: 45,
+        disparity: 30,
+        biased: true,
+        message: 'Bias Detected! 30% disparity in approval rates'
+    },
+    reweight: {
+        groupA: 68,
+        groupB: 62,
+        disparity: 6,
+        biased: false,
+        message: 'Bias Reduced! 6% disparity after reweighting'
+    },
+    threshold: {
+        groupA: 65,
+        groupB: 65,
+        disparity: 0,
+        biased: false,
+        message: 'Bias Eliminated! Equal approval rates achieved'
     }
-    
-    // Start button
-    document.getElementById('btn-start').addEventListener('click', function() {
-        if (!isRunning) {
-            isRunning = true;
-            this.textContent = 'Pause';
-            animateEveryone();
-            document.getElementById('explanation').innerHTML = 
-                '<p>Watch how data flows through the ethics process!</p>' +
-                '<p>The green dot represents data being transformed.</p>';
-        } else {
-            isRunning = false;
-            this.textContent = 'Start Demo';
-            cancelAnimationFrame(animationFrame);
-        }
-    });
-    
-    // Reset button
-    document.getElementById('btn-reset').addEventListener('click', function() {
-        isRunning = false;
-        step = 0;
-        document.getElementById('btn-start').textContent = 'Start Demo';
-        cancelAnimationFrame(animationFrame);
-        drawInitialState(ctxEveryone, canvasEveryone);
-        document.getElementById('explanation').innerHTML = 
-            '<p>Click "Start Demo" to see ethics in action!</p>';
-    });
-    
-    // Technical slider
-    const paramSlider = document.getElementById('param-slider');
-    const paramValue = document.getElementById('param-value');
-    
-    function drawTechnicalDemo(value) {
-        ctxTech.fillStyle = '#0a0a1a';
-        ctxTech.fillRect(0, 0, canvasTech.width, canvasTech.height);
-        
-        // Draw parameter-dependent visualization
-        const normalizedValue = value / 100;
-        
-        // Draw bars representing different aspects
-        const barWidth = 50;
-        const maxHeight = 300;
-        const startX = 100;
-        
-        const aspects = ['Accuracy', 'Speed', 'Cost', 'Complexity'];
-        const colors = ['#4a90d9', '#50c878', '#ff6b6b', '#ffaa00'];
-        
-        aspects.forEach((aspect, i) => {
-            const height = maxHeight * (0.3 + normalizedValue * 0.7 * Math.sin(i + normalizedValue * Math.PI));
-            const x = startX + i * (barWidth + 40);
-            
-            ctxTech.fillStyle = colors[i];
-            ctxTech.fillRect(x, canvasTech.height - 50 - height, barWidth, height);
-            
-            ctxTech.fillStyle = 'white';
-            ctxTech.font = '12px Arial';
-            ctxTech.textAlign = 'center';
-            ctxTech.fillText(aspect, x + barWidth/2, canvasTech.height - 30);
-        });
-        
-        // Title
-        ctxTech.fillStyle = '#4a90d9';
-        ctxTech.font = 'bold 16px Arial';
-        ctxTech.fillText('Parameter Impact on ethics', canvasTech.width/2, 30);
-        ctxTech.font = '14px Arial';
-        ctxTech.fillText('Parameter Value: ' + value, canvasTech.width/2, 55);
-    }
-    
-    paramSlider.addEventListener('input', function() {
-        paramValue.textContent = this.value;
-        drawTechnicalDemo(parseInt(this.value));
-    });
-    
-    // Initial technical demo draw
-    drawTechnicalDemo(50);
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTrackToggle();
+    initPrinciplesDemo();
+    initBiasDemo();
+    initScenariosDemo();
 });
+
+// Track Toggle
+function initTrackToggle() {
+    new TrackToggle({
+        defaultTrack: 'non-tech',
+        onToggle: (track) => {
+            console.log('Track changed to:', track);
+        }
+    });
+}
+
+// ============================================================================
+// Section 1: Principles Demo
+// ============================================================================
+
+function initPrinciplesDemo() {
+    const principleItems = document.querySelectorAll('.principle-item');
+    const detailPanel = document.getElementById('principleDetail');
+    
+    principleItems.forEach(item => {
+        item.addEventListener('click', () => {
+            principleItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            const principle = item.dataset.principle;
+            const details = principleDetails[principle];
+            
+            detailPanel.innerHTML = `
+                <h4>${details.title}</h4>
+                <p>${details.description}</p>
+            `;
+        });
+    });
+    
+    // Auto-rotate through principles
+    let currentIndex = 0;
+    const principles = Array.from(principleItems);
+    
+    setInterval(() => {
+        if (!document.querySelector('.principle-item:hover')) {
+            principles[currentIndex].click();
+            currentIndex = (currentIndex + 1) % principles.length;
+        }
+    }, 3000);
+}
+
+// ============================================================================
+// Section 2: Bias Demo
+// ============================================================================
+
+function initBiasDemo() {
+    const mitigationBtns = document.querySelectorAll('.mitigation-btn');
+    
+    mitigationBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            mitigationBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyMitigation(btn.dataset.method);
+        });
+    });
+    
+    // Initialize with threshold
+    applyMitigation('threshold');
+}
+
+function applyMitigation(method) {
+    const data = mitigationData[method];
+    
+    // Update bars
+    const groupABar = document.getElementById('groupABar');
+    const groupBBar = document.getElementById('groupBBar');
+    const groupAValue = document.getElementById('groupAValue');
+    const groupBValue = document.getElementById('groupBValue');
+    
+    groupABar.style.width = `${data.groupA}%`;
+    groupBBar.style.width = `${data.groupB}%`;
+    groupAValue.textContent = `${data.groupA}%`;
+    groupBValue.textContent = `${data.groupB}%`;
+    
+    // Update bar colors
+    groupABar.className = 'bar-fill';
+    groupBBar.className = 'bar-fill';
+    
+    if (data.biased) {
+        groupBBar.classList.add('biased');
+    } else {
+        groupABar.classList.add('mitigated');
+        groupBBar.classList.add('mitigated');
+    }
+    
+    // Update indicator
+    const indicator = document.getElementById('biasIndicator');
+    indicator.className = 'bias-indicator';
+    
+    if (data.biased) {
+        indicator.innerHTML = `
+            <div class="indicator-icon">⚠️</div>
+            <div class="indicator-text">
+                <strong>Bias Detected!</strong>
+                <span>${data.disparity}% disparity in approval rates</span>
+            </div>
+        `;
+    } else {
+        indicator.classList.add('fair');
+        indicator.innerHTML = `
+            <div class="indicator-icon">✓</div>
+            <div class="indicator-text">
+                <strong>${data.disparity === 0 ? 'Bias Eliminated!' : 'Bias Reduced!'}</strong>
+                <span>${data.message}</span>
+            </div>
+        `;
+    }
+}
+
+// ============================================================================
+// Section 4: Scenarios Demo
+// ============================================================================
+
+function initScenariosDemo() {
+    const scenarioCards = document.querySelectorAll('.scenario-card');
+    
+    scenarioCards.forEach(card => {
+        card.addEventListener('click', () => {
+            scenarioCards.forEach(c => c.classList.remove('expanded'));
+            card.classList.toggle('expanded');
+        });
+    });
+}

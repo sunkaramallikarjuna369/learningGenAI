@@ -1,181 +1,279 @@
-// Generative AI 360° - Interactive Demo Script
+/**
+ * Prompt Engineering - Interactive Demo Script
+ * 
+ * This demo shows prompt engineering techniques including
+ * good vs bad prompts, prompt components, and advanced techniques.
+ */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Track switching
-    const trackBtns = document.querySelectorAll('.track-btn');
-    const trackContents = document.querySelectorAll('.track-content');
-    
-    trackBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const track = btn.dataset.track;
-            
-            trackBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            trackContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === track + '-content') {
-                    content.classList.add('active');
-                }
-            });
-        });
-    });
-    
-    // Canvas setup for "Everyone" demo
-    const canvasEveryone = document.getElementById('canvas-everyone');
-    const ctxEveryone = canvasEveryone.getContext('2d');
-    
-    // Canvas setup for "Technical" demo
-    const canvasTech = document.getElementById('canvas-technical');
-    const ctxTech = canvasTech.getContext('2d');
-    
-    // Demo state
-    let isRunning = false;
-    let animationFrame = null;
-    let step = 0;
-    
-    // Draw initial state
-    function drawInitialState(ctx, canvas) {
-        ctx.fillStyle = '#0a0a1a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#4a90d9';
-        ctx.font = '20px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Click "Start Demo" to begin', canvas.width/2, canvas.height/2);
-    }
-    
-    drawInitialState(ctxEveryone, canvasEveryone);
-    drawInitialState(ctxTech, canvasTech);
-    
-    // Animation for "Everyone" demo
-    function animateEveryone() {
-        ctxEveryone.fillStyle = '#0a0a1a';
-        ctxEveryone.fillRect(0, 0, canvasEveryone.width, canvasEveryone.height);
-        
-        // Draw animated elements representing prompts
-        const centerX = canvasEveryone.width / 2;
-        const centerY = canvasEveryone.height / 2;
-        
-        // Input
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(100, centerY, 30 + Math.sin(step * 0.05) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.font = '12px Arial';
-        ctxEveryone.textAlign = 'center';
-        ctxEveryone.fillText('Input', 100, centerY + 50);
-        
-        // Process (animated)
-        ctxEveryone.fillStyle = '#50c878';
-        const processX = 100 + (step % 200) * 2;
-        if (processX < 500) {
-            ctxEveryone.beginPath();
-            ctxEveryone.arc(processX, centerY, 20, 0, Math.PI * 2);
-            ctxEveryone.fill();
-        }
-        
-        // Arrow
-        ctxEveryone.strokeStyle = '#8892b0';
-        ctxEveryone.lineWidth = 2;
-        ctxEveryone.beginPath();
-        ctxEveryone.moveTo(140, centerY);
-        ctxEveryone.lineTo(460, centerY);
-        ctxEveryone.stroke();
-        
-        // Output
-        ctxEveryone.fillStyle = '#ff6b6b';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(500, centerY, 30 + Math.sin(step * 0.05 + 1) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.fillText('Output', 500, centerY + 50);
-        
-        // Title
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.font = 'bold 18px Arial';
-        ctxEveryone.fillText('Prompt Engineering', centerX, 40);
-        
-        step++;
-        
-        if (isRunning) {
-            animationFrame = requestAnimationFrame(animateEveryone);
-        }
-    }
-    
-    // Start button
-    document.getElementById('btn-start').addEventListener('click', function() {
-        if (!isRunning) {
-            isRunning = true;
-            this.textContent = 'Pause';
-            animateEveryone();
-            document.getElementById('explanation').innerHTML = 
-                '<p>Watch how data flows through the prompts process!</p>' +
-                '<p>The green dot represents data being transformed.</p>';
-        } else {
-            isRunning = false;
-            this.textContent = 'Start Demo';
-            cancelAnimationFrame(animationFrame);
-        }
-    });
-    
-    // Reset button
-    document.getElementById('btn-reset').addEventListener('click', function() {
-        isRunning = false;
-        step = 0;
-        document.getElementById('btn-start').textContent = 'Start Demo';
-        cancelAnimationFrame(animationFrame);
-        drawInitialState(ctxEveryone, canvasEveryone);
-        document.getElementById('explanation').innerHTML = 
-            '<p>Click "Start Demo" to see prompts in action!</p>';
-    });
-    
-    // Technical slider
-    const paramSlider = document.getElementById('param-slider');
-    const paramValue = document.getElementById('param-value');
-    
-    function drawTechnicalDemo(value) {
-        ctxTech.fillStyle = '#0a0a1a';
-        ctxTech.fillRect(0, 0, canvasTech.width, canvasTech.height);
-        
-        // Draw parameter-dependent visualization
-        const normalizedValue = value / 100;
-        
-        // Draw bars representing different aspects
-        const barWidth = 50;
-        const maxHeight = 300;
-        const startX = 100;
-        
-        const aspects = ['Accuracy', 'Speed', 'Cost', 'Complexity'];
-        const colors = ['#4a90d9', '#50c878', '#ff6b6b', '#ffaa00'];
-        
-        aspects.forEach((aspect, i) => {
-            const height = maxHeight * (0.3 + normalizedValue * 0.7 * Math.sin(i + normalizedValue * Math.PI));
-            const x = startX + i * (barWidth + 40);
-            
-            ctxTech.fillStyle = colors[i];
-            ctxTech.fillRect(x, canvasTech.height - 50 - height, barWidth, height);
-            
-            ctxTech.fillStyle = 'white';
-            ctxTech.font = '12px Arial';
-            ctxTech.textAlign = 'center';
-            ctxTech.fillText(aspect, x + barWidth/2, canvasTech.height - 30);
-        });
-        
-        // Title
-        ctxTech.fillStyle = '#4a90d9';
-        ctxTech.font = 'bold 16px Arial';
-        ctxTech.fillText('Parameter Impact on prompts', canvasTech.width/2, 30);
-        ctxTech.font = '14px Arial';
-        ctxTech.fillText('Parameter Value: ' + value, canvasTech.width/2, 55);
-    }
-    
-    paramSlider.addEventListener('input', function() {
-        paramValue.textContent = this.value;
-        drawTechnicalDemo(parseInt(this.value));
-    });
-    
-    // Initial technical demo draw
-    drawTechnicalDemo(50);
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTrackToggle();
+    initComparison();
+    initPromptBuilder();
+    initTechniques();
+    initPromptLab();
 });
+
+// Track Toggle
+function initTrackToggle() {
+    new TrackToggle({
+        defaultTrack: 'non-tech',
+        onToggle: (track) => {
+            console.log('Track changed to:', track);
+        }
+    });
+}
+
+// ============================================================================
+// Section 1: Good vs Bad Prompts Comparison
+// ============================================================================
+
+function initComparison() {
+    const animateBtn = document.getElementById('animateComparisonBtn');
+    
+    animateBtn.addEventListener('click', animateComparison);
+}
+
+async function animateComparison() {
+    const badResponse = document.getElementById('badResponse');
+    const goodResponse = document.getElementById('goodResponse');
+    const badMeter = document.querySelector('.comparison-side.bad .meter-fill');
+    const goodMeter = document.querySelector('.comparison-side.good .meter-fill');
+    
+    // Reset
+    badResponse.classList.remove('visible');
+    goodResponse.classList.remove('visible');
+    badMeter.style.width = '0%';
+    goodMeter.style.width = '0%';
+    
+    // Animate bad prompt first
+    await new Promise(resolve => setTimeout(resolve, 500));
+    badResponse.classList.add('visible');
+    badMeter.style.width = '30%';
+    
+    // Then good prompt
+    await new Promise(resolve => setTimeout(resolve, 800));
+    goodResponse.classList.add('visible');
+    goodMeter.style.width = '90%';
+}
+
+// ============================================================================
+// Section 2: Prompt Builder
+// ============================================================================
+
+function initPromptBuilder() {
+    const toggles = {
+        role: document.getElementById('toggleRole'),
+        task: document.getElementById('toggleTask'),
+        format: document.getElementById('toggleFormat'),
+        examples: document.getElementById('toggleExamples'),
+        constraints: document.getElementById('toggleConstraints')
+    };
+    
+    // Set initial state
+    updatePromptBuilder();
+    
+    // Add event listeners
+    Object.values(toggles).forEach(toggle => {
+        toggle.addEventListener('change', updatePromptBuilder);
+    });
+}
+
+function updatePromptBuilder() {
+    const components = {
+        role: document.getElementById('toggleRole').checked,
+        task: document.getElementById('toggleTask').checked,
+        format: document.getElementById('toggleFormat').checked,
+        examples: document.getElementById('toggleExamples').checked,
+        constraints: document.getElementById('toggleConstraints').checked
+    };
+    
+    // Update visibility of components
+    Object.entries(components).forEach(([key, visible]) => {
+        const element = document.querySelector(`.prompt-component.${key}`);
+        if (element) {
+            element.classList.toggle('hidden', !visible);
+        }
+    });
+    
+    // Calculate score
+    const activeCount = Object.values(components).filter(v => v).length;
+    const score = (activeCount / 5) * 100;
+    
+    document.getElementById('promptScore').style.width = `${score}%`;
+    document.getElementById('scoreValue').textContent = `${Math.round(score)}%`;
+}
+
+// ============================================================================
+// Section 3: Prompting Techniques
+// ============================================================================
+
+function initTechniques() {
+    const tabs = document.querySelectorAll('.technique-tab');
+    const panels = document.querySelectorAll('.technique-panel');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const technique = tab.dataset.technique;
+            
+            // Update tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Update panels
+            panels.forEach(p => p.classList.remove('active'));
+            document.querySelector(`.technique-panel[data-technique="${technique}"]`).classList.add('active');
+            
+            // Animate CoT steps if that technique is selected
+            if (technique === 'cot') {
+                animateCoTSteps();
+            }
+        });
+    });
+}
+
+async function animateCoTSteps() {
+    const steps = document.querySelectorAll('.cot-step');
+    const answer = document.querySelector('.cot-answer');
+    
+    // Reset
+    steps.forEach(s => s.classList.remove('visible'));
+    answer.classList.remove('visible');
+    
+    // Animate each step
+    for (let i = 0; i < steps.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 600));
+        steps[i].classList.add('visible');
+    }
+    
+    // Show answer
+    await new Promise(resolve => setTimeout(resolve, 600));
+    answer.classList.add('visible');
+}
+
+// ============================================================================
+// Section 4: Prompt Lab
+// ============================================================================
+
+const promptKeywords = {
+    specificity: ['specific', 'exactly', 'precisely', 'detailed', 'particular', 'words', 'sentences', 'paragraphs', 'steps'],
+    context: ['you are', 'act as', 'role', 'expert', 'professional', 'specialist', 'background', 'context', 'scenario'],
+    format: ['format', 'structure', 'bullet', 'list', 'json', 'markdown', 'table', 'sections', 'headers', 'output'],
+    constraints: ['limit', 'maximum', 'minimum', 'avoid', 'don\'t', 'must', 'should', 'only', 'without', 'under', 'words']
+};
+
+const taskTips = {
+    email: [
+        'Specify the tone (formal, friendly, urgent)',
+        'Mention the recipient relationship (colleague, client, manager)',
+        'Include the main purpose of the email',
+        'Specify any constraints (length, deadline mentions)'
+    ],
+    summary: [
+        'Specify the target length (e.g., "in 3 sentences")',
+        'Mention the audience (technical, executive, general)',
+        'Indicate what aspects to focus on',
+        'Specify the format (bullet points, paragraph)'
+    ],
+    code: [
+        'Specify the programming language',
+        'Describe the input/output format',
+        'Mention any libraries or frameworks to use',
+        'Include error handling requirements'
+    ],
+    creative: [
+        'Specify the genre and tone',
+        'Provide character or setting details',
+        'Mention the target audience',
+        'Include any themes to explore'
+    ]
+};
+
+function initPromptLab() {
+    const promptInput = document.getElementById('labPromptInput');
+    const taskSelect = document.getElementById('labTaskSelect');
+    
+    promptInput.addEventListener('input', analyzePrompt);
+    taskSelect.addEventListener('change', () => {
+        updateTips();
+        analyzePrompt();
+    });
+    
+    // Initial tips
+    updateTips();
+}
+
+function analyzePrompt() {
+    const prompt = document.getElementById('labPromptInput').value.toLowerCase();
+    const scores = {};
+    
+    // Calculate scores for each factor
+    Object.entries(promptKeywords).forEach(([factor, keywords]) => {
+        let score = 0;
+        keywords.forEach(keyword => {
+            if (prompt.includes(keyword)) {
+                score += 20;
+            }
+        });
+        scores[factor] = Math.min(score, 100);
+    });
+    
+    // Bonus for length
+    if (prompt.length > 50) scores.specificity = Math.min(scores.specificity + 20, 100);
+    if (prompt.length > 100) scores.specificity = Math.min(scores.specificity + 20, 100);
+    
+    // Update UI
+    Object.entries(scores).forEach(([factor, score]) => {
+        const item = document.querySelector(`.analysis-item[data-factor="${factor}"]`);
+        if (item) {
+            item.querySelector('.factor-fill').style.width = `${score}%`;
+            item.querySelector('.factor-score').textContent = `${score}%`;
+        }
+    });
+    
+    // Calculate overall score
+    const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / 4);
+    document.getElementById('overallScore').textContent = `${overall}%`;
+    
+    // Update tips based on missing elements
+    updateTipsBasedOnAnalysis(scores);
+}
+
+function updateTips() {
+    const task = document.getElementById('labTaskSelect').value;
+    const tipsList = document.getElementById('tipsList');
+    
+    tipsList.innerHTML = '';
+    taskTips[task].forEach(tip => {
+        const li = document.createElement('li');
+        li.textContent = tip;
+        tipsList.appendChild(li);
+    });
+}
+
+function updateTipsBasedOnAnalysis(scores) {
+    const tipsList = document.getElementById('tipsList');
+    const tips = [];
+    
+    if (scores.specificity < 50) {
+        tips.push('Add more specific details about what you want');
+    }
+    if (scores.context < 50) {
+        tips.push('Try adding a role (e.g., "You are an expert...")');
+    }
+    if (scores.format < 50) {
+        tips.push('Specify the desired output format');
+    }
+    if (scores.constraints < 50) {
+        tips.push('Add constraints like length limits or things to avoid');
+    }
+    
+    if (tips.length > 0) {
+        tipsList.innerHTML = '';
+        tips.forEach(tip => {
+            const li = document.createElement('li');
+            li.textContent = tip;
+            tipsList.appendChild(li);
+        });
+    }
+}

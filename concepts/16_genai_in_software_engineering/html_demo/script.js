@@ -1,181 +1,358 @@
-// Generative AI 360° - Interactive Demo Script
+/**
+ * GenAI in Software Engineering - Interactive Demo Script
+ * 
+ * This demo shows how AI assists with code completion,
+ * generation, explanation, and the development workflow.
+ */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Track switching
-    const trackBtns = document.querySelectorAll('.track-btn');
-    const trackContents = document.querySelectorAll('.track-content');
+// Code generation examples
+const codeExamples = {
+    validate: `import re
+
+def validate_email(email: str) -> bool:
+    """
+    Validate an email address using regex.
     
-    trackBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const track = btn.dataset.track;
-            
-            trackBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            trackContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === track + '-content') {
-                    content.classList.add('active');
-                }
-            });
-        });
-    });
-    
-    // Canvas setup for "Everyone" demo
-    const canvasEveryone = document.getElementById('canvas-everyone');
-    const ctxEveryone = canvasEveryone.getContext('2d');
-    
-    // Canvas setup for "Technical" demo
-    const canvasTech = document.getElementById('canvas-technical');
-    const ctxTech = canvasTech.getContext('2d');
-    
-    // Demo state
-    let isRunning = false;
-    let animationFrame = null;
-    let step = 0;
-    
-    // Draw initial state
-    function drawInitialState(ctx, canvas) {
-        ctx.fillStyle = '#0a0a1a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    Args:
+        email: The email address to validate
         
-        ctx.fillStyle = '#4a90d9';
-        ctx.font = '20px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Click "Start Demo" to begin', canvas.width/2, canvas.height/2);
-    }
+    Returns:
+        True if valid, False otherwise
+    """
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email))
+
+# Example usage
+emails = ["user@example.com", "invalid-email", "test@domain.co.uk"]
+for email in emails:
+    result = "✓ Valid" if validate_email(email) else "✗ Invalid"
+    print(f"{email}: {result}")`,
+
+    sort: `def sort_by_property(items: list, property_name: str, reverse: bool = False) -> list:
+    """
+    Sort a list of objects by a specific property.
     
-    drawInitialState(ctxEveryone, canvasEveryone);
-    drawInitialState(ctxTech, canvasTech);
+    Args:
+        items: List of dictionaries or objects
+        property_name: The key/attribute to sort by
+        reverse: Sort in descending order if True
+        
+    Returns:
+        Sorted list
+    """
+    return sorted(items, key=lambda x: x.get(property_name, 0), reverse=reverse)
+
+# Example usage
+products = [
+    {"name": "Laptop", "price": 999, "rating": 4.5},
+    {"name": "Phone", "price": 699, "rating": 4.8},
+    {"name": "Tablet", "price": 449, "rating": 4.2}
+]
+
+# Sort by price (ascending)
+by_price = sort_by_property(products, "price")
+print("By price:", [p["name"] for p in by_price])
+
+# Sort by rating (descending)
+by_rating = sort_by_property(products, "rating", reverse=True)
+print("By rating:", [p["name"] for p in by_rating])`,
+
+    api: `import requests
+from typing import Optional, Dict, Any
+
+def make_api_request(
+    url: str,
+    method: str = "GET",
+    data: Optional[Dict] = None,
+    headers: Optional[Dict] = None,
+    timeout: int = 30
+) -> Dict[str, Any]:
+    """
+    Make an API request with comprehensive error handling.
     
-    // Animation for "Everyone" demo
-    function animateEveryone() {
-        ctxEveryone.fillStyle = '#0a0a1a';
-        ctxEveryone.fillRect(0, 0, canvasEveryone.width, canvasEveryone.height);
+    Args:
+        url: The API endpoint URL
+        method: HTTP method (GET, POST, PUT, DELETE)
+        data: Request payload for POST/PUT
+        headers: Custom headers
+        timeout: Request timeout in seconds
         
-        // Draw animated elements representing software_engineering
-        const centerX = canvasEveryone.width / 2;
-        const centerY = canvasEveryone.height / 2;
+    Returns:
+        Dict with 'success', 'data' or 'error' keys
+    """
+    try:
+        response = requests.request(
+            method=method,
+            url=url,
+            json=data,
+            headers=headers or {},
+            timeout=timeout
+        )
+        response.raise_for_status()
         
-        // Input
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(100, centerY, 30 + Math.sin(step * 0.05) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.font = '12px Arial';
-        ctxEveryone.textAlign = 'center';
-        ctxEveryone.fillText('Input', 100, centerY + 50);
-        
-        // Process (animated)
-        ctxEveryone.fillStyle = '#50c878';
-        const processX = 100 + (step % 200) * 2;
-        if (processX < 500) {
-            ctxEveryone.beginPath();
-            ctxEveryone.arc(processX, centerY, 20, 0, Math.PI * 2);
-            ctxEveryone.fill();
+        return {
+            "success": True,
+            "status_code": response.status_code,
+            "data": response.json()
         }
         
-        // Arrow
-        ctxEveryone.strokeStyle = '#8892b0';
-        ctxEveryone.lineWidth = 2;
-        ctxEveryone.beginPath();
-        ctxEveryone.moveTo(140, centerY);
-        ctxEveryone.lineTo(460, centerY);
-        ctxEveryone.stroke();
-        
-        // Output
-        ctxEveryone.fillStyle = '#ff6b6b';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(500, centerY, 30 + Math.sin(step * 0.05 + 1) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.fillText('Output', 500, centerY + 50);
-        
-        // Title
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.font = 'bold 18px Arial';
-        ctxEveryone.fillText('GenAI in Software Engineering', centerX, 40);
-        
-        step++;
-        
-        if (isRunning) {
-            animationFrame = requestAnimationFrame(animateEveryone);
-        }
+    except requests.exceptions.Timeout:
+        return {"success": False, "error": "Request timed out"}
+    except requests.exceptions.ConnectionError:
+        return {"success": False, "error": "Connection failed"}
+    except requests.exceptions.HTTPError as e:
+        return {"success": False, "error": f"HTTP error: {e}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+# Example usage
+result = make_api_request("https://api.example.com/users")
+if result["success"]:
+    print("Data:", result["data"])
+else:
+    print("Error:", result["error"])`,
+
+    test: `import pytest
+from your_module import calculate_discount
+
+class TestCalculateDiscount:
+    """Unit tests for the calculate_discount function."""
+    
+    def test_basic_discount(self):
+        """Test standard discount calculation."""
+        result = calculate_discount(100, 20)
+        assert result == 80.0
+    
+    def test_zero_discount(self):
+        """Test with zero discount."""
+        result = calculate_discount(100, 0)
+        assert result == 100.0
+    
+    def test_full_discount(self):
+        """Test with 100% discount."""
+        result = calculate_discount(100, 100)
+        assert result == 0.0
+    
+    def test_decimal_price(self):
+        """Test with decimal price."""
+        result = calculate_discount(99.99, 10)
+        assert result == pytest.approx(89.991, rel=1e-3)
+    
+    def test_negative_price_raises_error(self):
+        """Test that negative price raises ValueError."""
+        with pytest.raises(ValueError):
+            calculate_discount(-100, 20)
+    
+    def test_invalid_discount_raises_error(self):
+        """Test that discount > 100 raises ValueError."""
+        with pytest.raises(ValueError):
+            calculate_discount(100, 150)
+
+# Run with: pytest test_discount.py -v`
+};
+
+// Workflow stage details
+const workflowDetails = {
+    design: {
+        title: "Design Phase",
+        description: "AI helps architects and developers plan software systems before writing code.",
+        capabilities: [
+            "Generate architecture diagrams from descriptions",
+            "Suggest design patterns for specific problems",
+            "Review API designs for best practices",
+            "Create database schema suggestions",
+            "Identify potential scalability issues"
+        ]
+    },
+    code: {
+        title: "Coding Phase",
+        description: "AI assists with writing code faster and with fewer errors.",
+        capabilities: [
+            "Real-time code completion as you type",
+            "Generate functions from natural language",
+            "Translate code between languages",
+            "Suggest refactoring improvements",
+            "Auto-complete repetitive patterns"
+        ]
+    },
+    test: {
+        title: "Testing Phase",
+        description: "AI helps ensure code quality through automated test generation.",
+        capabilities: [
+            "Generate unit tests for functions",
+            "Suggest edge cases to test",
+            "Create integration test scenarios",
+            "Generate mock data for testing",
+            "Identify untested code paths"
+        ]
+    },
+    review: {
+        title: "Code Review Phase",
+        description: "AI acts as a first-pass reviewer to catch issues early.",
+        capabilities: [
+            "Detect potential bugs and errors",
+            "Identify security vulnerabilities",
+            "Check for code style violations",
+            "Suggest performance improvements",
+            "Flag complex code that needs simplification"
+        ]
+    },
+    deploy: {
+        title: "Deployment Phase",
+        description: "AI assists with deployment configuration and automation.",
+        capabilities: [
+            "Generate Docker configurations",
+            "Create CI/CD pipeline scripts",
+            "Suggest infrastructure as code",
+            "Generate deployment documentation",
+            "Create monitoring and alerting rules"
+        ]
     }
-    
-    // Start button
-    document.getElementById('btn-start').addEventListener('click', function() {
-        if (!isRunning) {
-            isRunning = true;
-            this.textContent = 'Pause';
-            animateEveryone();
-            document.getElementById('explanation').innerHTML = 
-                '<p>Watch how data flows through the software_engineering process!</p>' +
-                '<p>The green dot represents data being transformed.</p>';
-        } else {
-            isRunning = false;
-            this.textContent = 'Start Demo';
-            cancelAnimationFrame(animationFrame);
-        }
-    });
-    
-    // Reset button
-    document.getElementById('btn-reset').addEventListener('click', function() {
-        isRunning = false;
-        step = 0;
-        document.getElementById('btn-start').textContent = 'Start Demo';
-        cancelAnimationFrame(animationFrame);
-        drawInitialState(ctxEveryone, canvasEveryone);
-        document.getElementById('explanation').innerHTML = 
-            '<p>Click "Start Demo" to see software_engineering in action!</p>';
-    });
-    
-    // Technical slider
-    const paramSlider = document.getElementById('param-slider');
-    const paramValue = document.getElementById('param-value');
-    
-    function drawTechnicalDemo(value) {
-        ctxTech.fillStyle = '#0a0a1a';
-        ctxTech.fillRect(0, 0, canvasTech.width, canvasTech.height);
-        
-        // Draw parameter-dependent visualization
-        const normalizedValue = value / 100;
-        
-        // Draw bars representing different aspects
-        const barWidth = 50;
-        const maxHeight = 300;
-        const startX = 100;
-        
-        const aspects = ['Accuracy', 'Speed', 'Cost', 'Complexity'];
-        const colors = ['#4a90d9', '#50c878', '#ff6b6b', '#ffaa00'];
-        
-        aspects.forEach((aspect, i) => {
-            const height = maxHeight * (0.3 + normalizedValue * 0.7 * Math.sin(i + normalizedValue * Math.PI));
-            const x = startX + i * (barWidth + 40);
-            
-            ctxTech.fillStyle = colors[i];
-            ctxTech.fillRect(x, canvasTech.height - 50 - height, barWidth, height);
-            
-            ctxTech.fillStyle = 'white';
-            ctxTech.font = '12px Arial';
-            ctxTech.textAlign = 'center';
-            ctxTech.fillText(aspect, x + barWidth/2, canvasTech.height - 30);
-        });
-        
-        // Title
-        ctxTech.fillStyle = '#4a90d9';
-        ctxTech.font = 'bold 16px Arial';
-        ctxTech.fillText('Parameter Impact on software_engineering', canvasTech.width/2, 30);
-        ctxTech.font = '14px Arial';
-        ctxTech.fillText('Parameter Value: ' + value, canvasTech.width/2, 55);
-    }
-    
-    paramSlider.addEventListener('input', function() {
-        paramValue.textContent = this.value;
-        drawTechnicalDemo(parseInt(this.value));
-    });
-    
-    // Initial technical demo draw
-    drawTechnicalDemo(50);
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTrackToggle();
+    initCodeCompletion();
+    initCodeGeneration();
+    initCodeExplanation();
+    initWorkflowDemo();
 });
+
+// Track Toggle
+function initTrackToggle() {
+    new TrackToggle({
+        defaultTrack: 'non-tech',
+        onToggle: (track) => {
+            console.log('Track changed to:', track);
+        }
+    });
+}
+
+// ============================================================================
+// Section 1: Code Completion
+// ============================================================================
+
+function initCodeCompletion() {
+    const showBtn = document.getElementById('showSuggestionBtn');
+    const acceptBtn = document.getElementById('acceptSuggestionBtn');
+    const suggestion = document.getElementById('aiSuggestion');
+    const codeDisplay = document.getElementById('codeDisplay');
+    
+    showBtn.addEventListener('click', () => {
+        suggestion.classList.add('visible');
+        showBtn.disabled = true;
+    });
+    
+    acceptBtn.addEventListener('click', () => {
+        if (suggestion.classList.contains('visible')) {
+            codeDisplay.innerHTML = `def calculate_discount(price, percent):
+    """Calculate discounted price."""
+    <span class="accepted">discount = price * (percent / 100)
+    return price - discount</span>`;
+            suggestion.classList.remove('visible');
+            acceptBtn.textContent = 'Accepted!';
+            acceptBtn.disabled = true;
+        }
+    });
+}
+
+// ============================================================================
+// Section 2: Code Generation
+// ============================================================================
+
+function initCodeGeneration() {
+    const generateBtn = document.getElementById('generateCodeBtn');
+    const promptSelect = document.getElementById('promptSelect');
+    const generatedCode = document.getElementById('generatedCode');
+    const copyBtn = document.getElementById('copyCodeBtn');
+    
+    generateBtn.addEventListener('click', async () => {
+        const prompt = promptSelect.value;
+        generatedCode.innerHTML = '<span class="generating">Generating code...</span>';
+        
+        await sleep(1500);
+        
+        const code = codeExamples[prompt];
+        generatedCode.textContent = '';
+        
+        // Typing effect
+        for (let i = 0; i < code.length; i++) {
+            generatedCode.textContent += code[i];
+            if (i % 10 === 0) await sleep(5);
+        }
+    });
+    
+    copyBtn.addEventListener('click', () => {
+        const code = generatedCode.textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+        });
+    });
+}
+
+// ============================================================================
+// Section 3: Code Explanation
+// ============================================================================
+
+function initCodeExplanation() {
+    const explainBtn = document.getElementById('explainCodeBtn');
+    const result = document.getElementById('explanationResult');
+    
+    explainBtn.addEventListener('click', async () => {
+        result.innerHTML = '<span style="color: var(--primary);">Analyzing code...</span>';
+        
+        await sleep(1500);
+        
+        result.innerHTML = `
+            <h5>What This Code Does (Simple Explanation)</h5>
+            <p>This code creates a "debounce" function - like a patient assistant who waits for you to stop typing before taking action. Instead of reacting to every keystroke, it waits until you pause.</p>
+            
+            <h5>Real-World Example</h5>
+            <p>Imagine a search box that shows suggestions. Without debounce, it would search after every letter you type (expensive!). With debounce, it waits until you stop typing for a moment, then searches once.</p>
+            
+            <h5>Technical Breakdown</h5>
+            <p><strong>Line 1:</strong> Creates a function that takes another function (fn) and a delay time</p>
+            <p><strong>Line 2:</strong> Creates a variable to store a timer ID</p>
+            <p><strong>Line 3:</strong> Returns a new function that captures any arguments</p>
+            <p><strong>Line 4:</strong> Cancels any existing timer (resets the wait)</p>
+            <p><strong>Line 5:</strong> Sets a new timer - when it expires, calls the original function</p>
+            
+            <h5>Key Concepts</h5>
+            <p>• <strong>Closure:</strong> The inner function "remembers" timeoutId<br>
+            • <strong>Rest parameters:</strong> ...args captures all arguments<br>
+            • <strong>setTimeout/clearTimeout:</strong> JavaScript timer functions</p>
+        `;
+    });
+}
+
+// ============================================================================
+// Section 4: Workflow Demo
+// ============================================================================
+
+function initWorkflowDemo() {
+    const stages = document.querySelectorAll('.stage');
+    const detail = document.getElementById('workflowDetail');
+    
+    stages.forEach(stage => {
+        stage.addEventListener('click', () => {
+            stages.forEach(s => s.classList.remove('active'));
+            stage.classList.add('active');
+            
+            const stageData = workflowDetails[stage.dataset.stage];
+            detail.innerHTML = `
+                <h4>${stageData.title}</h4>
+                <p>${stageData.description}</p>
+                <ul>
+                    ${stageData.capabilities.map(c => `<li>${c}</li>`).join('')}
+                </ul>
+            `;
+        });
+    });
+}
+
+// Utility
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

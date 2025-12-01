@@ -3,108 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Large Language Models (LLMs) - Interactive Demo</title>
+    <title>Large Language Models - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Large Language Models (LLMs)</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Large Language Models</h1>
+            <p class="subtitle">The AI that learned from the internet</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Large Language Models (LLMs)?</h2>
-                    <p>The powerful AI systems like ChatGPT, Claude, and Gemini - trained on vast amounts of text to understand and generate human language.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>LLMs are the most impactful AI technology today, transforming how we work, learn, and create.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see llms in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>ChatGPT conversations</li><li>Claude analysis</li><li>Gemini multimodal tasks</li><li>Open-source models like LLaMA</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Scaling laws, pretraining objectives, emergent capabilities, instruction tuning, RLHF, and model families (GPT, LLaMA, etc.).</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of llms.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../05_transformers_and_attention/html_demo/index.html">Transformers and Attention</a><a href="../07_prompt_engineering/html_demo/index.html">Prompt Engineering</a><a href="../08_text_generation_use_cases/html_demo/index.html">Text Generation Use Cases</a>
+        <!-- Section 1: What Makes LLMs Large -->
+        <section class="demo-section">
+            <h2>Step 1: What Makes LLMs "Large"?</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>LLMs are called "large" because of their massive scale: billions of parameters (adjustable numbers), trained on trillions of words. Compare different models below to see how they've grown over time!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Parameters are the weights in the neural network. More parameters = more capacity to learn patterns. Training data size and compute also scale. Scaling laws show predictable performance improvements: L(N,D) ∝ N^(-α) + D^(-β).</p>
+            </div>
+
+            <div class="animation-canvas" id="scaleCanvas">
+                <div class="scale-comparison">
+                    <div class="model-cards" id="modelCards">
+                        <!-- Model cards will be created by JavaScript -->
+                    </div>
+                    
+                    <div class="scale-visualization">
+                        <h4>Parameter Scale Comparison</h4>
+                        <div class="scale-bars" id="scaleBars">
+                            <!-- Scale bars will be created by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="scale-facts">
+                        <div class="fact-item">
+                            <span class="fact-number" id="totalParams">1.7T</span>
+                            <span class="fact-label">Parameters in GPT-4</span>
+                        </div>
+                        <div class="fact-item">
+                            <span class="fact-number" id="trainingTokens">13T</span>
+                            <span class="fact-label">Training Tokens</span>
+                        </div>
+                        <div class="fact-item">
+                            <span class="fact-number" id="trainingCost">$100M+</span>
+                            <span class="fact-label">Estimated Training Cost</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Autoregressive Generation -->
+        <section class="demo-section">
+            <h2>Step 2: How LLMs Generate Text</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>LLMs generate text one word at a time by predicting "what comes next." Each new word is added to the context, and the process repeats. Watch the generation happen token by token!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Autoregressive generation: P(x₁,...,xₙ) = ∏P(xᵢ|x₁,...,xᵢ₋₁). Each forward pass produces logits over vocabulary, softmax gives probabilities, then sampling (greedy, top-k, top-p, or temperature-scaled) selects the next token.</p>
+            </div>
+
+            <div class="animation-canvas" id="generationCanvas">
+                <div class="generation-demo">
+                    <div class="prompt-section">
+                        <label>Prompt:</label>
+                        <input type="text" id="llmPrompt" value="The future of AI is" placeholder="Enter a prompt...">
+                    </div>
+                    
+                    <div class="generation-display">
+                        <div class="context-window" id="contextWindow">
+                            <span class="prompt-text">The future of AI is</span>
+                            <span class="generated-text" id="generatedText"></span>
+                            <span class="cursor">|</span>
+                        </div>
+                    </div>
+                    
+                    <div class="token-prediction">
+                        <h4>Next Token Prediction</h4>
+                        <div class="prediction-probs" id="predictionProbs">
+                            <!-- Probability bars will be created by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="generation-controls">
+                        <button class="action-btn primary" id="generateTokenBtn">Generate Next Token</button>
+                        <button class="action-btn" id="autoGenerateBtn">Auto Generate</button>
+                        <button class="action-btn" id="resetGenerationBtn">Reset</button>
+                    </div>
+                    
+                    <div class="generation-stats">
+                        <span>Tokens generated: <strong id="tokenCount">0</strong></span>
+                        <span>Context length: <strong id="contextLength">5</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Training Pipeline -->
+        <section class="demo-section">
+            <h2>Step 3: How LLMs Are Trained</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>LLMs go through multiple training phases: first they learn from massive text data (pre-training), then they learn to follow instructions (fine-tuning), and finally they learn human preferences (RLHF). Watch the training pipeline!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Pre-training: Causal LM objective on web-scale data. SFT: Supervised learning on instruction-response pairs. RLHF: Train reward model on preferences, then optimize policy with PPO. Constitutional AI adds self-critique loops.</p>
+            </div>
+
+            <div class="animation-canvas" id="trainingCanvas">
+                <div class="training-pipeline">
+                    <!-- Phase 1: Pre-training -->
+                    <div class="training-phase" data-phase="1">
+                        <div class="phase-header">
+                            <span class="phase-number">1</span>
+                            <h4>Pre-training</h4>
+                        </div>
+                        <div class="phase-content">
+                            <div class="phase-input">
+                                <span class="input-label">Input</span>
+                                <div class="data-flow">
+                                    <div class="data-item">Web pages</div>
+                                    <div class="data-item">Books</div>
+                                    <div class="data-item">Code</div>
+                                </div>
+                            </div>
+                            <div class="phase-process">
+                                <div class="process-box">
+                                    <span>Next Token Prediction</span>
+                                    <div class="process-animation" id="pretrainAnim"></div>
+                                </div>
+                            </div>
+                            <div class="phase-output">
+                                <span class="output-label">Output</span>
+                                <div class="output-item">Base Model</div>
+                            </div>
+                        </div>
+                        <div class="phase-stats">
+                            <span>~Trillions of tokens</span>
+                            <span>~Months of training</span>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-arrow">→</div>
+                    
+                    <!-- Phase 2: SFT -->
+                    <div class="training-phase" data-phase="2">
+                        <div class="phase-header">
+                            <span class="phase-number">2</span>
+                            <h4>Supervised Fine-tuning</h4>
+                        </div>
+                        <div class="phase-content">
+                            <div class="phase-input">
+                                <span class="input-label">Input</span>
+                                <div class="data-flow">
+                                    <div class="data-item">Instructions</div>
+                                    <div class="data-item">Responses</div>
+                                </div>
+                            </div>
+                            <div class="phase-process">
+                                <div class="process-box">
+                                    <span>Learn to Follow Instructions</span>
+                                    <div class="process-animation" id="sftAnim"></div>
+                                </div>
+                            </div>
+                            <div class="phase-output">
+                                <span class="output-label">Output</span>
+                                <div class="output-item">SFT Model</div>
+                            </div>
+                        </div>
+                        <div class="phase-stats">
+                            <span>~100K examples</span>
+                            <span>~Days of training</span>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-arrow">→</div>
+                    
+                    <!-- Phase 3: RLHF -->
+                    <div class="training-phase" data-phase="3">
+                        <div class="phase-header">
+                            <span class="phase-number">3</span>
+                            <h4>RLHF</h4>
+                        </div>
+                        <div class="phase-content">
+                            <div class="phase-input">
+                                <span class="input-label">Input</span>
+                                <div class="data-flow">
+                                    <div class="data-item">Human Preferences</div>
+                                    <div class="data-item">Comparisons</div>
+                                </div>
+                            </div>
+                            <div class="phase-process">
+                                <div class="process-box">
+                                    <span>Align with Human Values</span>
+                                    <div class="process-animation" id="rlhfAnim"></div>
+                                </div>
+                            </div>
+                            <div class="phase-output">
+                                <span class="output-label">Output</span>
+                                <div class="output-item">Aligned Model</div>
+                            </div>
+                        </div>
+                        <div class="phase-stats">
+                            <span>~50K comparisons</span>
+                            <span>~Days of training</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="training-controls">
+                    <button class="action-btn primary" id="animateTrainingBtn">Animate Training Pipeline</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Capabilities & Limitations -->
+        <section class="demo-section">
+            <h2>Step 4: Capabilities & Limitations</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>LLMs are incredibly capable but have important limitations. Understanding both helps you use them effectively. Explore the capabilities and limitations below!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Capabilities emerge from scale (in-context learning, chain-of-thought). Limitations include: finite context window, no real-time knowledge, hallucinations from probabilistic generation, and biases from training data distribution.</p>
+            </div>
+
+            <div class="animation-canvas" id="capabilitiesCanvas">
+                <div class="capabilities-demo">
+                    <div class="cap-section capabilities">
+                        <h4>Capabilities</h4>
+                        <div class="cap-items" id="capabilityItems">
+                            <div class="cap-item" data-cap="generation">
+                                <div class="cap-icon">✍️</div>
+                                <div class="cap-info">
+                                    <h5>Text Generation</h5>
+                                    <p>Write essays, stories, code, emails</p>
+                                </div>
+                            </div>
+                            <div class="cap-item" data-cap="qa">
+                                <div class="cap-icon">❓</div>
+                                <div class="cap-info">
+                                    <h5>Question Answering</h5>
+                                    <p>Answer questions from learned knowledge</p>
+                                </div>
+                            </div>
+                            <div class="cap-item" data-cap="reasoning">
+                                <div class="cap-icon">🧠</div>
+                                <div class="cap-info">
+                                    <h5>Reasoning</h5>
+                                    <p>Solve problems step by step</p>
+                                </div>
+                            </div>
+                            <div class="cap-item" data-cap="translation">
+                                <div class="cap-icon">🌐</div>
+                                <div class="cap-info">
+                                    <h5>Translation</h5>
+                                    <p>Convert between languages</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cap-divider"></div>
+                    
+                    <div class="cap-section limitations">
+                        <h4>Limitations</h4>
+                        <div class="cap-items" id="limitationItems">
+                            <div class="cap-item limitation" data-cap="hallucination">
+                                <div class="cap-icon">🎭</div>
+                                <div class="cap-info">
+                                    <h5>Hallucinations</h5>
+                                    <p>Can confidently state false information</p>
+                                </div>
+                            </div>
+                            <div class="cap-item limitation" data-cap="cutoff">
+                                <div class="cap-icon">📅</div>
+                                <div class="cap-info">
+                                    <h5>Knowledge Cutoff</h5>
+                                    <p>No knowledge of events after training</p>
+                                </div>
+                            </div>
+                            <div class="cap-item limitation" data-cap="context">
+                                <div class="cap-icon">📏</div>
+                                <div class="cap-info">
+                                    <h5>Context Limits</h5>
+                                    <p>Can only process limited text at once</p>
+                                </div>
+                            </div>
+                            <div class="cap-item limitation" data-cap="bias">
+                                <div class="cap-icon">⚖️</div>
+                                <div class="cap-info">
+                                    <h5>Bias</h5>
+                                    <p>Reflects biases in training data</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📊</div>
+                    <h4>Scale Matters</h4>
+                    <p>Billions of parameters trained on trillions of tokens enable emergent capabilities</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔄</div>
+                    <h4>Autoregressive</h4>
+                    <p>Text is generated one token at a time by predicting what comes next</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎓</div>
+                    <h4>Multi-Phase Training</h4>
+                    <p>Pre-training, fine-tuning, and RLHF create capable, aligned models</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚠️</div>
+                    <h4>Know Limitations</h4>
+                    <p>Hallucinations, cutoffs, and biases require careful consideration</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Input / Data</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Capability / Success</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Process / Training</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E74C3C;"></div>
+                <span>Limitation / Warning</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../05_transformers_and_attention/html_demo/">← Previous: Transformers & Attention</a> | <a href="../07_prompt_engineering/html_demo/">Next: Prompt Engineering →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
