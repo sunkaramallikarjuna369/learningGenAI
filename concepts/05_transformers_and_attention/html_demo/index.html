@@ -3,108 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transformers and Attention - Interactive Demo</title>
+    <title>Transformers & Attention - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Transformers and Attention</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Transformers & Attention</h1>
+            <p class="subtitle">How AI focuses on what matters</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Transformers and Attention?</h2>
-                    <p>The breakthrough architecture that powers ChatGPT and modern AI - attention lets AI focus on relevant parts of input, like how you focus on key words when reading.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>Transformers revolutionized AI and are the foundation of all modern language and vision models.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see transformers in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>ChatGPT understanding context</li><li>Translation maintaining meaning</li><li>Code completion understanding syntax</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Self-attention mechanism, multi-head attention, positional encoding, encoder-decoder vs decoder-only architectures.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of transformers.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../03_neural_network_basics/html_demo/index.html">Neural Network Basics</a><a href="../06_large_language_models/html_demo/index.html">Large Language Models (LLMs)</a>
+        <!-- Section 1: Self-Attention Basics -->
+        <section class="demo-section">
+            <h2>Step 1: Self-Attention - Words Looking at Words</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Each word in a sentence looks at every other word to understand context. Click on any word below to see which other words it "pays attention to" - brighter colors mean stronger attention!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Self-attention computes Attention(Q,K,V) = softmax(QK^T/√d_k)V. Each token generates query, key, and value vectors. The attention weights show how much each token attends to others. This enables capturing long-range dependencies in O(1) steps.</p>
+            </div>
+
+            <div class="animation-canvas" id="selfAttentionCanvas">
+                <div class="sentence-display">
+                    <div class="sentence-tokens" id="sentenceTokens">
+                        <!-- Tokens will be created by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="attention-visualization">
+                    <div class="attention-matrix" id="attentionMatrix">
+                        <!-- Attention heatmap will be drawn here -->
+                    </div>
+                    <div class="attention-legend">
+                        <span>Low</span>
+                        <div class="legend-gradient"></div>
+                        <span>High</span>
+                    </div>
+                </div>
+                
+                <div class="sentence-selector">
+                    <label>Try different sentences:</label>
+                    <select id="sentenceSelect">
+                        <option value="0">The cat sat on the mat because it was tired</option>
+                        <option value="1">The bank by the river had no money</option>
+                        <option value="2">I saw the man with the telescope</option>
+                        <option value="3">The chicken is ready to eat</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Query, Key, Value -->
+        <section class="demo-section">
+            <h2>Step 2: Query, Key, Value - The Attention Mechanism</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Think of attention like a search engine: the <strong>Query</strong> is what you're searching for, <strong>Keys</strong> are like titles of documents, and <strong>Values</strong> are the actual content. The model matches queries to keys to find relevant values!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>For input X, we compute Q=XW^Q, K=XW^K, V=XW^V where W matrices are learned. Attention scores are QK^T (dot product similarity), scaled by √d_k to prevent gradient issues, then softmaxed to get weights that sum to 1.</p>
+            </div>
+
+            <div class="animation-canvas" id="qkvCanvas">
+                <div class="qkv-demo">
+                    <!-- Input Token -->
+                    <div class="qkv-stage input-stage">
+                        <h4>Input Token</h4>
+                        <div class="token-box" id="qkvInputToken">cat</div>
+                        <div class="embedding-vector" id="inputEmbedding">
+                            <span>Embedding</span>
+                            <div class="vector-bars" id="inputBars"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Projections -->
+                    <div class="qkv-projections">
+                        <div class="projection-arrow">
+                            <svg width="60" height="120" viewBox="0 0 60 120">
+                                <path d="M30 0 L30 30 L10 30 L10 50" stroke="#4A90D9" stroke-width="2" fill="none"/>
+                                <path d="M30 0 L30 60" stroke="#50C878" stroke-width="2" fill="none"/>
+                                <path d="M30 0 L30 30 L50 30 L50 50" stroke="#E67E22" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Q, K, V Vectors -->
+                    <div class="qkv-vectors">
+                        <div class="qkv-vector query">
+                            <h4>Query (Q)</h4>
+                            <p class="qkv-desc">"What am I looking for?"</p>
+                            <div class="vector-bars" id="queryBars"></div>
+                        </div>
+                        <div class="qkv-vector key">
+                            <h4>Key (K)</h4>
+                            <p class="qkv-desc">"What do I contain?"</p>
+                            <div class="vector-bars" id="keyBars"></div>
+                        </div>
+                        <div class="qkv-vector value">
+                            <h4>Value (V)</h4>
+                            <p class="qkv-desc">"What's my content?"</p>
+                            <div class="vector-bars" id="valueBars"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="qkv-controls">
+                    <button class="action-btn" id="animateQKVBtn">Animate Projection</button>
+                    <button class="action-btn" id="resetQKVBtn">Reset</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Multi-Head Attention -->
+        <section class="demo-section">
+            <h2>Step 3: Multi-Head Attention - Multiple Perspectives</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Instead of one attention pattern, transformers use multiple "heads" that each focus on different aspects. One head might focus on grammar, another on meaning, another on position. Together they capture rich relationships!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>MultiHead(Q,K,V) = Concat(head_1,...,head_h)W^O where each head_i = Attention(QW_i^Q, KW_i^K, VW_i^V). Typical models use 8-96 heads. Each head has dimension d_k = d_model/h, maintaining total computation.</p>
+            </div>
+
+            <div class="animation-canvas" id="multiHeadCanvas">
+                <div class="multi-head-demo">
+                    <div class="heads-container" id="headsContainer">
+                        <!-- Attention heads will be created by JavaScript -->
+                    </div>
+                    
+                    <div class="head-selector">
+                        <label>Select attention head:</label>
+                        <div class="head-buttons" id="headButtons">
+                            <!-- Head buttons will be created by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="head-interpretation" id="headInterpretation">
+                        <h4>Head 1: Positional Attention</h4>
+                        <p>This head tends to attend to nearby words, capturing local context and phrase structure.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Transformer Architecture -->
+        <section class="demo-section">
+            <h2>Step 4: The Full Transformer</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>A transformer stacks multiple layers of attention and processing. Data flows through: Embedding → Multiple Transformer Blocks → Output. Each block refines the understanding. Watch the data flow through the architecture!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Each transformer block: x = LayerNorm(x + MultiHeadAttention(x)), then x = LayerNorm(x + FFN(x)). The FFN is typically two linear layers with GELU activation. Residual connections enable gradient flow in deep networks (12-96 layers).</p>
+            </div>
+
+            <div class="animation-canvas" id="architectureCanvas">
+                <div class="transformer-architecture">
+                    <!-- Input -->
+                    <div class="arch-stage" id="archInput">
+                        <div class="stage-label">Input</div>
+                        <div class="stage-content">
+                            <div class="input-tokens">
+                                <span class="arch-token">The</span>
+                                <span class="arch-token">cat</span>
+                                <span class="arch-token">sat</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="arch-arrow">↓</div>
+                    
+                    <!-- Embedding -->
+                    <div class="arch-stage" id="archEmbedding">
+                        <div class="stage-label">Embedding + Position</div>
+                        <div class="stage-content">
+                            <div class="embedding-boxes">
+                                <div class="emb-box"></div>
+                                <div class="emb-box"></div>
+                                <div class="emb-box"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="arch-arrow">↓</div>
+                    
+                    <!-- Transformer Blocks -->
+                    <div class="transformer-blocks" id="transformerBlocks">
+                        <div class="transformer-block" data-block="1">
+                            <div class="block-label">Block 1</div>
+                            <div class="block-components">
+                                <div class="component attention-comp">Multi-Head Attention</div>
+                                <div class="component ffn-comp">Feed Forward</div>
+                            </div>
+                        </div>
+                        <div class="transformer-block" data-block="2">
+                            <div class="block-label">Block 2</div>
+                            <div class="block-components">
+                                <div class="component attention-comp">Multi-Head Attention</div>
+                                <div class="component ffn-comp">Feed Forward</div>
+                            </div>
+                        </div>
+                        <div class="transformer-block" data-block="3">
+                            <div class="block-label">Block N</div>
+                            <div class="block-components">
+                                <div class="component attention-comp">Multi-Head Attention</div>
+                                <div class="component ffn-comp">Feed Forward</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="arch-arrow">↓</div>
+                    
+                    <!-- Output -->
+                    <div class="arch-stage" id="archOutput">
+                        <div class="stage-label">Output</div>
+                        <div class="stage-content">
+                            <div class="output-probs">
+                                <span class="prob-item">on <small>35%</small></span>
+                                <span class="prob-item">down <small>20%</small></span>
+                                <span class="prob-item">quietly <small>15%</small></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="arch-controls">
+                    <button class="control-btn" id="archPrevBtn">⏮</button>
+                    <button class="control-btn play" id="archPlayBtn">▶</button>
+                    <button class="control-btn" id="archNextBtn">⏭</button>
+                    <button class="control-btn" id="archResetBtn">↺</button>
+                </div>
+                
+                <div class="step-indicator" id="archStepIndicator">
+                    <span>Step 1 of 6: Input Tokens</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">👀</div>
+                    <h4>Attention</h4>
+                    <p>Allows each word to "look at" all other words to understand context</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔍</div>
+                    <h4>Q, K, V</h4>
+                    <p>Query-Key matching finds relevant information, Value provides content</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎭</div>
+                    <h4>Multi-Head</h4>
+                    <p>Multiple attention heads capture different types of relationships</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🏗️</div>
+                    <h4>Stacking</h4>
+                    <p>Multiple transformer blocks build increasingly abstract understanding</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Query / Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Key / Active</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Value / Output</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Attention Weight</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../04_autoencoders_and_embeddings/html_demo/">← Previous: Autoencoders & Embeddings</a> | <a href="../06_large_language_models/html_demo/">Next: Large Language Models →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

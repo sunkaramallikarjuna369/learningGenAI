@@ -4,107 +4,323 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deployment and APIs - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Deployment and APIs</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Deployment & APIs</h1>
+            <p class="subtitle">From prototype to production</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Deployment and APIs?</h2>
-                    <p>How AI gets from research to real products - the infrastructure and services that make AI accessible.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>Understanding deployment helps you build reliable AI applications and manage costs effectively.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see deployment in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>OpenAI API</li><li>Hugging Face Inference</li><li>Self-hosted models</li><li>Edge deployment</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>API design, rate limiting, caching, model serving, inference optimization, and cost management.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of deployment.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../12_agents_and_tool_use/html_demo/index.html">Agents and Tool Use</a><a href="../13_evaluation_and_safety/html_demo/index.html">Evaluation and Safety</a>
+        <!-- Section 1: API Request Flow -->
+        <section class="demo-section">
+            <h2>Step 1: How APIs Work</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>An API is like a waiter at a restaurant. You tell the waiter (API) what you want, they take your order to the kitchen (AI model), and bring back your food (response). Watch the flow below!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>REST APIs use HTTP methods (POST for completions). Request includes: endpoint URL, headers (auth, content-type), and JSON body (model, messages, parameters). Response contains generated text, token usage, and metadata.</p>
+            </div>
+
+            <div class="animation-canvas" id="apiFlowCanvas">
+                <div class="api-flow-demo">
+                    <div class="flow-diagram">
+                        <div class="flow-node client">
+                            <div class="node-icon">👤</div>
+                            <div class="node-label">Your App</div>
+                        </div>
+                        
+                        <div class="flow-arrow" id="arrow1">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-packet" id="packet1">📤</div>
+                            <div class="arrow-label">Request</div>
+                        </div>
+                        
+                        <div class="flow-node api">
+                            <div class="node-icon">🔌</div>
+                            <div class="node-label">API Gateway</div>
+                        </div>
+                        
+                        <div class="flow-arrow" id="arrow2">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-packet" id="packet2">⚡</div>
+                            <div class="arrow-label">Process</div>
+                        </div>
+                        
+                        <div class="flow-node model">
+                            <div class="node-icon">🤖</div>
+                            <div class="node-label">AI Model</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-controls">
+                        <button class="action-btn primary" id="sendRequestBtn">Send Request</button>
+                        <button class="action-btn secondary" id="resetFlowBtn">Reset</button>
+                    </div>
+                    
+                    <div class="flow-status" id="flowStatus">
+                        Click "Send Request" to see how an API call works
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: API Playground -->
+        <section class="demo-section">
+            <h2>Step 2: Try an API Call</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>This simulates making a real API call. You provide a prompt, the "API" processes it, and returns a response. In real life, this happens in milliseconds!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>API parameters control output: temperature (creativity), max_tokens (length), top_p (nucleus sampling). Response includes usage stats for billing. Always handle errors with retries and exponential backoff.</p>
+            </div>
+
+            <div class="animation-canvas" id="playgroundCanvas">
+                <div class="api-playground">
+                    <div class="playground-request">
+                        <h4>Request</h4>
+                        <div class="request-builder">
+                            <div class="param-group">
+                                <label>Model:</label>
+                                <select id="modelSelect">
+                                    <option value="gpt-4">GPT-4</option>
+                                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                    <option value="claude-3">Claude 3</option>
+                                </select>
+                            </div>
+                            
+                            <div class="param-group">
+                                <label>Prompt:</label>
+                                <textarea id="promptInput" rows="3">Explain what an API is in one sentence.</textarea>
+                            </div>
+                            
+                            <div class="param-group">
+                                <label>Temperature: <span id="tempValue">0.7</span></label>
+                                <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7">
+                            </div>
+                            
+                            <button class="action-btn primary" id="callApiBtn">Call API</button>
+                        </div>
+                    </div>
+                    
+                    <div class="playground-response">
+                        <h4>Response</h4>
+                        <div class="response-display" id="responseDisplay">
+                            <span class="placeholder">Response will appear here...</span>
+                        </div>
+                        <div class="response-meta" id="responseMeta">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Deployment Options -->
+        <section class="demo-section">
+            <h2>Step 3: Deployment Options</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>There are different ways to make AI available to users. Each option has trade-offs between cost, speed, control, and complexity. Click each option to learn more.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Deployment choices depend on: latency requirements, data privacy needs, cost constraints, and scale. Cloud APIs are easiest; self-hosted gives most control. Consider hybrid approaches for flexibility.</p>
+            </div>
+
+            <div class="animation-canvas" id="deploymentCanvas">
+                <div class="deployment-options">
+                    <div class="option-cards">
+                        <div class="option-card" data-option="cloud">
+                            <div class="option-icon">☁️</div>
+                            <h4>Cloud API</h4>
+                            <p>Use provider's infrastructure</p>
+                            <div class="option-rating">
+                                <span class="rating-item">Easy: ⭐⭐⭐⭐⭐</span>
+                                <span class="rating-item">Cost: $$</span>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card" data-option="selfhost">
+                            <div class="option-icon">🖥️</div>
+                            <h4>Self-Hosted</h4>
+                            <p>Run on your own servers</p>
+                            <div class="option-rating">
+                                <span class="rating-item">Easy: ⭐⭐</span>
+                                <span class="rating-item">Cost: $$$</span>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card" data-option="edge">
+                            <div class="option-icon">📱</div>
+                            <h4>Edge/On-Device</h4>
+                            <p>Run locally on user devices</p>
+                            <div class="option-rating">
+                                <span class="rating-item">Easy: ⭐⭐</span>
+                                <span class="rating-item">Cost: $</span>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card" data-option="hybrid">
+                            <div class="option-icon">🔄</div>
+                            <h4>Hybrid</h4>
+                            <p>Combine multiple approaches</p>
+                            <div class="option-rating">
+                                <span class="rating-item">Easy: ⭐⭐⭐</span>
+                                <span class="rating-item">Cost: $$</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-details" id="optionDetails">
+                        <h4>Select an option to see details</h4>
+                        <p>Each deployment approach has different trade-offs for your use case.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Cost Calculator -->
+        <section class="demo-section">
+            <h2>Step 4: Estimate API Costs</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>API calls cost money based on how much text you send and receive. This calculator helps you estimate monthly costs based on your usage.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Pricing is per 1K tokens (roughly 750 words). Input tokens (prompts) and output tokens (responses) often have different rates. Caching, batching, and model selection can significantly reduce costs.</p>
+            </div>
+
+            <div class="animation-canvas" id="costCanvas">
+                <div class="cost-calculator">
+                    <div class="cost-inputs">
+                        <div class="cost-input-group">
+                            <label>Requests per day</label>
+                            <input type="range" id="requestsPerDay" min="100" max="10000" value="1000">
+                            <span class="input-value" id="requestsValue">1,000</span>
+                        </div>
+                        
+                        <div class="cost-input-group">
+                            <label>Avg input tokens</label>
+                            <input type="range" id="inputTokens" min="50" max="2000" value="500">
+                            <span class="input-value" id="inputValue">500</span>
+                        </div>
+                        
+                        <div class="cost-input-group">
+                            <label>Avg output tokens</label>
+                            <input type="range" id="outputTokens" min="50" max="2000" value="300">
+                            <span class="input-value" id="outputValue">300</span>
+                        </div>
+                        
+                        <div class="cost-input-group">
+                            <label>Model</label>
+                            <select id="costModel">
+                                <option value="gpt4">GPT-4 ($30/$60 per 1M)</option>
+                                <option value="gpt35" selected>GPT-3.5 ($0.50/$1.50 per 1M)</option>
+                                <option value="claude">Claude 3 Sonnet ($3/$15 per 1M)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="cost-results">
+                        <div class="cost-card">
+                            <div class="cost-label">Daily Cost</div>
+                            <div class="cost-value" id="dailyCost">$0.00</div>
+                        </div>
+                        <div class="cost-card">
+                            <div class="cost-label">Monthly Cost</div>
+                            <div class="cost-value" id="monthlyCost">$0.00</div>
+                        </div>
+                        <div class="cost-card highlight">
+                            <div class="cost-label">Annual Cost</div>
+                            <div class="cost-value" id="annualCost">$0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="cost-breakdown" id="costBreakdown">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔌</div>
+                    <h4>APIs are Bridges</h4>
+                    <p>They connect your app to powerful AI models</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">💰</div>
+                    <h4>Monitor Costs</h4>
+                    <p>Track usage and optimize for your budget</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔒</div>
+                    <h4>Security Matters</h4>
+                    <p>Protect API keys and user data</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📈</div>
+                    <h4>Plan for Scale</h4>
+                    <p>Design for growth from the start</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Request / Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Response / Output</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Cost / Metrics</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../17_genai_in_non_it_roles/html_demo/">← Previous: GenAI for Non-IT Roles</a> | <a href="../19_future_trends_and_limits/html_demo/">Next: Future Trends →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -4,107 +4,308 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neural Network Basics - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
             <h1>Neural Network Basics</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+            <p class="subtitle">How artificial neurons learn to recognize patterns</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Neural Network Basics?</h2>
-                    <p>The building blocks of AI - neural networks are inspired by the brain and learn patterns from data, like learning to recognize cats from thousands of cat photos.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>Neural networks are the foundation of all modern AI. Understanding them helps you grasp how AI learns and improves.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see neural_networks in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>Image recognition</li><li>Spam detection</li><li>Voice assistants</li><li>Recommendation systems</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Perceptrons, activation functions, backpropagation, gradient descent, loss functions, and the universal approximation theorem.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of neural_networks.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../04_autoencoders_and_embeddings/html_demo/index.html">Autoencoders and Embeddings</a><a href="../05_transformers_and_attention/html_demo/index.html">Transformers and Attention</a>
+        <!-- Section 1: Single Neuron -->
+        <section class="demo-section">
+            <h2>Step 1: The Single Neuron</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>A single neuron is like a tiny decision-maker. It receives multiple inputs, weighs their importance, adds them up, and decides whether to "fire" (output a signal) or not. Click the inputs below to see how changing them affects the output!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>A neuron computes y = f(Σ(w_i × x_i) + b), where x_i are inputs, w_i are weights, b is bias, and f is an activation function. The activation function introduces non-linearity, enabling the network to learn complex patterns.</p>
+            </div>
+
+            <div class="animation-canvas" id="neuronCanvas">
+                <div class="single-neuron-demo">
+                    <!-- Inputs -->
+                    <div class="neuron-inputs">
+                        <div class="input-node" data-index="0">
+                            <span class="input-label">Input 1</span>
+                            <input type="range" class="input-slider" min="0" max="1" step="0.1" value="0.5">
+                            <span class="input-value">0.5</span>
+                        </div>
+                        <div class="input-node" data-index="1">
+                            <span class="input-label">Input 2</span>
+                            <input type="range" class="input-slider" min="0" max="1" step="0.1" value="0.3">
+                            <span class="input-value">0.3</span>
+                        </div>
+                        <div class="input-node" data-index="2">
+                            <span class="input-label">Input 3</span>
+                            <input type="range" class="input-slider" min="0" max="1" step="0.1" value="0.8">
+                            <span class="input-value">0.8</span>
+                        </div>
+                    </div>
+
+                    <!-- Weights -->
+                    <div class="weights-section">
+                        <div class="weight-line" data-index="0">
+                            <span class="weight-value">w=0.6</span>
+                        </div>
+                        <div class="weight-line" data-index="1">
+                            <span class="weight-value">w=0.4</span>
+                        </div>
+                        <div class="weight-line" data-index="2">
+                            <span class="weight-value">w=0.9</span>
+                        </div>
+                    </div>
+
+                    <!-- Neuron -->
+                    <div class="neuron-body">
+                        <div class="neuron-circle">
+                            <span class="sum-display">Σ</span>
+                        </div>
+                        <div class="neuron-calculation">
+                            <div class="calc-step weighted-sum">
+                                <span class="calc-label">Weighted Sum:</span>
+                                <span class="calc-value" id="weightedSum">0.00</span>
+                            </div>
+                            <div class="calc-step bias">
+                                <span class="calc-label">+ Bias:</span>
+                                <span class="calc-value">0.1</span>
+                            </div>
+                            <div class="calc-step activation">
+                                <span class="calc-label">After ReLU:</span>
+                                <span class="calc-value" id="activationOutput">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output -->
+                    <div class="neuron-output">
+                        <div class="output-arrow">→</div>
+                        <div class="output-node">
+                            <span class="output-label">Output</span>
+                            <div class="output-bar-container">
+                                <div class="output-bar" id="outputBar"></div>
+                            </div>
+                            <span class="output-value" id="outputValue">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Network Layers -->
+        <section class="demo-section">
+            <h2>Step 2: Building a Network</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>When we connect many neurons in layers, we get a neural network! Data flows from left to right: the <strong>input layer</strong> receives data, <strong>hidden layers</strong> process it, and the <strong>output layer</strong> gives the final answer. Watch the signal flow through the network!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>This is a feedforward network (MLP). Each layer computes a = g(Wa + b), where W is the weight matrix, a is the previous layer's activations, b is the bias vector, and g is the activation function. The network learns by adjusting W and b via backpropagation.</p>
+            </div>
+
+            <div class="animation-canvas" id="networkCanvas">
+                <svg class="network-svg" id="networkSvg" viewBox="0 0 800 400">
+                    <!-- Connections will be drawn here -->
+                </svg>
+                <div class="network-layers" id="networkLayers">
+                    <!-- Layers will be created by JavaScript -->
+                </div>
+            </div>
+
+            <div class="control-bar">
+                <button class="control-btn" id="prevStepBtn" title="Previous">⏮</button>
+                <button class="control-btn play" id="playNetworkBtn" title="Play">▶</button>
+                <button class="control-btn" id="nextStepBtn" title="Next">⏭</button>
+                <button class="control-btn" id="resetNetworkBtn" title="Reset">↺</button>
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="speedSlider" min="0.5" max="2" step="0.25" value="1">
+                </div>
+            </div>
+
+            <div class="step-indicator" id="networkStepIndicator">
+                <span class="step-text">Step 1 of 5: Input Layer</span>
+            </div>
+        </section>
+
+        <!-- Section 3: Learning Process -->
+        <section class="demo-section">
+            <h2>Step 3: How Networks Learn</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Neural networks learn by making predictions, comparing them to correct answers, and adjusting their weights to do better next time. It's like practicing a skill - you get feedback and improve! Watch the error decrease as the network learns.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Training uses gradient descent: weights are updated as w = w - η∇L, where η is the learning rate and ∇L is the gradient of the loss function. Backpropagation efficiently computes gradients using the chain rule. The loss decreases over epochs as the network converges.</p>
+            </div>
+
+            <div class="animation-canvas" id="learningCanvas">
+                <div class="learning-demo">
+                    <div class="learning-visualization">
+                        <!-- Target vs Prediction -->
+                        <div class="prediction-comparison">
+                            <div class="target-box">
+                                <h4>Target</h4>
+                                <div class="target-display" id="targetDisplay">🐱</div>
+                                <span>Cat</span>
+                            </div>
+                            <div class="vs-divider">vs</div>
+                            <div class="prediction-box">
+                                <h4>Prediction</h4>
+                                <div class="prediction-display" id="predictionDisplay">?</div>
+                                <span id="predictionLabel">Unknown</span>
+                            </div>
+                        </div>
+
+                        <!-- Error Display -->
+                        <div class="error-display">
+                            <h4>Error (Loss)</h4>
+                            <div class="error-bar-container">
+                                <div class="error-bar" id="errorBar"></div>
+                            </div>
+                            <span class="error-value" id="errorValue">100%</span>
+                        </div>
+
+                        <!-- Training Progress -->
+                        <div class="training-progress">
+                            <h4>Training Progress</h4>
+                            <div class="epoch-display">
+                                Epoch: <span id="epochNumber">0</span> / 100
+                            </div>
+                            <div class="loss-chart" id="lossChart">
+                                <canvas id="lossCanvas" width="300" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="learning-controls">
+                        <button class="action-btn" id="trainStepBtn">Train One Step</button>
+                        <button class="action-btn primary" id="trainAutoBtn">Auto Train</button>
+                        <button class="action-btn" id="resetTrainBtn">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Activation Functions -->
+        <section class="demo-section">
+            <h2>Step 4: Activation Functions</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Activation functions decide whether a neuron should "fire" or not. Without them, neural networks could only learn simple straight-line patterns. Different functions have different behaviors - try them out!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Activation functions introduce non-linearity. ReLU(x) = max(0,x) is most common due to computational efficiency and avoiding vanishing gradients. Sigmoid σ(x) = 1/(1+e^-x) outputs (0,1), useful for probabilities. Tanh outputs (-1,1) and is zero-centered.</p>
+            </div>
+
+            <div class="animation-canvas" id="activationCanvas">
+                <div class="activation-demo">
+                    <div class="activation-selector">
+                        <button class="activation-btn active" data-fn="relu">ReLU</button>
+                        <button class="activation-btn" data-fn="sigmoid">Sigmoid</button>
+                        <button class="activation-btn" data-fn="tanh">Tanh</button>
+                        <button class="activation-btn" data-fn="linear">Linear</button>
+                    </div>
+
+                    <div class="activation-graph">
+                        <canvas id="activationGraph" width="400" height="300"></canvas>
+                    </div>
+
+                    <div class="activation-input">
+                        <label>Input value (x):</label>
+                        <input type="range" id="activationInput" min="-5" max="5" step="0.1" value="0">
+                        <span id="activationInputValue">0.0</span>
+                    </div>
+
+                    <div class="activation-output">
+                        <span>Output: </span>
+                        <span id="activationOutputValue" class="highlight-value">0.0</span>
+                    </div>
+
+                    <div class="activation-formula" id="activationFormula">
+                        f(x) = max(0, x)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🧠</div>
+                    <h4>Neurons</h4>
+                    <p>Basic units that receive inputs, apply weights, and produce outputs</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📊</div>
+                    <h4>Layers</h4>
+                    <p>Networks have input, hidden, and output layers that process data sequentially</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎯</div>
+                    <h4>Learning</h4>
+                    <p>Networks learn by adjusting weights to minimize prediction errors</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚡</div>
+                    <h4>Activation</h4>
+                    <p>Non-linear functions that enable learning complex patterns</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Input / Inactive</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Active / Firing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FFB347;"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF6B6B;"></div>
+                <span>Error / Loss</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../02_probabilities_and_tokens/html_demo/">← Previous: Tokens & Probabilities</a> | <a href="../04_autoencoders_and_embeddings/html_demo/">Next: Autoencoders & Embeddings →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

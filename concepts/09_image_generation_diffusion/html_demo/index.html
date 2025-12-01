@@ -3,108 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Generation and Diffusion - Interactive Demo</title>
+    <title>Image Generation & Diffusion - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Image Generation and Diffusion</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Image Generation & Diffusion</h1>
+            <p class="subtitle">Creating images from noise</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Image Generation and Diffusion?</h2>
-                    <p>How AI creates images from text descriptions - the technology behind DALL-E, Midjourney, and Stable Diffusion.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>Image generation is transforming creative industries, marketing, and design workflows.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see image_generation in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>DALL-E creating art</li><li>Midjourney illustrations</li><li>Product mockups</li><li>Marketing visuals</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Diffusion process, noise schedules, U-Net architecture, CLIP conditioning, latent diffusion, and ControlNet.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of image_generation.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../04_autoencoders_and_embeddings/html_demo/index.html">Autoencoders and Embeddings</a><a href="../10_multimodal_models/html_demo/index.html">Multimodal Models</a>
+        <!-- Section 1: Diffusion Process -->
+        <section class="demo-section">
+            <h2>Step 1: The Diffusion Process</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Diffusion models learn by adding noise to images until they become random static, then learning to reverse the process. Watch an image get noisy, then see it restored!</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Forward process: q(x_t|x_{t-1}) adds Gaussian noise over T steps. Reverse process: p_θ(x_{t-1}|x_t) learns to denoise. The model predicts noise ε at each step, trained with MSE loss: L = ||ε - ε_θ(x_t, t)||².</p>
+            </div>
+
+            <div class="animation-canvas" id="diffusionCanvas">
+                <div class="diffusion-demo">
+                    <div class="process-label">
+                        <span id="processLabel">Forward Process: Adding Noise</span>
+                    </div>
+                    
+                    <div class="image-sequence">
+                        <div class="image-frame" id="frame0">
+                            <canvas id="canvas0" width="150" height="150"></canvas>
+                            <span class="frame-label">Original (t=0)</span>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="image-frame" id="frame1">
+                            <canvas id="canvas1" width="150" height="150"></canvas>
+                            <span class="frame-label">t=250</span>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="image-frame" id="frame2">
+                            <canvas id="canvas2" width="150" height="150"></canvas>
+                            <span class="frame-label">t=500</span>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="image-frame" id="frame3">
+                            <canvas id="canvas3" width="150" height="150"></canvas>
+                            <span class="frame-label">t=750</span>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="image-frame" id="frame4">
+                            <canvas id="canvas4" width="150" height="150"></canvas>
+                            <span class="frame-label">Pure Noise (t=1000)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="noise-slider">
+                        <label>Noise Level (t):</label>
+                        <input type="range" id="noiseSlider" min="0" max="1000" value="0">
+                        <span id="noiseValue">0</span>
+                    </div>
+                    
+                    <div class="diffusion-controls">
+                        <button class="action-btn" id="forwardBtn">Forward (Add Noise)</button>
+                        <button class="action-btn primary" id="reverseBtn">Reverse (Denoise)</button>
+                        <button class="action-btn" id="resetDiffusionBtn">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Text-to-Image -->
+        <section class="demo-section">
+            <h2>Step 2: Text-to-Image Generation</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Your text prompt guides the denoising process. The AI starts with random noise and gradually shapes it into an image matching your description. Watch the generation unfold!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Text is encoded via CLIP/T5 into embeddings. Cross-attention layers condition the U-Net on these embeddings. Classifier-free guidance: ε̃ = ε_uncond + s(ε_cond - ε_uncond) controls prompt adherence.</p>
+            </div>
+
+            <div class="animation-canvas" id="t2iCanvas">
+                <div class="t2i-demo">
+                    <div class="prompt-input-section">
+                        <label>Your Prompt:</label>
+                        <input type="text" id="imagePrompt" value="A serene mountain lake at sunset" placeholder="Describe your image...">
+                    </div>
+                    
+                    <div class="generation-flow">
+                        <div class="flow-step">
+                            <div class="step-icon">📝</div>
+                            <span>Text Prompt</span>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-icon">🔤</div>
+                            <span>Text Encoder</span>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-icon">🎲</div>
+                            <span>Random Noise</span>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step highlight">
+                            <div class="step-icon">🔄</div>
+                            <span>Denoise (×50)</span>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-icon">🖼️</div>
+                            <span>Final Image</span>
+                        </div>
+                    </div>
+                    
+                    <div class="generation-preview">
+                        <canvas id="generationCanvas" width="300" height="300"></canvas>
+                        <div class="generation-info">
+                            <span>Step: <strong id="genStep">0</strong>/50</span>
+                            <div class="step-progress">
+                                <div class="step-progress-fill" id="stepProgress" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="generation-controls">
+                        <button class="action-btn primary" id="generateImageBtn">Generate Image</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Parameters -->
+        <section class="demo-section">
+            <h2>Step 3: Generation Parameters</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Different settings affect the final image. Guidance scale controls how closely the AI follows your prompt. Steps affect quality. Seed determines the random starting point.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Guidance scale (s) in CFG: higher values increase prompt adherence but may reduce diversity. More steps improve quality but with diminishing returns. Same seed + prompt = reproducible results.</p>
+            </div>
+
+            <div class="animation-canvas" id="paramsCanvas">
+                <div class="params-demo">
+                    <div class="param-controls">
+                        <div class="param-group">
+                            <label>Guidance Scale</label>
+                            <input type="range" id="guidanceSlider" min="1" max="20" value="7.5" step="0.5">
+                            <span id="guidanceValue">7.5</span>
+                            <p class="param-desc">How closely to follow the prompt</p>
+                        </div>
+                        
+                        <div class="param-group">
+                            <label>Steps</label>
+                            <input type="range" id="stepsSlider" min="10" max="100" value="50" step="5">
+                            <span id="stepsValue">50</span>
+                            <p class="param-desc">Number of denoising iterations</p>
+                        </div>
+                        
+                        <div class="param-group">
+                            <label>Seed</label>
+                            <input type="number" id="seedInput" value="42" min="0" max="999999">
+                            <button class="seed-random" id="randomSeedBtn">🎲</button>
+                            <p class="param-desc">Random starting point</p>
+                        </div>
+                    </div>
+                    
+                    <div class="param-comparison">
+                        <div class="comparison-item">
+                            <h4>Low Guidance (1-3)</h4>
+                            <div class="comparison-preview low-guidance">
+                                <canvas id="lowGuidanceCanvas" width="120" height="120"></canvas>
+                            </div>
+                            <p>More creative, less accurate</p>
+                        </div>
+                        <div class="comparison-item">
+                            <h4>Medium Guidance (7-8)</h4>
+                            <div class="comparison-preview med-guidance">
+                                <canvas id="medGuidanceCanvas" width="120" height="120"></canvas>
+                            </div>
+                            <p>Balanced quality</p>
+                        </div>
+                        <div class="comparison-item">
+                            <h4>High Guidance (15-20)</h4>
+                            <div class="comparison-preview high-guidance">
+                                <canvas id="highGuidanceCanvas" width="120" height="120"></canvas>
+                            </div>
+                            <p>Very literal, may oversaturate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Latent Space -->
+        <section class="demo-section">
+            <h2>Step 4: Latent Diffusion</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Modern diffusion models work in a compressed "latent space" instead of pixel space. This makes generation much faster while maintaining quality. See how images are compressed and reconstructed!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>VAE encoder compresses 512×512×3 images to 64×64×4 latents (48× smaller). Diffusion happens in latent space. VAE decoder reconstructs pixels. This enables high-res generation on consumer GPUs.</p>
+            </div>
+
+            <div class="animation-canvas" id="latentCanvas">
+                <div class="latent-demo">
+                    <div class="latent-pipeline">
+                        <div class="pipeline-stage">
+                            <div class="stage-visual">
+                                <canvas id="pixelCanvas" width="100" height="100"></canvas>
+                            </div>
+                            <div class="stage-info">
+                                <h4>Pixel Space</h4>
+                                <span>512 × 512 × 3</span>
+                                <span class="size-badge">786,432 values</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-arrow">
+                            <span>VAE Encode</span>
+                            <div class="arrow-line">→</div>
+                        </div>
+                        
+                        <div class="pipeline-stage highlight">
+                            <div class="stage-visual">
+                                <canvas id="latentSpaceCanvas" width="100" height="100"></canvas>
+                            </div>
+                            <div class="stage-info">
+                                <h4>Latent Space</h4>
+                                <span>64 × 64 × 4</span>
+                                <span class="size-badge">16,384 values</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-arrow">
+                            <span>Diffusion</span>
+                            <div class="arrow-line">⟳</div>
+                        </div>
+                        
+                        <div class="pipeline-stage highlight">
+                            <div class="stage-visual">
+                                <canvas id="denoisedLatentCanvas" width="100" height="100"></canvas>
+                            </div>
+                            <div class="stage-info">
+                                <h4>Denoised Latent</h4>
+                                <span>64 × 64 × 4</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-arrow">
+                            <span>VAE Decode</span>
+                            <div class="arrow-line">→</div>
+                        </div>
+                        
+                        <div class="pipeline-stage">
+                            <div class="stage-visual">
+                                <canvas id="outputCanvas" width="100" height="100"></canvas>
+                            </div>
+                            <div class="stage-info">
+                                <h4>Output Image</h4>
+                                <span>512 × 512 × 3</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="latent-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">48×</span>
+                            <span class="stat-label">Compression</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">~4×</span>
+                            <span class="stat-label">Faster</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">~8×</span>
+                            <span class="stat-label">Less Memory</span>
+                        </div>
+                    </div>
+                    
+                    <div class="latent-controls">
+                        <button class="action-btn primary" id="animateLatentBtn">Animate Pipeline</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔄</div>
+                    <h4>Noise to Image</h4>
+                    <p>Diffusion learns to reverse noise, generating images from randomness</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📝</div>
+                    <h4>Text Guidance</h4>
+                    <p>Prompts guide the denoising process to create specific images</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚙️</div>
+                    <h4>Parameters Matter</h4>
+                    <p>Guidance, steps, and seed control quality and style</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🗜️</div>
+                    <h4>Latent Space</h4>
+                    <p>Working in compressed space makes generation fast and efficient</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Input / Original</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #888;"></div>
+                <span>Noise</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Generated / Output</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Latent Space</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../08_text_generation_use_cases/html_demo/">← Previous: Text Generation</a> | <a href="../10_multimodal_models/html_demo/">Next: Multimodal Models →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,181 +1,335 @@
-// Generative AI 360° - Interactive Demo Script
+/**
+ * Deployment and APIs - Interactive Demo Script
+ * 
+ * This demo shows how APIs work and different deployment options
+ * for GenAI applications.
+ */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Track switching
-    const trackBtns = document.querySelectorAll('.track-btn');
-    const trackContents = document.querySelectorAll('.track-content');
-    
-    trackBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const track = btn.dataset.track;
-            
-            trackBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            trackContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === track + '-content') {
-                    content.classList.add('active');
-                }
-            });
-        });
-    });
-    
-    // Canvas setup for "Everyone" demo
-    const canvasEveryone = document.getElementById('canvas-everyone');
-    const ctxEveryone = canvasEveryone.getContext('2d');
-    
-    // Canvas setup for "Technical" demo
-    const canvasTech = document.getElementById('canvas-technical');
-    const ctxTech = canvasTech.getContext('2d');
-    
-    // Demo state
-    let isRunning = false;
-    let animationFrame = null;
-    let step = 0;
-    
-    // Draw initial state
-    function drawInitialState(ctx, canvas) {
-        ctx.fillStyle = '#0a0a1a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#4a90d9';
-        ctx.font = '20px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Click "Start Demo" to begin', canvas.width/2, canvas.height/2);
+// Deployment option details
+const deploymentOptions = {
+    cloud: {
+        title: "Cloud API Services",
+        description: "Use managed API services from providers like OpenAI, Anthropic, or Google. The easiest way to get started - no infrastructure to manage.",
+        pros: [
+            "Quick to start - just get an API key",
+            "Automatically scales with demand",
+            "Always up-to-date models",
+            "No hardware to maintain"
+        ],
+        cons: [
+            "Pay per request (can get expensive)",
+            "Data leaves your network",
+            "Dependent on provider availability",
+            "Limited customization"
+        ],
+        bestFor: "Startups, MVPs, variable workloads, teams without ML infrastructure"
+    },
+    selfhost: {
+        title: "Self-Hosted Deployment",
+        description: "Run open-source models on your own servers or cloud infrastructure. Maximum control but requires significant expertise.",
+        pros: [
+            "Full control over data and models",
+            "No per-request costs after setup",
+            "Can fine-tune for your use case",
+            "No external dependencies"
+        ],
+        cons: [
+            "High upfront infrastructure cost",
+            "Requires ML/DevOps expertise",
+            "You handle scaling and maintenance",
+            "May lag behind latest models"
+        ],
+        bestFor: "Enterprise, privacy-sensitive industries, high-volume applications"
+    },
+    edge: {
+        title: "Edge / On-Device",
+        description: "Run smaller models directly on user devices (phones, laptops, IoT). Great for offline use and privacy.",
+        pros: [
+            "Works offline",
+            "Zero latency to server",
+            "Complete data privacy",
+            "No ongoing API costs"
+        ],
+        cons: [
+            "Limited to smaller models",
+            "Device hardware constraints",
+            "Harder to update models",
+            "Inconsistent performance across devices"
+        ],
+        bestFor: "Mobile apps, IoT, privacy-critical applications, offline scenarios"
+    },
+    hybrid: {
+        title: "Hybrid Approach",
+        description: "Combine multiple deployment methods. Use edge for simple tasks, cloud for complex ones. Balance cost, performance, and privacy.",
+        pros: [
+            "Optimize cost vs performance",
+            "Graceful degradation",
+            "Flexibility for different use cases",
+            "Best of multiple worlds"
+        ],
+        cons: [
+            "More complex architecture",
+            "Multiple systems to maintain",
+            "Routing logic needed",
+            "Testing complexity"
+        ],
+        bestFor: "Mature products, variable workloads, cost-conscious enterprises"
     }
-    
-    drawInitialState(ctxEveryone, canvasEveryone);
-    drawInitialState(ctxTech, canvasTech);
-    
-    // Animation for "Everyone" demo
-    function animateEveryone() {
-        ctxEveryone.fillStyle = '#0a0a1a';
-        ctxEveryone.fillRect(0, 0, canvasEveryone.width, canvasEveryone.height);
-        
-        // Draw animated elements representing deployment
-        const centerX = canvasEveryone.width / 2;
-        const centerY = canvasEveryone.height / 2;
-        
-        // Input
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(100, centerY, 30 + Math.sin(step * 0.05) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.font = '12px Arial';
-        ctxEveryone.textAlign = 'center';
-        ctxEveryone.fillText('Input', 100, centerY + 50);
-        
-        // Process (animated)
-        ctxEveryone.fillStyle = '#50c878';
-        const processX = 100 + (step % 200) * 2;
-        if (processX < 500) {
-            ctxEveryone.beginPath();
-            ctxEveryone.arc(processX, centerY, 20, 0, Math.PI * 2);
-            ctxEveryone.fill();
-        }
-        
-        // Arrow
-        ctxEveryone.strokeStyle = '#8892b0';
-        ctxEveryone.lineWidth = 2;
-        ctxEveryone.beginPath();
-        ctxEveryone.moveTo(140, centerY);
-        ctxEveryone.lineTo(460, centerY);
-        ctxEveryone.stroke();
-        
-        // Output
-        ctxEveryone.fillStyle = '#ff6b6b';
-        ctxEveryone.beginPath();
-        ctxEveryone.arc(500, centerY, 30 + Math.sin(step * 0.05 + 1) * 5, 0, Math.PI * 2);
-        ctxEveryone.fill();
-        ctxEveryone.fillStyle = 'white';
-        ctxEveryone.fillText('Output', 500, centerY + 50);
-        
-        // Title
-        ctxEveryone.fillStyle = '#4a90d9';
-        ctxEveryone.font = 'bold 18px Arial';
-        ctxEveryone.fillText('Deployment and APIs', centerX, 40);
-        
-        step++;
-        
-        if (isRunning) {
-            animationFrame = requestAnimationFrame(animateEveryone);
-        }
-    }
-    
-    // Start button
-    document.getElementById('btn-start').addEventListener('click', function() {
-        if (!isRunning) {
-            isRunning = true;
-            this.textContent = 'Pause';
-            animateEveryone();
-            document.getElementById('explanation').innerHTML = 
-                '<p>Watch how data flows through the deployment process!</p>' +
-                '<p>The green dot represents data being transformed.</p>';
-        } else {
-            isRunning = false;
-            this.textContent = 'Start Demo';
-            cancelAnimationFrame(animationFrame);
-        }
-    });
-    
-    // Reset button
-    document.getElementById('btn-reset').addEventListener('click', function() {
-        isRunning = false;
-        step = 0;
-        document.getElementById('btn-start').textContent = 'Start Demo';
-        cancelAnimationFrame(animationFrame);
-        drawInitialState(ctxEveryone, canvasEveryone);
-        document.getElementById('explanation').innerHTML = 
-            '<p>Click "Start Demo" to see deployment in action!</p>';
-    });
-    
-    // Technical slider
-    const paramSlider = document.getElementById('param-slider');
-    const paramValue = document.getElementById('param-value');
-    
-    function drawTechnicalDemo(value) {
-        ctxTech.fillStyle = '#0a0a1a';
-        ctxTech.fillRect(0, 0, canvasTech.width, canvasTech.height);
-        
-        // Draw parameter-dependent visualization
-        const normalizedValue = value / 100;
-        
-        // Draw bars representing different aspects
-        const barWidth = 50;
-        const maxHeight = 300;
-        const startX = 100;
-        
-        const aspects = ['Accuracy', 'Speed', 'Cost', 'Complexity'];
-        const colors = ['#4a90d9', '#50c878', '#ff6b6b', '#ffaa00'];
-        
-        aspects.forEach((aspect, i) => {
-            const height = maxHeight * (0.3 + normalizedValue * 0.7 * Math.sin(i + normalizedValue * Math.PI));
-            const x = startX + i * (barWidth + 40);
-            
-            ctxTech.fillStyle = colors[i];
-            ctxTech.fillRect(x, canvasTech.height - 50 - height, barWidth, height);
-            
-            ctxTech.fillStyle = 'white';
-            ctxTech.font = '12px Arial';
-            ctxTech.textAlign = 'center';
-            ctxTech.fillText(aspect, x + barWidth/2, canvasTech.height - 30);
-        });
-        
-        // Title
-        ctxTech.fillStyle = '#4a90d9';
-        ctxTech.font = 'bold 16px Arial';
-        ctxTech.fillText('Parameter Impact on deployment', canvasTech.width/2, 30);
-        ctxTech.font = '14px Arial';
-        ctxTech.fillText('Parameter Value: ' + value, canvasTech.width/2, 55);
-    }
-    
-    paramSlider.addEventListener('input', function() {
-        paramValue.textContent = this.value;
-        drawTechnicalDemo(parseInt(this.value));
-    });
-    
-    // Initial technical demo draw
-    drawTechnicalDemo(50);
+};
+
+// Model pricing (per 1M tokens)
+const modelPricing = {
+    gpt4: { input: 30, output: 60, name: "GPT-4" },
+    gpt35: { input: 0.5, output: 1.5, name: "GPT-3.5 Turbo" },
+    claude: { input: 3, output: 15, name: "Claude 3 Sonnet" }
+};
+
+// Sample API responses
+const sampleResponses = {
+    "gpt-4": "An API (Application Programming Interface) is a set of rules and protocols that allows different software applications to communicate with each other, enabling them to request and exchange data or functionality.",
+    "gpt-3.5-turbo": "An API is like a messenger that takes your request to a system and brings back the response, allowing different software programs to talk to each other.",
+    "claude-3": "An API is a standardized interface that enables software applications to interact and share data with each other through defined requests and responses."
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTrackToggle();
+    initAPIFlow();
+    initPlayground();
+    initDeploymentOptions();
+    initCostCalculator();
 });
+
+// Track Toggle
+function initTrackToggle() {
+    new TrackToggle({
+        defaultTrack: 'non-tech',
+        onToggle: (track) => {
+            console.log('Track changed to:', track);
+        }
+    });
+}
+
+// ============================================================================
+// Section 1: API Flow Animation
+// ============================================================================
+
+function initAPIFlow() {
+    const sendBtn = document.getElementById('sendRequestBtn');
+    const resetBtn = document.getElementById('resetFlowBtn');
+    const status = document.getElementById('flowStatus');
+    
+    sendBtn.addEventListener('click', runAPIFlow);
+    resetBtn.addEventListener('click', resetAPIFlow);
+}
+
+async function runAPIFlow() {
+    const nodes = document.querySelectorAll('.flow-node');
+    const packet1 = document.getElementById('packet1');
+    const packet2 = document.getElementById('packet2');
+    const status = document.getElementById('flowStatus');
+    const sendBtn = document.getElementById('sendRequestBtn');
+    
+    sendBtn.disabled = true;
+    
+    // Step 1: Client sends request
+    status.textContent = "1. Your app sends a request to the API...";
+    status.className = 'flow-status';
+    nodes[0].classList.add('active');
+    await sleep(500);
+    
+    packet1.classList.add('moving');
+    await sleep(1000);
+    
+    // Step 2: API Gateway receives
+    status.textContent = "2. API Gateway authenticates and routes the request...";
+    nodes[0].classList.remove('active');
+    nodes[1].classList.add('active');
+    packet1.classList.remove('moving');
+    await sleep(1000);
+    
+    packet2.classList.add('moving');
+    await sleep(1000);
+    
+    // Step 3: Model processes
+    status.textContent = "3. AI Model processes your request...";
+    nodes[1].classList.remove('active');
+    nodes[2].classList.add('active');
+    packet2.classList.remove('moving');
+    await sleep(1500);
+    
+    // Step 4: Response returns
+    status.textContent = "4. Response travels back to your app!";
+    status.className = 'flow-status success';
+    
+    await sleep(1000);
+    nodes[2].classList.remove('active');
+    sendBtn.disabled = false;
+}
+
+function resetAPIFlow() {
+    const nodes = document.querySelectorAll('.flow-node');
+    const packets = document.querySelectorAll('.arrow-packet');
+    const status = document.getElementById('flowStatus');
+    const sendBtn = document.getElementById('sendRequestBtn');
+    
+    nodes.forEach(n => n.classList.remove('active'));
+    packets.forEach(p => p.classList.remove('moving'));
+    status.textContent = 'Click "Send Request" to see how an API call works';
+    status.className = 'flow-status';
+    sendBtn.disabled = false;
+}
+
+// ============================================================================
+// Section 2: API Playground
+// ============================================================================
+
+function initPlayground() {
+    const tempSlider = document.getElementById('tempSlider');
+    const tempValue = document.getElementById('tempValue');
+    const callBtn = document.getElementById('callApiBtn');
+    
+    tempSlider.addEventListener('input', () => {
+        tempValue.textContent = tempSlider.value;
+    });
+    
+    callBtn.addEventListener('click', simulateAPICall);
+}
+
+async function simulateAPICall() {
+    const model = document.getElementById('modelSelect').value;
+    const prompt = document.getElementById('promptInput').value;
+    const temp = document.getElementById('tempSlider').value;
+    const responseDisplay = document.getElementById('responseDisplay');
+    const responseMeta = document.getElementById('responseMeta');
+    
+    responseDisplay.innerHTML = '<span style="color: #888;">Calling API...</span>';
+    responseMeta.innerHTML = '';
+    
+    // Simulate latency
+    await sleep(1500);
+    
+    // Get response
+    const response = sampleResponses[model] || sampleResponses["gpt-4"];
+    
+    // Typing effect
+    responseDisplay.textContent = '';
+    for (let i = 0; i < response.length; i++) {
+        responseDisplay.textContent += response[i];
+        if (i % 5 === 0) await sleep(20);
+    }
+    
+    // Show metadata
+    const inputTokens = Math.round(prompt.split(' ').length * 1.3);
+    const outputTokens = Math.round(response.split(' ').length * 1.3);
+    const latency = Math.round(800 + Math.random() * 400);
+    
+    responseMeta.innerHTML = `
+        <div class="meta-item"><strong>Model:</strong> ${model}</div>
+        <div class="meta-item"><strong>Input tokens:</strong> ${inputTokens}</div>
+        <div class="meta-item"><strong>Output tokens:</strong> ${outputTokens}</div>
+        <div class="meta-item"><strong>Latency:</strong> ${latency}ms</div>
+    `;
+}
+
+// ============================================================================
+// Section 3: Deployment Options
+// ============================================================================
+
+function initDeploymentOptions() {
+    const cards = document.querySelectorAll('.option-card');
+    const details = document.getElementById('optionDetails');
+    
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            const option = deploymentOptions[card.dataset.option];
+            details.innerHTML = `
+                <h4>${option.title}</h4>
+                <p>${option.description}</p>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h5>Pros</h5>
+                        <ul>
+                            ${option.pros.map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h5>Cons</h5>
+                        <ul>
+                            ${option.cons.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <p><strong>Best for:</strong> ${option.bestFor}</p>
+            `;
+        });
+    });
+}
+
+// ============================================================================
+// Section 4: Cost Calculator
+// ============================================================================
+
+function initCostCalculator() {
+    const inputs = ['requestsPerDay', 'inputTokens', 'outputTokens', 'costModel'];
+    
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('input', updateCosts);
+        el.addEventListener('change', updateCosts);
+    });
+    
+    updateCosts();
+}
+
+function updateCosts() {
+    const requestsPerDay = parseInt(document.getElementById('requestsPerDay').value);
+    const inputTokens = parseInt(document.getElementById('inputTokens').value);
+    const outputTokens = parseInt(document.getElementById('outputTokens').value);
+    const modelKey = document.getElementById('costModel').value;
+    
+    // Update display values
+    document.getElementById('requestsValue').textContent = requestsPerDay.toLocaleString();
+    document.getElementById('inputValue').textContent = inputTokens.toLocaleString();
+    document.getElementById('outputValue').textContent = outputTokens.toLocaleString();
+    
+    // Get pricing
+    const pricing = modelPricing[modelKey];
+    
+    // Calculate costs
+    const dailyInputCost = (requestsPerDay * inputTokens / 1000000) * pricing.input;
+    const dailyOutputCost = (requestsPerDay * outputTokens / 1000000) * pricing.output;
+    const dailyCost = dailyInputCost + dailyOutputCost;
+    const monthlyCost = dailyCost * 30;
+    const annualCost = monthlyCost * 12;
+    
+    // Update results
+    document.getElementById('dailyCost').textContent = `$${dailyCost.toFixed(2)}`;
+    document.getElementById('monthlyCost').textContent = `$${monthlyCost.toFixed(2)}`;
+    document.getElementById('annualCost').textContent = `$${annualCost.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+    
+    // Update breakdown
+    document.getElementById('costBreakdown').innerHTML = `
+        <h4>Cost Breakdown (${pricing.name})</h4>
+        <div class="breakdown-item">
+            <span>Input tokens (${inputTokens.toLocaleString()} × ${requestsPerDay.toLocaleString()} requests)</span>
+            <span>$${dailyInputCost.toFixed(2)}/day</span>
+        </div>
+        <div class="breakdown-item">
+            <span>Output tokens (${outputTokens.toLocaleString()} × ${requestsPerDay.toLocaleString()} requests)</span>
+            <span>$${dailyOutputCost.toFixed(2)}/day</span>
+        </div>
+        <div class="breakdown-item">
+            <span><strong>Total daily tokens</strong></span>
+            <span><strong>${((inputTokens + outputTokens) * requestsPerDay).toLocaleString()}</strong></span>
+        </div>
+    `;
+}
+
+// Utility
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -4,107 +4,333 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsible AI and Ethics - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Responsible AI and Ethics</h1>
-            <p class="subtitle">Interactive Visual Explanation</p>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Responsible AI & Ethics</h1>
+            <p class="subtitle">Building AI that benefits everyone</p>
         </header>
 
-        <nav class="track-selector">
-            <button class="track-btn active" data-track="everyone">For Everyone</button>
-            <button class="track-btn" data-track="technical">For Technical Readers</button>
-        </nav>
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
 
-        <main>
-            <section id="everyone-content" class="track-content active">
-                <div class="card">
-                    <h2>What is Responsible AI and Ethics?</h2>
-                    <p>Using AI responsibly - understanding bias, privacy, transparency, and the societal impact of AI systems.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Why Does This Matter?</h2>
-                    <p>Responsible AI use protects individuals, organizations, and society from potential harms.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Interactive Demo</h2>
-                    <div class="demo-area" id="demo-everyone">
-                        <div class="demo-visualization">
-                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
-                        </div>
-                        <div class="demo-controls">
-                            <button id="btn-start" class="btn-primary">Start Demo</button>
-                            <button id="btn-reset" class="btn-secondary">Reset</button>
-                        </div>
-                        <div class="demo-explanation" id="explanation">
-                            <p>Click "Start Demo" to see ethics in action!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Real-World Examples</h2>
-                    <ul class="examples-list">
-                        <li>Bias in hiring AI</li><li>Privacy in AI assistants</li><li>Deepfake concerns</li><li>AI transparency requirements</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="technical-content" class="track-content">
-                <div class="card">
-                    <h2>Technical Overview</h2>
-                    <p>Bias detection and mitigation, fairness metrics, explainability, privacy-preserving techniques, and AI governance.</p>
-                </div>
-
-                <div class="card">
-                    <h2>Key Concepts</h2>
-                    <div class="concept-diagram" id="tech-diagram">
-                        <canvas id="canvas-technical" width="600" height="400"></canvas>
-                    </div>
-                    <div class="demo-controls">
-                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
-                        <span id="param-value">50</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Mathematical Foundation</h2>
-                    <div class="math-content">
-                        <p>Key equations and relationships:</p>
-                        <div class="equation">
-                            f(x) = transform(input, parameters)
-                        </div>
-                        <p class="math-explanation">
-                            Where transform represents the core operation of ethics.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>Implementation Considerations</h2>
-                    <ul class="tech-list">
-                        <li>Performance trade-offs</li>
-                        <li>Scalability concerns</li>
-                        <li>Common pitfalls</li>
-                        <li>Best practices</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
-            <div class="related-links">
-                <h4>Related Concepts:</h4>
-                <a href="../13_evaluation_and_safety/html_demo/index.html">Evaluation and Safety</a><a href="../15_business_and_product_use_cases/html_demo/index.html">Business and Product Use Cases</a>
+        <!-- Section 1: Core Principles -->
+        <section class="demo-section">
+            <h2>Step 1: Core Principles</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Responsible AI is built on key principles that ensure AI systems are fair, transparent, and beneficial. These principles guide how we design, build, and deploy AI systems.</p>
             </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Responsible AI frameworks include fairness metrics (demographic parity, equalized odds), explainability methods (LIME, SHAP), privacy techniques (differential privacy, federated learning), and governance structures (model cards, audit trails).</p>
+            </div>
+
+            <div class="animation-canvas" id="principlesCanvas">
+                <div class="principles-demo">
+                    <div class="principles-wheel">
+                        <div class="wheel-center">
+                            <span>Responsible AI</span>
+                        </div>
+                        <div class="principle-item" data-principle="fairness" style="--angle: 0deg;">
+                            <div class="principle-icon">⚖️</div>
+                            <div class="principle-name">Fairness</div>
+                        </div>
+                        <div class="principle-item" data-principle="transparency" style="--angle: 60deg;">
+                            <div class="principle-icon">🔍</div>
+                            <div class="principle-name">Transparency</div>
+                        </div>
+                        <div class="principle-item" data-principle="privacy" style="--angle: 120deg;">
+                            <div class="principle-icon">🔒</div>
+                            <div class="principle-name">Privacy</div>
+                        </div>
+                        <div class="principle-item" data-principle="accountability" style="--angle: 180deg;">
+                            <div class="principle-icon">📋</div>
+                            <div class="principle-name">Accountability</div>
+                        </div>
+                        <div class="principle-item" data-principle="safety" style="--angle: 240deg;">
+                            <div class="principle-icon">🛡️</div>
+                            <div class="principle-name">Safety</div>
+                        </div>
+                        <div class="principle-item" data-principle="human" style="--angle: 300deg;">
+                            <div class="principle-icon">👥</div>
+                            <div class="principle-name">Human-Centered</div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-detail" id="principleDetail">
+                        <h4>Click a principle to learn more</h4>
+                        <p>Each principle guides how we build and deploy AI responsibly.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Bias Detection -->
+        <section class="demo-section">
+            <h2>Step 2: Detecting Bias</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI can inherit biases from training data, leading to unfair treatment of certain groups. We need to measure and detect these biases to fix them. Watch how different groups might receive different outcomes!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Fairness metrics include: Demographic Parity (equal positive rates across groups), Equalized Odds (equal TPR and FPR), Calibration (predictions match actual probabilities). Use tools like Fairlearn, AIF360, or What-If Tool.</p>
+            </div>
+
+            <div class="animation-canvas" id="biasCanvas">
+                <div class="bias-demo">
+                    <div class="scenario-selector">
+                        <h4>Scenario: Loan Approval AI</h4>
+                        <p>Compare approval rates across different groups</p>
+                    </div>
+                    
+                    <div class="bias-visualization">
+                        <div class="group-comparison">
+                            <div class="group-bar">
+                                <div class="group-label">Group A</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" id="groupABar" style="width: 75%"></div>
+                                </div>
+                                <div class="bar-value" id="groupAValue">75%</div>
+                            </div>
+                            <div class="group-bar">
+                                <div class="group-label">Group B</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill biased" id="groupBBar" style="width: 45%"></div>
+                                </div>
+                                <div class="bar-value" id="groupBValue">45%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bias-indicator" id="biasIndicator">
+                            <div class="indicator-icon">⚠️</div>
+                            <div class="indicator-text">
+                                <strong>Bias Detected!</strong>
+                                <span>30% disparity in approval rates</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mitigation-controls">
+                        <h4>Apply Mitigation</h4>
+                        <div class="mitigation-buttons">
+                            <button class="mitigation-btn" data-method="none">No Mitigation</button>
+                            <button class="mitigation-btn" data-method="reweight">Reweighting</button>
+                            <button class="mitigation-btn active" data-method="threshold">Threshold Adjustment</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Explainability -->
+        <section class="demo-section">
+            <h2>Step 3: Explainability</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>People deserve to understand why AI made a decision about them. Explainability shows which factors influenced the AI's decision, making it transparent and trustworthy.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Explainability methods: LIME (local linear approximations), SHAP (Shapley values for feature attribution), attention visualization, counterfactual explanations ("what would change the decision?").</p>
+            </div>
+
+            <div class="animation-canvas" id="explainCanvas">
+                <div class="explain-demo">
+                    <div class="decision-display">
+                        <div class="decision-header">
+                            <h4>AI Decision: Loan Approved</h4>
+                            <div class="confidence-badge">Confidence: 85%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-visual">
+                        <h4>Why this decision?</h4>
+                        <div class="factor-list">
+                            <div class="factor-item positive">
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 80%"></div>
+                                </div>
+                                <div class="factor-label">Credit Score: 750</div>
+                                <div class="factor-impact">+40%</div>
+                            </div>
+                            <div class="factor-item positive">
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 60%"></div>
+                                </div>
+                                <div class="factor-label">Income: $75,000</div>
+                                <div class="factor-impact">+25%</div>
+                            </div>
+                            <div class="factor-item positive">
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 50%"></div>
+                                </div>
+                                <div class="factor-label">Employment: 5 years</div>
+                                <div class="factor-impact">+20%</div>
+                            </div>
+                            <div class="factor-item negative">
+                                <div class="factor-bar negative">
+                                    <div class="factor-fill" style="width: 30%"></div>
+                                </div>
+                                <div class="factor-label">Debt Ratio: 35%</div>
+                                <div class="factor-impact">-10%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="counterfactual">
+                        <h4>What would change the decision?</h4>
+                        <div class="counterfactual-item">
+                            <span class="cf-icon">💡</span>
+                            <span>If credit score dropped below 650, the loan would be denied</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Ethical Scenarios -->
+        <section class="demo-section">
+            <h2>Step 4: Ethical Scenarios</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Real-world AI applications face complex ethical dilemmas. Understanding these scenarios helps us make better decisions about when and how to use AI.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Ethical frameworks include consequentialism (outcomes), deontology (rules), virtue ethics (character). AI ethics requires balancing multiple stakeholders, considering long-term impacts, and establishing governance structures.</p>
+            </div>
+
+            <div class="animation-canvas" id="scenariosCanvas">
+                <div class="scenarios-demo">
+                    <div class="scenario-cards">
+                        <div class="scenario-card" data-scenario="hiring">
+                            <div class="scenario-icon">💼</div>
+                            <h4>AI Hiring</h4>
+                            <p>Should AI screen job candidates?</p>
+                            <div class="scenario-considerations">
+                                <div class="pro">Pro: Faster, consistent screening</div>
+                                <div class="con">Con: May perpetuate historical biases</div>
+                            </div>
+                            <div class="recommendation">
+                                <strong>Recommendation:</strong> Use with human oversight and regular bias audits
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-card" data-scenario="healthcare">
+                            <div class="scenario-icon">🏥</div>
+                            <h4>Medical Diagnosis</h4>
+                            <p>Should AI diagnose diseases?</p>
+                            <div class="scenario-considerations">
+                                <div class="pro">Pro: Can catch things humans miss</div>
+                                <div class="con">Con: Errors could be life-threatening</div>
+                            </div>
+                            <div class="recommendation">
+                                <strong>Recommendation:</strong> AI as assistant, doctor makes final call
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-card" data-scenario="content">
+                            <div class="scenario-icon">📝</div>
+                            <h4>Content Generation</h4>
+                            <p>Should AI write news articles?</p>
+                            <div class="scenario-considerations">
+                                <div class="pro">Pro: Faster content creation</div>
+                                <div class="con">Con: Risk of misinformation</div>
+                            </div>
+                            <div class="recommendation">
+                                <strong>Recommendation:</strong> Disclose AI involvement, fact-check outputs
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-card" data-scenario="surveillance">
+                            <div class="scenario-icon">📹</div>
+                            <h4>Facial Recognition</h4>
+                            <p>Should AI identify people in public?</p>
+                            <div class="scenario-considerations">
+                                <div class="pro">Pro: Security benefits</div>
+                                <div class="con">Con: Privacy concerns, bias issues</div>
+                            </div>
+                            <div class="recommendation">
+                                <strong>Recommendation:</strong> Strict regulations, consent requirements
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚖️</div>
+                    <h4>Fairness First</h4>
+                    <p>Measure and mitigate bias to ensure equal treatment</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔍</div>
+                    <h4>Be Transparent</h4>
+                    <p>Explain AI decisions so people can understand and trust them</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">👥</div>
+                    <h4>Human Oversight</h4>
+                    <p>Keep humans in the loop for important decisions</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📋</div>
+                    <h4>Be Accountable</h4>
+                    <p>Document decisions and take responsibility for outcomes</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Positive / Fair</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E74C3C;"></div>
+                <span>Negative / Biased</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #F1C40F;"></div>
+                <span>Warning / Caution</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Neutral / Info</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../13_evaluation_and_safety/html_demo/">← Previous: Evaluation & Safety</a> | <a href="../15_business_and_product_use_cases/html_demo/">Next: Business Use Cases →</a></p>
         </footer>
     </div>
 
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
