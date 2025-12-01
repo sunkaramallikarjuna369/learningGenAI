@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokens & Probabilities - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Tokens & Probabilities</h1>
+            <p class="subtitle">How AI reads text and predicts what comes next</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Tokenization -->
+        <section class="demo-section">
+            <h2>Step 1: Breaking Text into Tokens</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI doesn't read words like we do. It breaks text into smaller pieces called <strong>tokens</strong>. Some tokens are whole words, some are word parts, and some are just characters. Type something below to see how it gets tokenized!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Modern LLMs use subword tokenization (BPE, WordPiece, or SentencePiece). This balances vocabulary size with the ability to handle rare words. The tokenizer maps text to integer IDs that index into an embedding matrix.</p>
+            </div>
+
+            <!-- Tokenization Demo -->
+            <div class="tokenization-demo">
+                <div class="input-section">
+                    <label for="textInput">Enter text to tokenize:</label>
+                    <input type="text" id="textInput" placeholder="Type something like 'Hello, how are you?'" value="The quick brown fox jumps">
+                    <button id="tokenizeBtn" class="action-btn">Tokenize</button>
+                </div>
+                
+                <div class="animation-canvas" id="tokenCanvas">
+                    <div class="original-text" id="originalText"></div>
+                    <div class="arrow-down" id="tokenArrow">
+                        <svg width="40" height="60" viewBox="0 0 40 60">
+                            <path d="M20 0 L20 45 M10 35 L20 50 L30 35" stroke="#4A90D9" stroke-width="3" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="token-container" id="tokenDisplay"></div>
+                    <div class="token-count" id="tokenCount"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Next Token Prediction -->
+        <section class="demo-section">
+            <h2>Step 2: Predicting the Next Token</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>After reading your tokens, the AI calculates the probability of every possible next token. It's like a super-powered autocomplete that considers thousands of options. Watch the bars below to see which tokens are most likely!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>The model computes P(x_n | x_1, ..., x_{n-1}) via a forward pass through transformer layers, projecting to vocabulary size, then applying softmax to get a probability distribution over ~50,000+ tokens.</p>
+            </div>
+
+            <div class="animation-canvas" id="predictionCanvas">
+                <div class="context-display">
+                    <span class="context-label">Context:</span>
+                    <div class="context-tokens" id="contextTokens"></div>
+                    <span class="prediction-cursor">|</span>
+                </div>
+                
+                <div class="probability-section">
+                    <h4>Next Token Probabilities</h4>
+                    <div class="prob-bar-container" id="probBars"></div>
+                </div>
+                
+                <div class="selected-token-display">
+                    <span>Selected: </span>
+                    <span id="selectedToken" class="selected-token"></span>
+                </div>
+            </div>
+
+            <!-- Control Bar -->
+            <div class="control-bar">
+                <button class="control-btn" id="prevBtn" title="Previous">⏮</button>
+                <button class="control-btn play" id="playBtn" title="Play">▶</button>
+                <button class="control-btn" id="nextBtn" title="Next">⏭</button>
+                <button class="control-btn" id="resetBtn" title="Reset">↺</button>
+                <button class="action-btn" id="sampleBtn">Sample Next Token</button>
+            </div>
+
+            <div class="step-indicator" id="stepIndicator"></div>
+        </section>
+
+        <!-- Section 3: Temperature Control -->
+        <section class="demo-section">
+            <h2>Step 3: Temperature - Controlling Creativity</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p><strong>Temperature</strong> controls how "creative" or "random" the AI is. Low temperature = predictable and safe. High temperature = creative but potentially weird. Try the slider below!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Temperature T scales logits before softmax: P(x) = softmax(z/T). T&lt;1 sharpens the distribution (more deterministic), T&gt;1 flattens it (more random). T→0 approaches greedy decoding, T→∞ approaches uniform sampling.</p>
+            </div>
+
+            <div class="animation-canvas" id="temperatureCanvas">
+                <div class="temperature-control">
+                    <div class="temp-labels">
+                        <span class="temp-label low">Predictable</span>
+                        <span class="temp-label high">Creative</span>
+                    </div>
+                    <input type="range" id="temperatureSlider" min="0.1" max="2" step="0.1" value="1">
+                    <div class="temp-value">Temperature: <span id="tempValue">1.0</span></div>
+                </div>
+                
+                <div class="temp-visualization">
+                    <div class="temp-bars" id="tempBars"></div>
+                </div>
+                
+                <div class="temp-explanation" id="tempExplanation">
+                    <div class="temp-icon" id="tempIcon">🎯</div>
+                    <p id="tempDesc">Balanced between predictability and creativity</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Interactive Generation -->
+        <section class="demo-section">
+            <h2>Try It: Generate Text Token by Token</h2>
+            
+            <div class="explanation-panel">
+                <h4>Interactive Demo</h4>
+                <p>Watch text being generated one token at a time. Each step shows the probability distribution and the sampled token. Adjust temperature to see how it affects generation!</p>
+            </div>
+
+            <div class="animation-canvas" id="generationCanvas">
+                <div class="generation-prompt">
+                    <label>Starting prompt:</label>
+                    <input type="text" id="promptInput" value="Once upon a time" placeholder="Enter a starting prompt">
+                </div>
+                
+                <div class="generated-text-display">
+                    <div class="generated-text" id="generatedText"></div>
+                </div>
+                
+                <div class="generation-controls">
+                    <button class="action-btn primary" id="generateBtn">Generate Next Token</button>
+                    <button class="action-btn" id="autoGenerateBtn">Auto-Generate (5 tokens)</button>
+                    <button class="action-btn" id="clearBtn">Clear</button>
+                </div>
+                
+                <div class="mini-prob-display" id="miniProbs"></div>
+            </div>
+        </section>
+
+        <!-- Key Concepts -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🧩</div>
+                    <h4>Tokens</h4>
+                    <p>AI breaks text into tokens - pieces that can be words, word parts, or characters</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📊</div>
+                    <h4>Probabilities</h4>
+                    <p>For each position, AI calculates probability of every possible next token</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎲</div>
+                    <h4>Sampling</h4>
+                    <p>The next token is sampled from the probability distribution, not always the top choice</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🌡️</div>
+                    <h4>Temperature</h4>
+                    <p>Controls randomness: low = predictable, high = creative</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Token / Probability</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Selected / High Probability</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FFB347;"></div>
+                <span>Medium Probability</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../01_foundations_ai_vs_genai/html_demo/">← Previous: AI vs GenAI</a> | <a href="../03_neural_network_basics/html_demo/">Next: Neural Networks →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

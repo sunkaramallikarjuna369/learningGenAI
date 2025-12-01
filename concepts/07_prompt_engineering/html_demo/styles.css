@@ -1,0 +1,583 @@
+/* Prompt Engineering - Custom Styles */
+
+/* Comparison Section */
+.prompt-comparison {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    align-items: stretch;
+}
+
+.comparison-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.comparison-side h4 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.comparison-side.bad h4 {
+    color: var(--danger);
+}
+
+.comparison-side.good h4 {
+    color: var(--accent);
+}
+
+.prompt-box, .response-box {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.prompt-box {
+    border-left: 4px solid var(--primary);
+}
+
+.comparison-side.bad .prompt-box {
+    border-left-color: var(--danger);
+}
+
+.comparison-side.good .prompt-box {
+    border-left-color: var(--accent);
+}
+
+.response-box {
+    flex: 1;
+    background: var(--background);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all var(--transition-normal);
+}
+
+.response-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.arrow-down {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--text-light);
+}
+
+.quality-meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.meter-track {
+    flex: 1;
+    height: 10px;
+    background: var(--background-dark);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    transition: width 1s ease;
+}
+
+.meter-fill.bad {
+    background: linear-gradient(90deg, var(--danger) 0%, #E74C3C 100%);
+}
+
+.meter-fill.good {
+    background: linear-gradient(90deg, var(--accent) 0%, #27AE60 100%);
+}
+
+.vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-light);
+    padding: 0 10px;
+}
+
+.comparison-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Prompt Builder Section */
+.prompt-builder {
+    padding: 20px;
+}
+
+.component-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.component-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.component-toggle:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.component-toggle input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.toggle-label {
+    font-weight: 500;
+}
+
+.built-prompt {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+    min-height: 200px;
+}
+
+.prompt-component {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid;
+    transition: all var(--transition-normal);
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.prompt-component.hidden {
+    opacity: 0;
+    transform: translateX(-20px);
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.prompt-component.role {
+    background: rgba(74, 144, 217, 0.1);
+    border-left-color: var(--primary);
+}
+
+.prompt-component.task {
+    background: rgba(80, 200, 120, 0.1);
+    border-left-color: var(--accent);
+}
+
+.prompt-component.format {
+    background: rgba(230, 126, 34, 0.1);
+    border-left-color: #E67E22;
+}
+
+.prompt-component.examples {
+    background: rgba(155, 89, 182, 0.1);
+    border-left-color: #9B59B6;
+}
+
+.prompt-component.constraints {
+    background: rgba(231, 76, 60, 0.1);
+    border-left-color: var(--danger);
+}
+
+.component-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-right: 10px;
+    opacity: 0.7;
+}
+
+.component-text {
+    font-size: 0.95rem;
+}
+
+.prompt-score {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--background);
+    border-radius: var(--radius-md);
+}
+
+.score-bar {
+    flex: 1;
+    height: 20px;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    transition: width var(--transition-normal);
+}
+
+.score-value {
+    font-weight: 700;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* Techniques Section */
+.techniques-demo {
+    padding: 20px;
+}
+
+.technique-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.technique-tab {
+    padding: 12px 24px;
+    background: var(--white);
+    border: 2px solid var(--background-dark);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.technique-tab:hover {
+    border-color: var(--primary);
+}
+
+.technique-tab.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.technique-content {
+    position: relative;
+}
+
+.technique-panel {
+    display: none;
+    animation: fadeIn var(--transition-normal);
+}
+
+.technique-panel.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.technique-description {
+    margin-bottom: 20px;
+}
+
+.technique-description h4 {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.technique-example {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.example-prompt, .example-response {
+    margin-bottom: 15px;
+}
+
+.example-prompt .label, .example-response .label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.example-prompt .prompt-text {
+    padding: 15px;
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.example-response .response-text {
+    padding: 15px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.cot-response {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cot-step {
+    padding: 10px 15px;
+    background: var(--white);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all var(--transition-normal);
+}
+
+.cot-step.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.cot-answer {
+    padding: 12px 15px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    opacity: 0;
+    transition: all var(--transition-normal);
+}
+
+.cot-answer.visible {
+    opacity: 1;
+}
+
+/* Prompt Lab Section */
+.prompt-lab {
+    padding: 20px;
+}
+
+.lab-task-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.lab-task-selector label {
+    font-weight: 600;
+}
+
+.lab-task-selector select {
+    padding: 10px 15px;
+    border: 2px solid var(--background-dark);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    min-width: 200px;
+}
+
+.lab-prompt-area {
+    margin-bottom: 20px;
+}
+
+.lab-prompt-area label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.lab-prompt-area textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--background-dark);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color var(--transition-fast);
+}
+
+.lab-prompt-area textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.lab-analysis {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.lab-analysis h4 {
+    margin-bottom: 15px;
+}
+
+.analysis-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.analysis-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.factor-name {
+    min-width: 100px;
+    font-weight: 500;
+}
+
+.factor-bar {
+    flex: 1;
+    height: 12px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.factor-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    transition: width var(--transition-normal);
+}
+
+.factor-score {
+    min-width: 40px;
+    text-align: right;
+    font-weight: 600;
+}
+
+.overall-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 2px solid var(--background);
+    font-weight: 700;
+}
+
+.overall-value {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.lab-tips {
+    background: var(--primary-light);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.lab-tips h4 {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.lab-tips ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.lab-tips li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Takeaways Grid */
+.takeaways-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.takeaway-item {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 25px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.takeaway-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.takeaway-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.takeaway-item h4 {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.takeaway-item p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .prompt-comparison {
+        flex-direction: column;
+    }
+    
+    .vs-divider {
+        transform: rotate(90deg);
+        padding: 10px 0;
+    }
+    
+    .component-toggles {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .technique-tabs {
+        flex-direction: column;
+    }
+    
+    .technique-tab {
+        text-align: center;
+    }
+    
+    .analysis-item {
+        flex-wrap: wrap;
+    }
+    
+    .factor-name {
+        min-width: 100%;
+    }
+}

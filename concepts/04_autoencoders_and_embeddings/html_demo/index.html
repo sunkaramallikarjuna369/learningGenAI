@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoencoders & Embeddings - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Autoencoders & Embeddings</h1>
+            <p class="subtitle">How AI compresses and represents meaning</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Word Embeddings -->
+        <section class="demo-section">
+            <h2>Step 1: Word Embeddings - GPS for Meaning</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Words are converted into lists of numbers (vectors) that capture their meaning. Similar words end up close together in this "meaning space." Try clicking on words to see their positions!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Word embeddings map tokens to dense vectors in R^d. Models like Word2Vec learn these by predicting context words. The resulting space exhibits linear relationships: v(king) - v(man) + v(woman) ≈ v(queen). Cosine similarity measures semantic relatedness.</p>
+            </div>
+
+            <div class="animation-canvas" id="embeddingCanvas">
+                <div class="embedding-visualization">
+                    <!-- 2D Embedding Space -->
+                    <div class="embedding-space" id="embeddingSpace">
+                        <canvas id="embeddingPlot" width="500" height="400"></canvas>
+                        <div class="word-labels" id="wordLabels"></div>
+                    </div>
+                    
+                    <!-- Word Selection -->
+                    <div class="word-selector">
+                        <h4>Click words to highlight:</h4>
+                        <div class="word-categories">
+                            <div class="word-category">
+                                <span class="category-label">Royalty</span>
+                                <div class="word-buttons">
+                                    <button class="word-btn" data-word="king">king</button>
+                                    <button class="word-btn" data-word="queen">queen</button>
+                                    <button class="word-btn" data-word="prince">prince</button>
+                                    <button class="word-btn" data-word="princess">princess</button>
+                                </div>
+                            </div>
+                            <div class="word-category">
+                                <span class="category-label">Animals</span>
+                                <div class="word-buttons">
+                                    <button class="word-btn" data-word="cat">cat</button>
+                                    <button class="word-btn" data-word="dog">dog</button>
+                                    <button class="word-btn" data-word="lion">lion</button>
+                                    <button class="word-btn" data-word="tiger">tiger</button>
+                                </div>
+                            </div>
+                            <div class="word-category">
+                                <span class="category-label">Food</span>
+                                <div class="word-buttons">
+                                    <button class="word-btn" data-word="apple">apple</button>
+                                    <button class="word-btn" data-word="banana">banana</button>
+                                    <button class="word-btn" data-word="pizza">pizza</button>
+                                    <button class="word-btn" data-word="burger">burger</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Similarity Display -->
+                <div class="similarity-display" id="similarityDisplay">
+                    <h4>Similarity Scores</h4>
+                    <p class="hint">Select two words to see their similarity</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Word Arithmetic -->
+        <section class="demo-section">
+            <h2>Step 2: Word Math - Adding and Subtracting Meaning</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>The coolest thing about embeddings: you can do math with words! "King - Man + Woman = Queen" actually works because the vectors capture relationships. Try different combinations below!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Vector arithmetic in embedding space: v(king) - v(man) + v(woman) ≈ v(queen). This works because embeddings encode semantic relationships as directions. The "gender" direction is approximately v(woman) - v(man), which can be added to transform words.</p>
+            </div>
+
+            <div class="animation-canvas" id="arithmeticCanvas">
+                <div class="word-arithmetic">
+                    <div class="arithmetic-equation">
+                        <select id="word1" class="word-select">
+                            <option value="king">king</option>
+                            <option value="man">man</option>
+                            <option value="woman">woman</option>
+                            <option value="paris">Paris</option>
+                            <option value="france">France</option>
+                            <option value="japan">Japan</option>
+                            <option value="walking">walking</option>
+                            <option value="walked">walked</option>
+                        </select>
+                        <span class="operator">-</span>
+                        <select id="word2" class="word-select">
+                            <option value="man">man</option>
+                            <option value="king">king</option>
+                            <option value="woman">woman</option>
+                            <option value="france">France</option>
+                            <option value="paris">Paris</option>
+                            <option value="walking">walking</option>
+                        </select>
+                        <span class="operator">+</span>
+                        <select id="word3" class="word-select">
+                            <option value="woman">woman</option>
+                            <option value="man">man</option>
+                            <option value="king">king</option>
+                            <option value="japan">Japan</option>
+                            <option value="walked">walked</option>
+                        </select>
+                        <span class="operator">=</span>
+                        <span class="result-word" id="resultWord">?</span>
+                    </div>
+                    
+                    <button class="action-btn primary" id="calculateBtn">Calculate</button>
+                    
+                    <div class="arithmetic-visualization" id="arithmeticViz">
+                        <canvas id="arithmeticPlot" width="400" height="300"></canvas>
+                    </div>
+                    
+                    <div class="preset-examples">
+                        <h4>Try these examples:</h4>
+                        <button class="preset-btn" data-w1="king" data-w2="man" data-w3="woman">king - man + woman = ?</button>
+                        <button class="preset-btn" data-w1="paris" data-w2="france" data-w3="japan">Paris - France + Japan = ?</button>
+                        <button class="preset-btn" data-w1="walking" data-w2="walking" data-w3="walked">walking - walking + walked = ?</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Autoencoder -->
+        <section class="demo-section">
+            <h2>Step 3: Autoencoder - Compress and Reconstruct</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>An autoencoder learns to squeeze data through a tiny "bottleneck" and then expand it back. It's like summarizing a book in 3 words, then recreating the book from those words. Watch how the image gets compressed and reconstructed!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Autoencoders consist of an encoder z = f(x) and decoder x̂ = g(z). The bottleneck z is the latent representation. Training minimizes reconstruction loss ||x - x̂||². VAEs add a probabilistic twist: z ~ N(μ(x), σ(x)), enabling generation by sampling from the latent space.</p>
+            </div>
+
+            <div class="animation-canvas" id="autoencoderCanvas">
+                <div class="autoencoder-demo">
+                    <!-- Input -->
+                    <div class="ae-stage input-stage">
+                        <h4>Input</h4>
+                        <div class="image-grid" id="inputGrid">
+                            <!-- 8x8 pixel grid -->
+                        </div>
+                        <span class="dimension-label">64 values</span>
+                    </div>
+                    
+                    <!-- Encoder Arrow -->
+                    <div class="ae-arrow encoder-arrow">
+                        <div class="arrow-label">Encoder</div>
+                        <svg width="80" height="40" viewBox="0 0 80 40">
+                            <path d="M0 20 L60 20 M50 10 L65 20 L50 30" stroke="#4A90D9" stroke-width="3" fill="none"/>
+                        </svg>
+                        <div class="compression-label">Compress</div>
+                    </div>
+                    
+                    <!-- Latent Space -->
+                    <div class="ae-stage latent-stage">
+                        <h4>Latent Space</h4>
+                        <div class="latent-vector" id="latentVector">
+                            <!-- Small vector representation -->
+                        </div>
+                        <span class="dimension-label" id="latentDimLabel">8 values</span>
+                        <div class="bottleneck-slider">
+                            <label>Bottleneck size:</label>
+                            <input type="range" id="bottleneckSize" min="2" max="16" value="8">
+                            <span id="bottleneckValue">8</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Decoder Arrow -->
+                    <div class="ae-arrow decoder-arrow">
+                        <div class="arrow-label">Decoder</div>
+                        <svg width="80" height="40" viewBox="0 0 80 40">
+                            <path d="M0 20 L60 20 M50 10 L65 20 L50 30" stroke="#50C878" stroke-width="3" fill="none"/>
+                        </svg>
+                        <div class="compression-label">Expand</div>
+                    </div>
+                    
+                    <!-- Output -->
+                    <div class="ae-stage output-stage">
+                        <h4>Reconstruction</h4>
+                        <div class="image-grid" id="outputGrid">
+                            <!-- 8x8 pixel grid -->
+                        </div>
+                        <span class="dimension-label">64 values</span>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="ae-controls">
+                    <button class="action-btn" id="drawDigitBtn">Draw Pattern</button>
+                    <button class="action-btn" id="randomDigitBtn">Random Pattern</button>
+                    <button class="action-btn primary" id="encodeBtn">Encode & Decode</button>
+                    <button class="action-btn" id="clearBtn">Clear</button>
+                </div>
+                
+                <!-- Loss Display -->
+                <div class="loss-display">
+                    <span>Reconstruction Loss: </span>
+                    <span id="reconstructionLoss" class="loss-value">0.00</span>
+                    <div class="loss-bar-container">
+                        <div class="loss-bar" id="lossBar"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Latent Space Exploration -->
+        <section class="demo-section">
+            <h2>Step 4: Exploring the Latent Space</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>The "latent space" is where compressed representations live. Moving around in this space creates smooth transitions between different outputs. It's like a map where nearby points create similar images!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>VAEs regularize the latent space to be continuous and smooth via KL divergence. This enables interpolation: z_interp = α*z1 + (1-α)*z2 produces meaningful intermediate outputs. Latent diffusion models operate in this compressed space for efficient generation.</p>
+            </div>
+
+            <div class="animation-canvas" id="latentExploreCanvas">
+                <div class="latent-explorer">
+                    <div class="latent-2d-space">
+                        <canvas id="latentSpaceCanvas" width="300" height="300"></canvas>
+                        <div class="latent-cursor" id="latentCursor"></div>
+                    </div>
+                    
+                    <div class="latent-output">
+                        <h4>Generated Output</h4>
+                        <div class="generated-grid" id="generatedGrid"></div>
+                        <div class="latent-coords">
+                            <span>z1: <span id="z1Value">0.0</span></span>
+                            <span>z2: <span id="z2Value">0.0</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interpolation-demo">
+                    <h4>Interpolation Between Two Points</h4>
+                    <div class="interpolation-slider">
+                        <span>Point A</span>
+                        <input type="range" id="interpolationSlider" min="0" max="100" value="50">
+                        <span>Point B</span>
+                    </div>
+                    <div class="interpolation-frames" id="interpolationFrames">
+                        <!-- Generated frames will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📍</div>
+                    <h4>Embeddings</h4>
+                    <p>Convert words/data to vectors where similar items are close together</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">➕</div>
+                    <h4>Word Math</h4>
+                    <p>Vector arithmetic captures semantic relationships (king - man + woman = queen)</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🗜️</div>
+                    <h4>Autoencoders</h4>
+                    <p>Learn to compress data to essential features and reconstruct it</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🗺️</div>
+                    <h4>Latent Space</h4>
+                    <p>A compressed representation space where smooth interpolation is possible</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Encoder / Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Latent Space</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Decoder / Output</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../03_neural_network_basics/html_demo/">← Previous: Neural Networks</a> | <a href="../05_transformers_and_attention/html_demo/">Next: Transformers & Attention →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

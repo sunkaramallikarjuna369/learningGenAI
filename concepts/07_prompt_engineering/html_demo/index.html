@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Prompt Engineering</h1>
+            <p class="subtitle">The art of communicating with AI</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Good vs Bad Prompts -->
+        <section class="demo-section">
+            <h2>Step 1: Good vs Bad Prompts</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>The same AI can give very different results based on how you ask. Vague prompts get vague answers. Specific prompts get specific answers. Compare the prompts below to see the difference!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Prompt quality affects the probability distribution over outputs. Specific prompts constrain the output space, reducing entropy and increasing the likelihood of desired responses. This is why prompt engineering is crucial for production systems.</p>
+            </div>
+
+            <div class="animation-canvas" id="comparisonCanvas">
+                <div class="prompt-comparison">
+                    <div class="comparison-side bad">
+                        <h4>Vague Prompt</h4>
+                        <div class="prompt-box" id="badPrompt">
+                            <span class="prompt-text">Write about dogs</span>
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="response-box" id="badResponse">
+                            <span class="response-text">Dogs are animals. They are pets. People like dogs. Dogs can bark. They have four legs...</span>
+                        </div>
+                        <div class="quality-meter">
+                            <span>Quality:</span>
+                            <div class="meter-track">
+                                <div class="meter-fill bad" style="width: 30%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vs-divider">VS</div>
+                    
+                    <div class="comparison-side good">
+                        <h4>Specific Prompt</h4>
+                        <div class="prompt-box" id="goodPrompt">
+                            <span class="prompt-text">Write a 100-word article about the health benefits of dog ownership for seniors, focusing on mental health and physical activity</span>
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="response-box" id="goodResponse">
+                            <span class="response-text">For seniors, owning a dog offers remarkable health benefits. Daily walks provide gentle exercise, improving cardiovascular health and mobility. The companionship reduces loneliness and depression, common challenges in later life. Studies show dog owners have lower blood pressure and reduced stress hormones. The routine of pet care adds structure to days, while the unconditional love from a furry friend boosts emotional well-being. Social interactions increase as dog walks lead to conversations with neighbors. For many seniors, a canine companion becomes a vital source of purpose and joy.</span>
+                        </div>
+                        <div class="quality-meter">
+                            <span>Quality:</span>
+                            <div class="meter-track">
+                                <div class="meter-fill good" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comparison-controls">
+                    <button class="action-btn primary" id="animateComparisonBtn">Animate Comparison</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Prompt Components -->
+        <section class="demo-section">
+            <h2>Step 2: Building Better Prompts</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Great prompts have key ingredients: context, task, format, and examples. Add each component below to see how the prompt improves!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Prompt components map to different aspects of model conditioning: system prompts set behavioral priors, context provides in-context information, task specifies the objective, format constrains output structure, and examples enable few-shot learning.</p>
+            </div>
+
+            <div class="animation-canvas" id="builderCanvas">
+                <div class="prompt-builder">
+                    <div class="component-toggles">
+                        <label class="component-toggle">
+                            <input type="checkbox" id="toggleRole" checked>
+                            <span class="toggle-label">Role/Context</span>
+                        </label>
+                        <label class="component-toggle">
+                            <input type="checkbox" id="toggleTask" checked>
+                            <span class="toggle-label">Task</span>
+                        </label>
+                        <label class="component-toggle">
+                            <input type="checkbox" id="toggleFormat">
+                            <span class="toggle-label">Format</span>
+                        </label>
+                        <label class="component-toggle">
+                            <input type="checkbox" id="toggleExamples">
+                            <span class="toggle-label">Examples</span>
+                        </label>
+                        <label class="component-toggle">
+                            <input type="checkbox" id="toggleConstraints">
+                            <span class="toggle-label">Constraints</span>
+                        </label>
+                    </div>
+                    
+                    <div class="built-prompt" id="builtPrompt">
+                        <div class="prompt-component role" data-component="role">
+                            <span class="component-label">Role</span>
+                            <span class="component-text">You are an experienced marketing copywriter.</span>
+                        </div>
+                        <div class="prompt-component task" data-component="task">
+                            <span class="component-label">Task</span>
+                            <span class="component-text">Write a product description for a new eco-friendly water bottle.</span>
+                        </div>
+                        <div class="prompt-component format" data-component="format">
+                            <span class="component-label">Format</span>
+                            <span class="component-text">Structure: Headline, 3 bullet points, call-to-action.</span>
+                        </div>
+                        <div class="prompt-component examples" data-component="examples">
+                            <span class="component-label">Example</span>
+                            <span class="component-text">Example: "Stay Hydrated, Save the Planet" - Our bottles reduce plastic waste by 90%.</span>
+                        </div>
+                        <div class="prompt-component constraints" data-component="constraints">
+                            <span class="component-label">Constraints</span>
+                            <span class="component-text">Keep it under 100 words. Avoid clichés. Target millennials.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="prompt-score">
+                        <span>Prompt Completeness:</span>
+                        <div class="score-bar">
+                            <div class="score-fill" id="promptScore" style="width: 40%;"></div>
+                        </div>
+                        <span class="score-value" id="scoreValue">40%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Prompting Techniques -->
+        <section class="demo-section">
+            <h2>Step 3: Advanced Techniques</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Different techniques work for different tasks. Zero-shot is direct asking, few-shot shows examples, and chain-of-thought asks for step-by-step reasoning. Try each technique below!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Zero-shot relies on pre-trained knowledge. Few-shot leverages in-context learning to adapt to new patterns. Chain-of-thought (CoT) prompting improves reasoning by decomposing problems, especially effective for math and logic tasks.</p>
+            </div>
+
+            <div class="animation-canvas" id="techniquesCanvas">
+                <div class="techniques-demo">
+                    <div class="technique-tabs">
+                        <button class="technique-tab active" data-technique="zero-shot">Zero-Shot</button>
+                        <button class="technique-tab" data-technique="few-shot">Few-Shot</button>
+                        <button class="technique-tab" data-technique="cot">Chain-of-Thought</button>
+                    </div>
+                    
+                    <div class="technique-content" id="techniqueContent">
+                        <!-- Zero-Shot -->
+                        <div class="technique-panel active" data-technique="zero-shot">
+                            <div class="technique-description">
+                                <h4>Zero-Shot Prompting</h4>
+                                <p>Ask directly without examples. Works well for simple, common tasks.</p>
+                            </div>
+                            <div class="technique-example">
+                                <div class="example-prompt">
+                                    <span class="label">Prompt:</span>
+                                    <div class="prompt-text">Classify the sentiment of this review as positive, negative, or neutral: "The food was amazing but the service was slow."</div>
+                                </div>
+                                <div class="example-response">
+                                    <span class="label">Response:</span>
+                                    <div class="response-text" id="zeroShotResponse">Mixed/Neutral - The review contains both positive (amazing food) and negative (slow service) elements.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Few-Shot -->
+                        <div class="technique-panel" data-technique="few-shot">
+                            <div class="technique-description">
+                                <h4>Few-Shot Prompting</h4>
+                                <p>Provide examples to guide the model. Great for specific formats or edge cases.</p>
+                            </div>
+                            <div class="technique-example">
+                                <div class="example-prompt">
+                                    <span class="label">Prompt:</span>
+                                    <div class="prompt-text">
+                                        Classify sentiment:<br>
+                                        "I love this!" → positive<br>
+                                        "Terrible experience" → negative<br>
+                                        "It's okay" → neutral<br>
+                                        "The food was amazing but the service was slow." →
+                                    </div>
+                                </div>
+                                <div class="example-response">
+                                    <span class="label">Response:</span>
+                                    <div class="response-text" id="fewShotResponse">mixed</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chain-of-Thought -->
+                        <div class="technique-panel" data-technique="cot">
+                            <div class="technique-description">
+                                <h4>Chain-of-Thought Prompting</h4>
+                                <p>Ask for step-by-step reasoning. Essential for math, logic, and complex problems.</p>
+                            </div>
+                            <div class="technique-example">
+                                <div class="example-prompt">
+                                    <span class="label">Prompt:</span>
+                                    <div class="prompt-text">A store sells apples for $2 each. If you buy 5 or more, you get 20% off. How much do 7 apples cost? Think step by step.</div>
+                                </div>
+                                <div class="example-response">
+                                    <span class="label">Response:</span>
+                                    <div class="response-text cot-response" id="cotResponse">
+                                        <div class="cot-step">Step 1: Calculate regular price = 7 × $2 = $14</div>
+                                        <div class="cot-step">Step 2: Check discount eligibility: 7 ≥ 5, so discount applies</div>
+                                        <div class="cot-step">Step 3: Calculate discount = $14 × 20% = $2.80</div>
+                                        <div class="cot-step">Step 4: Final price = $14 - $2.80 = $11.20</div>
+                                        <div class="cot-answer">Answer: $11.20</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Interactive Prompt Lab -->
+        <section class="demo-section">
+            <h2>Step 4: Prompt Lab</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Practice writing prompts! Select a task, write your prompt, and see how different approaches affect the simulated response quality.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>This lab simulates prompt evaluation based on key factors: specificity, context, format specification, and constraint clarity. In production, you'd use actual model outputs and human evaluation or automated metrics.</p>
+            </div>
+
+            <div class="animation-canvas" id="labCanvas">
+                <div class="prompt-lab">
+                    <div class="lab-task-selector">
+                        <label>Select a Task:</label>
+                        <select id="labTaskSelect">
+                            <option value="email">Write a professional email</option>
+                            <option value="summary">Summarize a document</option>
+                            <option value="code">Generate code</option>
+                            <option value="creative">Creative writing</option>
+                        </select>
+                    </div>
+                    
+                    <div class="lab-prompt-area">
+                        <label>Your Prompt:</label>
+                        <textarea id="labPromptInput" placeholder="Write your prompt here..."></textarea>
+                    </div>
+                    
+                    <div class="lab-analysis" id="labAnalysis">
+                        <h4>Prompt Analysis</h4>
+                        <div class="analysis-items">
+                            <div class="analysis-item" data-factor="specificity">
+                                <span class="factor-name">Specificity</span>
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="factor-score">0%</span>
+                            </div>
+                            <div class="analysis-item" data-factor="context">
+                                <span class="factor-name">Context</span>
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="factor-score">0%</span>
+                            </div>
+                            <div class="analysis-item" data-factor="format">
+                                <span class="factor-name">Format</span>
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="factor-score">0%</span>
+                            </div>
+                            <div class="analysis-item" data-factor="constraints">
+                                <span class="factor-name">Constraints</span>
+                                <div class="factor-bar">
+                                    <div class="factor-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="factor-score">0%</span>
+                            </div>
+                        </div>
+                        <div class="overall-score">
+                            <span>Overall Quality:</span>
+                            <span class="overall-value" id="overallScore">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lab-tips" id="labTips">
+                        <h4>Tips to Improve</h4>
+                        <ul id="tipsList">
+                            <li>Start typing your prompt to see analysis...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎯</div>
+                    <h4>Be Specific</h4>
+                    <p>Vague prompts get vague answers. Include details about what you want.</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🧩</div>
+                    <h4>Use Components</h4>
+                    <p>Role, task, format, examples, and constraints make prompts complete.</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔧</div>
+                    <h4>Choose Techniques</h4>
+                    <p>Zero-shot, few-shot, and chain-of-thought for different situations.</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔄</div>
+                    <h4>Iterate</h4>
+                    <p>Prompt engineering is iterative. Refine based on results.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Role/Context</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Task</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Format</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Examples</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../06_large_language_models/html_demo/">← Previous: Large Language Models</a> | <a href="../08_text_generation_use_cases/html_demo/">Next: Text Generation Use Cases →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

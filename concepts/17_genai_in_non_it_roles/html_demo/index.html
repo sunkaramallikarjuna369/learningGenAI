@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI in Non-IT Roles - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>GenAI for Non-IT Roles</h1>
+            <p class="subtitle">AI tools for every profession</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Role Explorer -->
+        <section class="demo-section">
+            <h2>Step 1: Find Your Role</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI can help professionals in every field. Click on different roles to see specific ways AI can make your work easier and more efficient.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Role-specific applications typically use prompt templates, domain-specific fine-tuning, and integration with existing workflows. Key success factors: clear prompts, domain expertise for verification, and iterative refinement.</p>
+            </div>
+
+            <div class="animation-canvas" id="roleCanvas">
+                <div class="role-explorer">
+                    <div class="role-grid">
+                        <div class="role-card" data-role="teacher">
+                            <div class="role-icon">👩‍🏫</div>
+                            <h4>Teacher</h4>
+                        </div>
+                        <div class="role-card" data-role="marketer">
+                            <div class="role-icon">📢</div>
+                            <h4>Marketer</h4>
+                        </div>
+                        <div class="role-card" data-role="hr">
+                            <div class="role-icon">👥</div>
+                            <h4>HR Manager</h4>
+                        </div>
+                        <div class="role-card" data-role="sales">
+                            <div class="role-icon">💼</div>
+                            <h4>Sales Rep</h4>
+                        </div>
+                        <div class="role-card" data-role="finance">
+                            <div class="role-icon">📊</div>
+                            <h4>Finance</h4>
+                        </div>
+                        <div class="role-card" data-role="legal">
+                            <div class="role-icon">⚖️</div>
+                            <h4>Legal</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="role-details" id="roleDetails">
+                        <h4>Select a role to see AI use cases</h4>
+                        <p>Click on any role above to explore how AI can help in that profession.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Task Assistant -->
+        <section class="demo-section">
+            <h2>Step 2: Try the AI Assistant</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>See how AI can help with common tasks. Select your role and a task, then watch AI generate helpful content in seconds.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>This simulates prompt-based generation with role context. Production systems use system prompts for role definition, few-shot examples for format consistency, and temperature settings for creativity control.</p>
+            </div>
+
+            <div class="animation-canvas" id="assistantCanvas">
+                <div class="task-assistant">
+                    <div class="assistant-controls">
+                        <div class="control-group">
+                            <label>Your Role:</label>
+                            <select id="roleSelect">
+                                <option value="teacher">Teacher</option>
+                                <option value="marketer">Marketer</option>
+                                <option value="hr">HR Manager</option>
+                                <option value="sales">Sales Rep</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Task:</label>
+                            <select id="taskSelect">
+                                <!-- Populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <button class="action-btn primary" id="generateTaskBtn">Generate</button>
+                    </div>
+                    
+                    <div class="assistant-output">
+                        <div class="output-header">
+                            <span>AI Output</span>
+                            <span class="time-badge" id="timeBadge">~30 seconds saved</span>
+                        </div>
+                        <div class="output-content" id="taskOutput">
+                            <span class="placeholder">Select a role and task, then click Generate...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Prompt Builder -->
+        <section class="demo-section">
+            <h2>Step 3: Build Better Prompts</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Learn to write prompts that get better results. Add context, specify your audience, and define the format you want.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Effective prompts include: role/persona definition, context/background, specific task, format requirements, and constraints. This follows the CRISPE framework (Capacity, Role, Insight, Statement, Personality, Experiment).</p>
+            </div>
+
+            <div class="animation-canvas" id="promptCanvas">
+                <div class="prompt-builder">
+                    <div class="builder-inputs">
+                        <div class="builder-field">
+                            <label>What do you need?</label>
+                            <input type="text" id="promptTask" placeholder="e.g., Write a lesson plan about fractions">
+                        </div>
+                        
+                        <div class="builder-field">
+                            <label>Who is the audience?</label>
+                            <input type="text" id="promptAudience" placeholder="e.g., 5th grade students">
+                        </div>
+                        
+                        <div class="builder-field">
+                            <label>What format?</label>
+                            <select id="promptFormat">
+                                <option value="paragraph">Paragraph</option>
+                                <option value="bullets">Bullet points</option>
+                                <option value="table">Table</option>
+                                <option value="steps">Step-by-step</option>
+                            </select>
+                        </div>
+                        
+                        <div class="builder-field">
+                            <label>Tone:</label>
+                            <select id="promptTone">
+                                <option value="professional">Professional</option>
+                                <option value="friendly">Friendly</option>
+                                <option value="formal">Formal</option>
+                                <option value="casual">Casual</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="prompt-preview">
+                        <h4>Your Optimized Prompt:</h4>
+                        <div class="preview-content" id="promptPreview">
+                            Fill in the fields above to build your prompt...
+                        </div>
+                        <button class="action-btn secondary" id="copyPromptBtn">Copy Prompt</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Time Savings Calculator -->
+        <section class="demo-section">
+            <h2>Step 4: Calculate Your Time Savings</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>See how much time you could save by using AI for routine tasks. Select tasks you do regularly and see the potential impact.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Time savings vary by task complexity and user proficiency. Studies show 30-80% time reduction for content creation tasks. ROI calculation should include learning curve, quality review time, and tool costs.</p>
+            </div>
+
+            <div class="animation-canvas" id="savingsCanvas">
+                <div class="savings-calculator">
+                    <div class="task-checklist">
+                        <h4>Select tasks you do weekly:</h4>
+                        <div class="checklist-items">
+                            <label class="check-item">
+                                <input type="checkbox" data-task="emails" data-time="60">
+                                <span>Writing emails (60 min/week)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" data-task="reports" data-time="120">
+                                <span>Creating reports (2 hrs/week)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" data-task="content" data-time="180">
+                                <span>Content creation (3 hrs/week)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" data-task="research" data-time="90">
+                                <span>Research & summaries (1.5 hrs/week)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" data-task="docs" data-time="60">
+                                <span>Documentation (1 hr/week)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" data-task="planning" data-time="45">
+                                <span>Planning & outlines (45 min/week)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="savings-results">
+                        <div class="savings-card">
+                            <div class="savings-label">Current Time</div>
+                            <div class="savings-value" id="currentTime">0 hrs/week</div>
+                        </div>
+                        <div class="savings-card">
+                            <div class="savings-label">With AI</div>
+                            <div class="savings-value" id="aiTime">0 hrs/week</div>
+                        </div>
+                        <div class="savings-card highlight">
+                            <div class="savings-label">Time Saved</div>
+                            <div class="savings-value" id="timeSaved">0 hrs/week</div>
+                        </div>
+                        <div class="savings-card">
+                            <div class="savings-label">Annual Savings</div>
+                            <div class="savings-value" id="annualSaved">0 hours</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎯</div>
+                    <h4>No Coding Needed</h4>
+                    <p>Anyone can use AI tools with just natural language</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📝</div>
+                    <h4>Better Prompts = Better Results</h4>
+                    <p>Be specific about what you need and for whom</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">✅</div>
+                    <h4>Always Review</h4>
+                    <p>AI is a starting point - use your expertise to refine</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⏱️</div>
+                    <h4>Start Small</h4>
+                    <p>Begin with one task and expand as you learn</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Input / Selection</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>AI Output / Savings</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Time / Results</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../16_genai_in_software_engineering/html_demo/">← Previous: GenAI for Software Engineering</a> | <a href="../18_deployment_and_apis/html_demo/">Next: Deployment and APIs →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
