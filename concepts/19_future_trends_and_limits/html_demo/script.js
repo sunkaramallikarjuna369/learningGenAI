@@ -5,6 +5,55 @@
  * current limitations, and how to prepare for what's coming.
  */
 
+// Role-based applications data
+const roleApplications = {
+    work: {
+        title: 'Future of Work',
+        apps: [
+            { name: 'AI Colleagues', desc: 'AI agents that collaborate on projects alongside humans' },
+            { name: 'Automated Research', desc: 'AI that conducts research and synthesizes findings' },
+            { name: 'Personalized Training', desc: 'AI tutors that adapt to individual learning styles' },
+            { name: 'Decision Support', desc: 'AI advisors for complex business decisions' }
+        ]
+    },
+    science: {
+        title: 'Science',
+        apps: [
+            { name: 'Drug Discovery', desc: 'AI-designed molecules and treatment protocols' },
+            { name: 'Climate Modeling', desc: 'Advanced simulations for climate prediction' },
+            { name: 'Materials Science', desc: 'Discovery of new materials with desired properties' },
+            { name: 'Protein Engineering', desc: 'Design of novel proteins for medicine and industry' }
+        ]
+    },
+    creative: {
+        title: 'Creative',
+        apps: [
+            { name: 'Film Production', desc: 'AI-generated scenes, effects, and entire movies' },
+            { name: 'Music Composition', desc: 'Original music tailored to any style or mood' },
+            { name: 'Game Design', desc: 'Procedurally generated worlds and narratives' },
+            { name: 'Fashion Design', desc: 'AI-created clothing designs and patterns' }
+        ]
+    },
+    personal: {
+        title: 'Personal AI',
+        apps: [
+            { name: 'Health Monitoring', desc: 'Continuous health analysis and early warning' },
+            { name: 'Life Planning', desc: 'AI advisors for career and life decisions' },
+            { name: 'Memory Augmentation', desc: 'AI that remembers and organizes your life' },
+            { name: 'Personal Tutors', desc: 'Lifelong learning companions for any subject' }
+        ]
+    }
+};
+
+// 3D Future visualization state
+let future3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    capabilities: []
+};
+
 // Timeline event data
 const timelineEvents = {
     "2017": {
@@ -162,10 +211,181 @@ const limitationData = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DFuture();
+    initRoleApplications();
     initTimeline();
     initCapabilities();
     initLimitations();
 });
+
+// ============================================================================
+// 3D AI Evolution Visualization
+// ============================================================================
+
+function init3DFuture() {
+    const canvas = document.getElementById('future3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    future3D.mini3d = new Mini3D(canvas);
+    
+    // Create capability nodes representing AI evolution
+    const capData = [
+        { name: 'Language', color: '#4A90D9', x: -150, y: -80, z: 0, level: 0.9 },
+        { name: 'Vision', color: '#9B59B6', x: -50, y: -80, z: 50, level: 0.85 },
+        { name: 'Reasoning', color: '#E67E22', x: 50, y: -80, z: -50, level: 0.6 },
+        { name: 'Agents', color: '#50C878', x: 150, y: -80, z: 0, level: 0.4 },
+        { name: 'Robotics', color: '#E74C3C', x: 0, y: 80, z: 0, level: 0.25 }
+    ];
+    
+    capData.forEach(c => {
+        future3D.capabilities.push({
+            x: c.x,
+            y: c.y,
+            z: c.z,
+            name: c.name,
+            color: c.color,
+            level: c.level,
+            currentLevel: 0,
+            active: false
+        });
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        future3D.rotationY -= 0.3;
+        render3DFuture();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        future3D.rotationY += 0.3;
+        render3DFuture();
+    });
+    
+    document.getElementById('animateFutureBtn')?.addEventListener('click', () => {
+        if (!future3D.animating) {
+            future3D.animating = true;
+            future3D.progress = 0;
+            future3D.capabilities.forEach(c => {
+                c.currentLevel = 0;
+                c.active = false;
+            });
+            animateFuture3D();
+        }
+    });
+    
+    render3DFuture();
+}
+
+function animateFuture3D() {
+    if (!future3D.animating) return;
+    
+    future3D.progress += 0.01;
+    future3D.rotationY += 0.005;
+    
+    // Grow capability levels progressively
+    future3D.capabilities.forEach((c, i) => {
+        const delay = i * 0.15;
+        if (future3D.progress > delay) {
+            c.active = true;
+            c.currentLevel = Math.min(c.level, (future3D.progress - delay) * 2);
+        }
+    });
+    
+    render3DFuture();
+    
+    if (future3D.progress < 1.5) {
+        requestAnimationFrame(animateFuture3D);
+    } else {
+        future3D.animating = false;
+    }
+}
+
+function render3DFuture() {
+    const mini3d = future3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0.3, future3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw capability bars
+    future3D.capabilities.forEach(cap => {
+        const rotated = mini3d.rotatePoint(cap.x, cap.y, cap.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Draw bar background
+        const barHeight = 100 * proj.scale;
+        const barWidth = 30 * proj.scale;
+        
+        mini3d.ctx.fillStyle = 'rgba(100, 100, 100, 0.3)';
+        mini3d.ctx.fillRect(proj.x - barWidth/2, proj.y - barHeight/2, barWidth, barHeight);
+        
+        // Draw filled portion
+        const fillHeight = barHeight * cap.currentLevel;
+        const gradient = mini3d.ctx.createLinearGradient(proj.x, proj.y + barHeight/2 - fillHeight, proj.x, proj.y + barHeight/2);
+        gradient.addColorStop(0, cap.color);
+        gradient.addColorStop(1, cap.color + '66');
+        
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.fillRect(proj.x - barWidth/2, proj.y + barHeight/2 - fillHeight, barWidth, fillHeight);
+        
+        // Draw border
+        mini3d.ctx.strokeStyle = cap.active ? cap.color : 'rgba(150, 150, 150, 0.5)';
+        mini3d.ctx.lineWidth = 2;
+        mini3d.ctx.strokeRect(proj.x - barWidth/2, proj.y - barHeight/2, barWidth, barHeight);
+        
+        // Draw label
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `${10 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.fillText(cap.name, proj.x, proj.y + barHeight/2 + 15 * proj.scale);
+        
+        // Draw percentage
+        if (cap.currentLevel > 0) {
+            mini3d.ctx.fillStyle = cap.color;
+            mini3d.ctx.fillText(`${Math.round(cap.currentLevel * 100)}%`, proj.x, proj.y - barHeight/2 - 5 * proj.scale);
+        }
+    });
+    
+    // Draw title
+    mini3d.ctx.fillStyle = '#ccc';
+    mini3d.ctx.font = '14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('AI Capability Evolution', centerX, 30);
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('work');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

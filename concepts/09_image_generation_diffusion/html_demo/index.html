@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Diffusion Visualization -->
+        <section class="demo-section">
+            <h2>3D Diffusion Process</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch particles transform from random noise into structured patterns! This 3D visualization shows how diffusion models gradually organize chaos into meaningful images.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>The 3D particle cloud represents the latent space. Forward diffusion adds Gaussian noise, while reverse diffusion (denoising) learns to recover structure through iterative refinement.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="diffusion3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateDiffusionBtn">Animate Diffusion</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Image Generation Across Industries</h4>
+                <p>Select your field to see how diffusion models are transforming visual content creation.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="creative">Creative Design</button>
+                <button class="role-btn" data-role="ecommerce">E-Commerce</button>
+                <button class="role-btn" data-role="gaming">Gaming</button>
+                <button class="role-btn" data-role="architecture">Architecture</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Diffusion Process -->
         <section class="demo-section">
             <h2>Step 1: The Diffusion Process</h2>
@@ -366,6 +410,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

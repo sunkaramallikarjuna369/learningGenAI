@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D RAG Pipeline Visualization -->
+        <section class="demo-section">
+            <h2>3D RAG Pipeline</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch how your question travels through the RAG system! It gets converted to a vector, searches through a knowledge base, retrieves relevant documents, and generates an answer.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>RAG combines dense retrieval (embedding similarity search in vector stores) with generative models. The retrieved context augments the prompt, grounding the LLM's response in factual information.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="rag3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateRAGBtn">Animate Pipeline</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>RAG Across Industries</h4>
+                <p>Select your field to see how RAG is transforming knowledge access.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="enterprise">Enterprise</button>
+                <button class="role-btn" data-role="legal">Legal</button>
+                <button class="role-btn" data-role="research">Research</button>
+                <button class="role-btn" data-role="support">Customer Support</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: What is RAG -->
         <section class="demo-section">
             <h2>Step 1: Understanding RAG</h2>
@@ -337,6 +381,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

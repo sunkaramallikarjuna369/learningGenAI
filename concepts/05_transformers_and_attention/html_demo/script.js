@@ -5,6 +5,54 @@
  * including self-attention, Q/K/V projections, and multi-head attention.
  */
 
+// Role-based applications data
+const roleApplications = {
+    nlp: {
+        title: 'NLP Applications',
+        apps: [
+            { name: 'ChatGPT & Conversational AI', desc: 'Power chatbots that understand context and generate human-like responses' },
+            { name: 'Machine Translation', desc: 'Translate between languages while preserving meaning and nuance' },
+            { name: 'Text Summarization', desc: 'Condense long documents into concise summaries' },
+            { name: 'Question Answering', desc: 'Extract answers from documents based on natural language questions' }
+        ]
+    },
+    vision: {
+        title: 'Computer Vision',
+        apps: [
+            { name: 'Vision Transformers (ViT)', desc: 'Image classification by treating image patches as tokens' },
+            { name: 'DETR Object Detection', desc: 'Detect and localize objects in images using attention' },
+            { name: 'Image Generation (DALL-E)', desc: 'Generate images from text descriptions using transformer decoders' },
+            { name: 'Video Understanding', desc: 'Analyze temporal relationships in video frames' }
+        ]
+    },
+    audio: {
+        title: 'Audio Processing',
+        apps: [
+            { name: 'Whisper Speech Recognition', desc: 'Transcribe speech to text with high accuracy across languages' },
+            { name: 'Music Generation', desc: 'Compose music by predicting next notes/tokens' },
+            { name: 'Voice Cloning', desc: 'Replicate voice characteristics for text-to-speech' },
+            { name: 'Audio Classification', desc: 'Identify sounds, speakers, or music genres' }
+        ]
+    },
+    multimodal: {
+        title: 'Multimodal AI',
+        apps: [
+            { name: 'GPT-4V Vision', desc: 'Understand and reason about images alongside text' },
+            { name: 'CLIP', desc: 'Connect images and text in a shared embedding space' },
+            { name: 'Flamingo', desc: 'Few-shot learning across text and images' },
+            { name: 'Video Captioning', desc: 'Generate descriptions of video content' }
+        ]
+    }
+};
+
+// 3D Attention visualization state
+let attention3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    animationProgress: 0
+};
+
 // Sample sentences with pre-computed attention patterns
 const sentences = [
     {
@@ -82,11 +130,183 @@ let archPlaying = false;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DAttention();
+    initRoleApplications();
     initSelfAttention();
     initQKV();
     initMultiHead();
     initArchitecture();
 });
+
+// ============================================================================
+// 3D Attention Visualization
+// ============================================================================
+
+function init3DAttention() {
+    const canvas = document.getElementById('attention3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    attention3D.mini3d = new Mini3D(canvas);
+    
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        attention3D.rotationY -= 0.3;
+        render3DAttention();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        attention3D.rotationY += 0.3;
+        render3DAttention();
+    });
+    
+    document.getElementById('animateAttentionBtn')?.addEventListener('click', () => {
+        if (!attention3D.animating) {
+            attention3D.animating = true;
+            attention3D.animationProgress = 0;
+            animateAttentionFlow();
+        }
+    });
+    
+    render3DAttention();
+}
+
+function animateAttentionFlow() {
+    if (!attention3D.animating) return;
+    
+    attention3D.animationProgress += 0.02;
+    render3DAttention();
+    
+    if (attention3D.animationProgress < 1) {
+        requestAnimationFrame(animateAttentionFlow);
+    } else {
+        attention3D.animating = false;
+        attention3D.animationProgress = 0;
+    }
+}
+
+function render3DAttention() {
+    const mini3d = attention3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, attention3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    const tokens = ['The', 'cat', 'sat', 'on', 'mat'];
+    const tokenPositions = tokens.map((t, i) => ({
+        token: t,
+        x: (i - 2) * 100,
+        y: 0,
+        z: 0
+    }));
+    
+    // Attention weights (simplified)
+    const attentionWeights = [
+        [0.4, 0.2, 0.1, 0.1, 0.2],
+        [0.1, 0.5, 0.2, 0.1, 0.1],
+        [0.1, 0.3, 0.3, 0.2, 0.1],
+        [0.1, 0.1, 0.2, 0.4, 0.2],
+        [0.2, 0.1, 0.1, 0.2, 0.4]
+    ];
+    
+    // Draw attention beams
+    tokenPositions.forEach((from, i) => {
+        tokenPositions.forEach((to, j) => {
+            if (i !== j) {
+                const weight = attentionWeights[i][j];
+                
+                // Animate beams
+                let alpha = weight;
+                if (attention3D.animating) {
+                    const beamProgress = (attention3D.animationProgress * 5 - i);
+                    if (beamProgress > 0 && beamProgress < 1) {
+                        alpha = weight * beamProgress;
+                    } else if (beamProgress <= 0) {
+                        alpha = 0;
+                    }
+                }
+                
+                const fromRot = mini3d.rotatePoint(from.x, from.y - 30, from.z);
+                const toRot = mini3d.rotatePoint(to.x, to.y - 30, to.z);
+                
+                const fromProj = mini3d.project(fromRot.x + centerX, fromRot.y + centerY, fromRot.z);
+                const toProj = mini3d.project(toRot.x + centerX, toRot.y + centerY, toRot.z);
+                
+                // Draw curved attention beam
+                mini3d.ctx.strokeStyle = `rgba(155, 89, 182, ${alpha})`;
+                mini3d.ctx.lineWidth = weight * 8;
+                mini3d.ctx.beginPath();
+                
+                const midX = (fromProj.x + toProj.x) / 2;
+                const midY = Math.min(fromProj.y, toProj.y) - 50 - weight * 50;
+                
+                mini3d.ctx.moveTo(fromProj.x, fromProj.y);
+                mini3d.ctx.quadraticCurveTo(midX, midY, toProj.x, toProj.y);
+                mini3d.ctx.stroke();
+            }
+        });
+    });
+    
+    // Draw token nodes
+    tokenPositions.forEach((pos, i) => {
+        const rotated = mini3d.rotatePoint(pos.x, pos.y, pos.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Draw node
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 30 * proj.scale);
+        gradient.addColorStop(0, '#4A90D9');
+        gradient.addColorStop(1, 'transparent');
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 30 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        mini3d.ctx.fillStyle = '#4A90D9';
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 20 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        // Draw token label
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `bold ${14 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.textBaseline = 'middle';
+        mini3d.ctx.fillText(pos.token, proj.x, proj.y);
+    });
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('nlp');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

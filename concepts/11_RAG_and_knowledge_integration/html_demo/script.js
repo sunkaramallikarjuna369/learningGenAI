@@ -5,6 +5,55 @@
  * vector similarity search, and document chunking.
  */
 
+// Role-based applications data
+const roleApplications = {
+    enterprise: {
+        title: 'Enterprise',
+        apps: [
+            { name: 'Internal Knowledge Base', desc: 'Search company documents, policies, and procedures instantly' },
+            { name: 'Employee Onboarding', desc: 'AI assistant that answers new hire questions from HR docs' },
+            { name: 'Meeting Summarization', desc: 'Query past meeting notes and action items' },
+            { name: 'Compliance Checking', desc: 'Verify decisions against company policies and regulations' }
+        ]
+    },
+    legal: {
+        title: 'Legal',
+        apps: [
+            { name: 'Case Research', desc: 'Find relevant precedents and case law instantly' },
+            { name: 'Contract Analysis', desc: 'Query contract terms and identify key clauses' },
+            { name: 'Due Diligence', desc: 'Search through thousands of documents for relevant information' },
+            { name: 'Regulatory Compliance', desc: 'Stay updated on regulations affecting your practice' }
+        ]
+    },
+    research: {
+        title: 'Research',
+        apps: [
+            { name: 'Literature Review', desc: 'Search and synthesize findings from research papers' },
+            { name: 'Data Discovery', desc: 'Find relevant datasets and methodologies' },
+            { name: 'Citation Assistance', desc: 'Find supporting evidence for claims' },
+            { name: 'Trend Analysis', desc: 'Identify emerging topics across publications' }
+        ]
+    },
+    support: {
+        title: 'Customer Support',
+        apps: [
+            { name: 'Ticket Resolution', desc: 'Find solutions from past tickets and documentation' },
+            { name: 'Product FAQ', desc: 'Answer customer questions from product manuals' },
+            { name: 'Troubleshooting Guide', desc: 'Step-by-step solutions from knowledge base' },
+            { name: 'Escalation Prevention', desc: 'Provide accurate answers to reduce escalations' }
+        ]
+    }
+};
+
+// 3D RAG visualization state
+let rag3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    documents: []
+};
+
 // Sample document database
 const documentDatabase = [
     { id: 1, title: "Return Policy", content: "Our company offers a 30-day return policy for all products. Items must be in original condition with tags attached. Refunds are processed within 5-7 business days.", topic: "refund" },
@@ -34,10 +83,174 @@ const queryVectors = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DRAG();
+    initRoleApplications();
     initPipelineDemo();
     initVectorDemo();
     initChunkingDemo();
 });
+
+// ============================================================================
+// 3D RAG Pipeline Visualization
+// ============================================================================
+
+function init3DRAG() {
+    const canvas = document.getElementById('rag3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    rag3D.mini3d = new Mini3D(canvas);
+    
+    // Initialize document nodes in 3D space
+    for (let i = 0; i < 20; i++) {
+        const angle = (i / 20) * Math.PI * 2;
+        const radius = 150 + Math.random() * 50;
+        rag3D.documents.push({
+            x: Math.cos(angle) * radius,
+            y: (Math.random() - 0.5) * 150,
+            z: Math.sin(angle) * radius,
+            relevant: false,
+            color: '#E67E22'
+        });
+    }
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        rag3D.rotationY -= 0.3;
+        render3DRAG();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        rag3D.rotationY += 0.3;
+        render3DRAG();
+    });
+    
+    document.getElementById('animateRAGBtn')?.addEventListener('click', () => {
+        if (!rag3D.animating) {
+            rag3D.animating = true;
+            rag3D.progress = 0;
+            animateRAGPipeline();
+        }
+    });
+    
+    render3DRAG();
+}
+
+function animateRAGPipeline() {
+    if (!rag3D.animating) return;
+    
+    rag3D.progress += 0.015;
+    rag3D.rotationY += 0.01;
+    
+    // Mark some documents as relevant during animation
+    if (rag3D.progress > 0.3 && rag3D.progress < 0.35) {
+        rag3D.documents.forEach((d, i) => {
+            d.relevant = i % 5 === 0;
+        });
+    }
+    
+    render3DRAG();
+    
+    if (rag3D.progress < 1) {
+        requestAnimationFrame(animateRAGPipeline);
+    } else {
+        rag3D.animating = false;
+        rag3D.documents.forEach(d => d.relevant = false);
+    }
+}
+
+function render3DRAG() {
+    const mini3d = rag3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, rag3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw query point at center
+    const queryRotated = mini3d.rotatePoint(0, 0, 0);
+    const queryProj = mini3d.project(queryRotated.x + centerX, queryRotated.y + centerY, queryRotated.z);
+    
+    const gradient = mini3d.ctx.createRadialGradient(queryProj.x, queryProj.y, 0, queryProj.x, queryProj.y, 40);
+    gradient.addColorStop(0, '#4A90D9');
+    gradient.addColorStop(0.7, '#3498DB');
+    gradient.addColorStop(1, 'transparent');
+    mini3d.ctx.fillStyle = gradient;
+    mini3d.ctx.beginPath();
+    mini3d.ctx.arc(queryProj.x, queryProj.y, 40, 0, Math.PI * 2);
+    mini3d.ctx.fill();
+    
+    mini3d.ctx.fillStyle = '#fff';
+    mini3d.ctx.font = 'bold 12px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('Query', queryProj.x, queryProj.y + 4);
+    
+    // Draw documents
+    rag3D.documents.forEach(doc => {
+        const rotated = mini3d.rotatePoint(doc.x, doc.y, doc.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Draw connection line if relevant
+        if (doc.relevant) {
+            mini3d.ctx.strokeStyle = 'rgba(80, 200, 120, 0.5)';
+            mini3d.ctx.lineWidth = 2;
+            mini3d.ctx.beginPath();
+            mini3d.ctx.moveTo(queryProj.x, queryProj.y);
+            mini3d.ctx.lineTo(proj.x, proj.y);
+            mini3d.ctx.stroke();
+        }
+        
+        mini3d.ctx.fillStyle = doc.relevant ? '#50C878' : doc.color;
+        mini3d.ctx.globalAlpha = 0.8 * proj.scale;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, (doc.relevant ? 12 : 8) * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+    });
+    
+    mini3d.ctx.globalAlpha = 1;
+    
+    // Draw stage label
+    mini3d.ctx.fillStyle = '#fff';
+    mini3d.ctx.font = 'bold 14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    let label = 'Knowledge Base';
+    if (rag3D.progress > 0.2 && rag3D.progress < 0.5) label = 'Searching...';
+    else if (rag3D.progress >= 0.5 && rag3D.progress < 0.8) label = 'Retrieving Documents';
+    else if (rag3D.progress >= 0.8) label = 'Generating Response';
+    mini3d.ctx.fillText(label, centerX, 30);
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('enterprise');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

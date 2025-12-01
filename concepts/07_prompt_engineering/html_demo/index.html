@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Prompt Transformation Visualization -->
+        <section class="demo-section">
+            <h2>3D Prompt Transformation</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch how your prompt transforms into AI understanding! Each component of your prompt adds dimensions to how the AI interprets your request.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Prompts are tokenized and embedded into high-dimensional space. Each component (role, task, format, constraints) shapes the attention patterns and output distribution.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="prompt3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">Rotate Left</button>
+                    <button class="canvas-btn" id="animatePromptBtn">Animate Flow</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Prompt Engineering in Action</h4>
+                <p>Select your role to see how prompt engineering transforms different workflows.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="writer">Content Writer</button>
+                <button class="role-btn" data-role="developer">Developer</button>
+                <button class="role-btn" data-role="analyst">Data Analyst</button>
+                <button class="role-btn" data-role="support">Customer Support</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Good vs Bad Prompts -->
         <section class="demo-section">
             <h2>Step 1: Good vs Bad Prompts</h2>
@@ -380,6 +424,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

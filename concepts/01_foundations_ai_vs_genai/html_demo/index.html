@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI vs Generative AI - Interactive Demo</title>
+    <title>AI vs Generative AI - Interactive 3D Demo</title>
     <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -20,6 +20,59 @@
             <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
+
+        <!-- 3D Visualization Section -->
+        <section class="demo-section">
+            <h2>3D Factory Visualization</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch a 3D visualization of two AI "factories". The <strong>Traditional AI factory</strong> sorts items into categories (like sorting mail). The <strong>Generative AI studio</strong> creates new content from your ideas. Drag to rotate the view!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>This 3D visualization shows the architectural difference: Traditional AI uses discriminative models (classification pipelines), while Generative AI uses generative models (content sampling from learned distributions).</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="factory3DCanvas" width="800" height="400"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">↺ Rotate Left</button>
+                    <button class="canvas-btn" id="autoRotateBtn">Auto Rotate</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate Right ↻</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications Section -->
+        <section class="demo-section">
+            <h2>Real-Time Applications by Role</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>How Can YOU Use AI?</h4>
+                <p>Select your role to see how AI can help in your daily work!</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="teacher">👩‍🏫 Teacher</button>
+                <button class="role-btn" data-role="marketer">📊 Marketer</button>
+                <button class="role-btn" data-role="developer">💻 Developer</button>
+                <button class="role-btn" data-role="doctor">🏥 Doctor</button>
+                <button class="role-btn" data-role="hr">👥 HR</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+                <div class="app-card traditional-app">
+                    <h4>Traditional AI</h4>
+                    <ul id="tradAppsList"></ul>
+                </div>
+                <div class="app-card generative-app">
+                    <h4>Generative AI</h4>
+                    <ul id="genAppsList"></ul>
+                </div>
+            </div>
+        </section>
 
         <!-- Main Animation Section -->
         <section class="demo-section">
@@ -246,6 +299,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

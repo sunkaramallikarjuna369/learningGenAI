@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Code Pipeline Visualization -->
+        <section class="demo-section">
+            <h2>3D Code Generation Pipeline</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch how AI transforms your ideas into code! See the pipeline from natural language input through AI processing to generated code output in 3D.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Code generation uses transformer models trained on billions of lines of code. The pipeline includes tokenization, context embedding, attention-based generation, and post-processing for syntax validation.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="code3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateCodeBtn">Animate Pipeline</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>AI in Software Development</h4>
+                <p>Select your development role to see specific AI use cases.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="frontend">Frontend</button>
+                <button class="role-btn" data-role="backend">Backend</button>
+                <button class="role-btn" data-role="devops">DevOps</button>
+                <button class="role-btn" data-role="data">Data Engineering</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Code Completion -->
         <section class="demo-section">
             <h2>Step 1: Code Completion</h2>
@@ -259,6 +303,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

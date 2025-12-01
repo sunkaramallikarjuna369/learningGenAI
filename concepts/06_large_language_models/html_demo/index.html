@@ -21,6 +21,51 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D LLM Architecture Visualization -->
+        <section class="demo-section">
+            <h2>3D LLM Architecture</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch how data flows through an LLM! Text enters, gets processed through many layers of transformers, and emerges as intelligent responses. Each layer adds more understanding.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>LLMs stack transformer blocks (attention + FFN) with residual connections. Each layer refines representations. GPT-4 has ~120 layers, each with multi-head attention and feed-forward networks.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="llm3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">Rotate Left</button>
+                    <button class="canvas-btn" id="animateFlowBtn">Animate Flow</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>LLMs in Action</h4>
+                <p>Select your role to see how LLMs are transforming different industries and workflows.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="business">Business</button>
+                <button class="role-btn" data-role="developer">Developer</button>
+                <button class="role-btn" data-role="creative">Creative</button>
+                <button class="role-btn" data-role="research">Research</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+                <!-- Applications will be populated by JavaScript -->
+            </div>
+        </section>
+
         <!-- Section 1: What Makes LLMs Large -->
         <section class="demo-section">
             <h2>Step 1: What Makes LLMs "Large"?</h2>
@@ -381,6 +426,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

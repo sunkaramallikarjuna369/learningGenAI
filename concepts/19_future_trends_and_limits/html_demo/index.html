@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D AI Evolution Visualization -->
+        <section class="demo-section">
+            <h2>3D AI Evolution</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch AI capabilities evolve over time in 3D! See how different aspects of AI (language, vision, reasoning) have grown and where they're heading.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>AI progress follows scaling laws (compute, data, parameters). Key milestones: Transformers (2017), GPT-3 (2020), ChatGPT (2022), GPT-4 (2023). Future directions include reasoning, agents, and multimodal understanding.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="future3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateFutureBtn">Animate Evolution</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Future AI Applications</h4>
+                <p>Select a domain to see emerging AI applications.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="work">Future of Work</button>
+                <button class="role-btn" data-role="science">Science</button>
+                <button class="role-btn" data-role="creative">Creative</button>
+                <button class="role-btn" data-role="personal">Personal AI</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Timeline -->
         <section class="demo-section">
             <h2>Step 1: AI Evolution Timeline</h2>
@@ -323,6 +367,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

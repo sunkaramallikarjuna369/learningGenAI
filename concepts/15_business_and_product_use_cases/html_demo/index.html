@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D ROI Visualization -->
+        <section class="demo-section">
+            <h2>3D Business Impact</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>See how GenAI creates value across three dimensions: time savings, cost reduction, and quality improvement. Watch the business impact grow as AI is adopted!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>ROI calculation factors: API costs ($0.01-0.10 per 1K tokens), development time, integration costs, time savings (typically 50-80% for content tasks), and quality improvements measured by user satisfaction and error rates.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="business3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateROIBtn">Animate Growth</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>GenAI Business Applications</h4>
+                <p>Select your department to see specific AI use cases.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="marketing">Marketing</button>
+                <button class="role-btn" data-role="sales">Sales</button>
+                <button class="role-btn" data-role="operations">Operations</button>
+                <button class="role-btn" data-role="finance">Finance</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Use Case Explorer -->
         <section class="demo-section">
             <h2>Step 1: Explore Use Cases</h2>
@@ -309,6 +353,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

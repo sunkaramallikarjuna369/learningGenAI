@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Agent Decision Tree -->
+        <section class="demo-section">
+            <h2>3D Agent Decision Tree</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch an AI agent think through decisions in 3D! Each branch represents a possible action, and the agent navigates through the tree to find the best solution.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Agents use planning algorithms (MCTS, beam search) to explore action spaces. The 3D tree shows the branching factor of decisions, with depth representing reasoning steps and width showing action alternatives.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="agent3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateAgentBtn">Animate Decision</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>AI Agents Across Industries</h4>
+                <p>Select your field to see how AI agents are automating complex workflows.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="business">Business</button>
+                <button class="role-btn" data-role="development">Development</button>
+                <button class="role-btn" data-role="research">Research</button>
+                <button class="role-btn" data-role="personal">Personal</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Agent vs Chatbot -->
         <section class="demo-section">
             <h2>Step 1: Agents vs Chatbots</h2>
@@ -324,6 +368,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

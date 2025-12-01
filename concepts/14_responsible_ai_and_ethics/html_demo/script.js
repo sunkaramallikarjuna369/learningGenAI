@@ -5,6 +5,55 @@
  * fairness, transparency, and ethical considerations.
  */
 
+// Role-based applications data
+const roleApplications = {
+    hiring: {
+        title: 'Hiring',
+        apps: [
+            { name: 'Bias Auditing', desc: 'Regular testing for demographic disparities in candidate screening' },
+            { name: 'Explainable Decisions', desc: 'Clear reasons for why candidates were selected or rejected' },
+            { name: 'Human Oversight', desc: 'Final hiring decisions made by humans, not algorithms' },
+            { name: 'Diverse Training Data', desc: 'Ensure training data represents all demographic groups fairly' }
+        ]
+    },
+    lending: {
+        title: 'Lending',
+        apps: [
+            { name: 'Fair Lending Compliance', desc: 'Ensure equal access to credit across protected groups' },
+            { name: 'Adverse Action Notices', desc: 'Clear explanations when loan applications are denied' },
+            { name: 'Disparate Impact Testing', desc: 'Regular audits for unintentional discrimination' },
+            { name: 'Alternative Data Review', desc: 'Careful evaluation of non-traditional credit factors' }
+        ]
+    },
+    healthcare: {
+        title: 'Healthcare',
+        apps: [
+            { name: 'Clinical Validation', desc: 'Rigorous testing across diverse patient populations' },
+            { name: 'Informed Consent', desc: 'Patients understand when AI is used in their care' },
+            { name: 'Physician Override', desc: 'Doctors can override AI recommendations' },
+            { name: 'Outcome Monitoring', desc: 'Track AI impact on health outcomes by demographic' }
+        ]
+    },
+    criminal: {
+        title: 'Criminal Justice',
+        apps: [
+            { name: 'Risk Assessment Audits', desc: 'Regular testing for racial and socioeconomic bias' },
+            { name: 'Transparency Requirements', desc: 'Defendants can understand and challenge AI assessments' },
+            { name: 'Human Decision-Making', desc: 'Judges make final decisions, AI provides information only' },
+            { name: 'Recidivism Accuracy', desc: 'Validate predictions against actual outcomes' }
+        ]
+    }
+};
+
+// 3D Ethics visualization state
+let ethics3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    principles: []
+};
+
 // Principle details
 const principleDetails = {
     fairness: {
@@ -61,10 +110,175 @@ const mitigationData = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DEthics();
+    initRoleApplications();
     initPrinciplesDemo();
     initBiasDemo();
     initScenariosDemo();
 });
+
+// ============================================================================
+// 3D Ethics Balance Visualization
+// ============================================================================
+
+function init3DEthics() {
+    const canvas = document.getElementById('ethics3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    ethics3D.mini3d = new Mini3D(canvas);
+    
+    // Create principle nodes in 3D space
+    const principleData = [
+        { name: 'Fairness', color: '#4A90D9', angle: 0 },
+        { name: 'Transparency', color: '#50C878', angle: 1.05 },
+        { name: 'Privacy', color: '#9B59B6', angle: 2.09 },
+        { name: 'Accountability', color: '#E67E22', angle: 3.14 },
+        { name: 'Safety', color: '#E74C3C', angle: 4.19 },
+        { name: 'Human-Centered', color: '#F1C40F', angle: 5.24 }
+    ];
+    
+    const radius = 150;
+    principleData.forEach(p => {
+        ethics3D.principles.push({
+            x: Math.cos(p.angle) * radius,
+            y: (Math.random() - 0.5) * 50,
+            z: Math.sin(p.angle) * radius,
+            name: p.name,
+            color: p.color,
+            pulse: Math.random()
+        });
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        ethics3D.rotationY -= 0.3;
+        render3DEthics();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        ethics3D.rotationY += 0.3;
+        render3DEthics();
+    });
+    
+    document.getElementById('animateEthicsBtn')?.addEventListener('click', () => {
+        if (!ethics3D.animating) {
+            ethics3D.animating = true;
+            ethics3D.progress = 0;
+            animateEthicsBalance();
+        }
+    });
+    
+    render3DEthics();
+}
+
+function animateEthicsBalance() {
+    if (!ethics3D.animating) return;
+    
+    ethics3D.progress += 0.02;
+    ethics3D.rotationY += 0.02;
+    
+    // Pulse principles
+    ethics3D.principles.forEach(p => {
+        p.pulse += 0.05;
+    });
+    
+    render3DEthics();
+    
+    if (ethics3D.progress < 1) {
+        requestAnimationFrame(animateEthicsBalance);
+    } else {
+        ethics3D.animating = false;
+    }
+}
+
+function render3DEthics() {
+    const mini3d = ethics3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, ethics3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw central "AI" sphere
+    const centerRotated = mini3d.rotatePoint(0, 0, 0);
+    const centerProj = mini3d.project(centerRotated.x + centerX, centerRotated.y + centerY, centerRotated.z);
+    
+    const gradient = mini3d.ctx.createRadialGradient(centerProj.x, centerProj.y, 0, centerProj.x, centerProj.y, 40);
+    gradient.addColorStop(0, '#4A90D9');
+    gradient.addColorStop(0.7, '#3498DB');
+    gradient.addColorStop(1, 'transparent');
+    mini3d.ctx.fillStyle = gradient;
+    mini3d.ctx.beginPath();
+    mini3d.ctx.arc(centerProj.x, centerProj.y, 40, 0, Math.PI * 2);
+    mini3d.ctx.fill();
+    
+    mini3d.ctx.fillStyle = '#fff';
+    mini3d.ctx.font = 'bold 14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('AI', centerProj.x, centerProj.y + 5);
+    
+    // Draw connections and principles
+    ethics3D.principles.forEach((p, i) => {
+        const rotated = mini3d.rotatePoint(p.x, p.y, p.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Draw connection line
+        mini3d.ctx.strokeStyle = `${p.color}66`;
+        mini3d.ctx.lineWidth = 2;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(centerProj.x, centerProj.y);
+        mini3d.ctx.lineTo(proj.x, proj.y);
+        mini3d.ctx.stroke();
+        
+        // Draw principle sphere
+        const pulseSize = 25 + Math.sin(p.pulse) * 5;
+        const pGradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, pulseSize * proj.scale);
+        pGradient.addColorStop(0, p.color);
+        pGradient.addColorStop(1, 'transparent');
+        
+        mini3d.ctx.fillStyle = pGradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, pulseSize * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `${9 * proj.scale}px Arial`;
+        mini3d.ctx.fillText(p.name, proj.x, proj.y + 4);
+    });
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('hiring');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

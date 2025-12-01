@@ -5,6 +5,57 @@
  * learn from data, and use activation functions.
  */
 
+// Role-based applications data
+const roleApplications = {
+    healthcare: {
+        title: 'Healthcare Applications',
+        apps: [
+            { name: 'Medical Image Analysis', desc: 'Detecting tumors, fractures, and abnormalities in X-rays, MRIs, and CT scans' },
+            { name: 'Drug Discovery', desc: 'Predicting molecular interactions and identifying potential drug candidates' },
+            { name: 'Patient Risk Assessment', desc: 'Predicting patient outcomes and readmission risks' },
+            { name: 'ECG Analysis', desc: 'Detecting heart arrhythmias and cardiac conditions from ECG signals' }
+        ]
+    },
+    finance: {
+        title: 'Finance Applications',
+        apps: [
+            { name: 'Fraud Detection', desc: 'Identifying suspicious transactions and fraudulent activities in real-time' },
+            { name: 'Credit Scoring', desc: 'Assessing creditworthiness based on multiple financial factors' },
+            { name: 'Algorithmic Trading', desc: 'Making split-second trading decisions based on market patterns' },
+            { name: 'Risk Management', desc: 'Predicting market volatility and portfolio risks' }
+        ]
+    },
+    retail: {
+        title: 'Retail Applications',
+        apps: [
+            { name: 'Recommendation Systems', desc: 'Suggesting products based on browsing and purchase history' },
+            { name: 'Demand Forecasting', desc: 'Predicting inventory needs and seasonal trends' },
+            { name: 'Customer Segmentation', desc: 'Grouping customers by behavior for targeted marketing' },
+            { name: 'Price Optimization', desc: 'Dynamic pricing based on demand, competition, and inventory' }
+        ]
+    },
+    manufacturing: {
+        title: 'Manufacturing Applications',
+        apps: [
+            { name: 'Predictive Maintenance', desc: 'Forecasting equipment failures before they occur' },
+            { name: 'Quality Control', desc: 'Detecting defects in products using computer vision' },
+            { name: 'Supply Chain Optimization', desc: 'Optimizing logistics and reducing waste' },
+            { name: 'Process Optimization', desc: 'Fine-tuning manufacturing parameters for efficiency' }
+        ]
+    }
+};
+
+// 3D Network visualization state
+let network3D = {
+    mini3d: null,
+    rotationY: 0,
+    autoRotate: false,
+    signalProgress: 0,
+    isAnimating: false,
+    layers: [4, 6, 6, 4, 2],
+    nodePositions: []
+};
+
 // State
 let networkState = {
     currentStep: 0,
@@ -22,11 +73,226 @@ let trainingState = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DNetwork();
+    initRoleApplications();
     initSingleNeuron();
     initNetworkVisualization();
     initLearningDemo();
     initActivationFunctions();
 });
+
+// ============================================================================
+// 3D Neural Network Visualization
+// ============================================================================
+
+function init3DNetwork() {
+    const canvas = document.getElementById('network3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    network3D.mini3d = new Mini3D(canvas);
+    
+    // Calculate node positions for each layer
+    calculateNodePositions();
+    
+    // Set up controls
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        network3D.rotationY -= 0.3;
+        render3DNetwork();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        network3D.rotationY += 0.3;
+        render3DNetwork();
+    });
+    
+    document.getElementById('pulseSignalBtn')?.addEventListener('click', () => {
+        if (!network3D.isAnimating) {
+            network3D.signalProgress = 0;
+            network3D.isAnimating = true;
+            animateSignalPulse();
+        }
+    });
+    
+    // Initial render
+    render3DNetwork();
+}
+
+function calculateNodePositions() {
+    network3D.nodePositions = [];
+    const layerSpacing = 120;
+    const startX = -((network3D.layers.length - 1) * layerSpacing) / 2;
+    
+    network3D.layers.forEach((nodeCount, layerIndex) => {
+        const layerPositions = [];
+        const nodeSpacing = 60;
+        const startY = -((nodeCount - 1) * nodeSpacing) / 2;
+        
+        for (let i = 0; i < nodeCount; i++) {
+            layerPositions.push({
+                x: startX + layerIndex * layerSpacing,
+                y: startY + i * nodeSpacing,
+                z: 0
+            });
+        }
+        network3D.nodePositions.push(layerPositions);
+    });
+}
+
+function render3DNetwork() {
+    const mini3d = network3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, network3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw connections first (behind nodes)
+    for (let l = 0; l < network3D.nodePositions.length - 1; l++) {
+        const currentLayer = network3D.nodePositions[l];
+        const nextLayer = network3D.nodePositions[l + 1];
+        
+        currentLayer.forEach((fromNode, fromIdx) => {
+            nextLayer.forEach((toNode, toIdx) => {
+                const from3D = mini3d.rotatePoint(fromNode.x, fromNode.y, fromNode.z);
+                const to3D = mini3d.rotatePoint(toNode.x, toNode.y, toNode.z);
+                
+                const fromProj = mini3d.project(from3D.x + centerX, from3D.y + centerY, from3D.z);
+                const toProj = mini3d.project(to3D.x + centerX, to3D.y + centerY, to3D.z);
+                
+                // Determine if this connection should be highlighted
+                let alpha = 0.15;
+                let color = '#4A90D9';
+                
+                if (network3D.isAnimating) {
+                    const connectionProgress = l / (network3D.layers.length - 1);
+                    if (network3D.signalProgress > connectionProgress && 
+                        network3D.signalProgress < connectionProgress + 0.3) {
+                        alpha = 0.8;
+                        color = '#50C878';
+                    }
+                }
+                
+                mini3d.ctx.strokeStyle = color;
+                mini3d.ctx.globalAlpha = alpha;
+                mini3d.ctx.lineWidth = 1;
+                mini3d.ctx.beginPath();
+                mini3d.ctx.moveTo(fromProj.x, fromProj.y);
+                mini3d.ctx.lineTo(toProj.x, toProj.y);
+                mini3d.ctx.stroke();
+            });
+        });
+    }
+    
+    mini3d.ctx.globalAlpha = 1;
+    
+    // Draw nodes
+    const layerColors = ['#4A90D9', '#9B59B6', '#9B59B6', '#9B59B6', '#50C878'];
+    const layerLabels = ['Input', 'Hidden 1', 'Hidden 2', 'Hidden 3', 'Output'];
+    
+    network3D.nodePositions.forEach((layer, layerIndex) => {
+        layer.forEach((node, nodeIndex) => {
+            const rotated = mini3d.rotatePoint(node.x, node.y, node.z);
+            const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+            
+            // Determine node state
+            let nodeColor = layerColors[layerIndex] || '#4A90D9';
+            let nodeSize = 12 * proj.scale;
+            
+            if (network3D.isAnimating) {
+                const layerProgress = layerIndex / (network3D.layers.length - 1);
+                if (Math.abs(network3D.signalProgress - layerProgress) < 0.15) {
+                    nodeColor = '#FFB347';
+                    nodeSize = 16 * proj.scale;
+                }
+            }
+            
+            // Draw node glow
+            const gradient = mini3d.ctx.createRadialGradient(
+                proj.x, proj.y, 0,
+                proj.x, proj.y, nodeSize * 2
+            );
+            gradient.addColorStop(0, nodeColor);
+            gradient.addColorStop(1, 'transparent');
+            
+            mini3d.ctx.fillStyle = gradient;
+            mini3d.ctx.beginPath();
+            mini3d.ctx.arc(proj.x, proj.y, nodeSize * 2, 0, Math.PI * 2);
+            mini3d.ctx.fill();
+            
+            // Draw node
+            mini3d.ctx.fillStyle = nodeColor;
+            mini3d.ctx.beginPath();
+            mini3d.ctx.arc(proj.x, proj.y, nodeSize, 0, Math.PI * 2);
+            mini3d.ctx.fill();
+            
+            mini3d.ctx.strokeStyle = '#fff';
+            mini3d.ctx.lineWidth = 2;
+            mini3d.ctx.stroke();
+        });
+        
+        // Draw layer label
+        if (layer.length > 0) {
+            const firstNode = layer[0];
+            const rotated = mini3d.rotatePoint(firstNode.x, firstNode.y - 50, firstNode.z);
+            const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY - 80, rotated.z);
+            
+            mini3d.ctx.fillStyle = '#fff';
+            mini3d.ctx.font = '14px Arial';
+            mini3d.ctx.textAlign = 'center';
+            mini3d.ctx.fillText(layerLabels[layerIndex] || `Layer ${layerIndex}`, proj.x, proj.y);
+        }
+    });
+}
+
+function animateSignalPulse() {
+    if (!network3D.isAnimating) return;
+    
+    network3D.signalProgress += 0.02;
+    render3DNetwork();
+    
+    if (network3D.signalProgress < 1.3) {
+        requestAnimationFrame(animateSignalPulse);
+    } else {
+        network3D.isAnimating = false;
+        network3D.signalProgress = 0;
+        render3DNetwork();
+    }
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    // Initialize with first role
+    updateApplications('healthcare');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {
