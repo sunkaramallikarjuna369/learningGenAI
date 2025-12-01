@@ -21,6 +21,51 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Neural Network Visualization -->
+        <section class="demo-section">
+            <h2>3D Neural Network Visualization</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What You're Seeing</h4>
+                <p>This 3D view shows how a neural network is structured in layers. Watch the signals (colored pulses) flow from inputs through hidden layers to outputs. Each connection has a "weight" that determines how strongly neurons influence each other.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical View</h4>
+                <p>This visualization shows a feedforward MLP with configurable layers. The signal propagation demonstrates forward pass computation: a[l] = g(W[l]a[l-1] + b[l]). Connection thickness represents weight magnitude, and node brightness shows activation values.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="network3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">← Rotate</button>
+                    <button class="canvas-btn" id="pulseSignalBtn">Pulse Signal</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Neural Networks in Action</h4>
+                <p>Neural networks power countless applications across industries. Select your role to see how neural networks are used in your field.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="healthcare">Healthcare</button>
+                <button class="role-btn" data-role="finance">Finance</button>
+                <button class="role-btn" data-role="retail">Retail</button>
+                <button class="role-btn" data-role="manufacturing">Manufacturing</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+                <!-- Applications will be populated by JavaScript -->
+            </div>
+        </section>
+
         <!-- Section 1: Single Neuron -->
         <section class="demo-section">
             <h2>Step 1: The Single Neuron</h2>
@@ -306,6 +351,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

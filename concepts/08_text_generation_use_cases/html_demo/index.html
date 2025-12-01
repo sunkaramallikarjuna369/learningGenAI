@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Text Generation Pipeline -->
+        <section class="demo-section">
+            <h2>3D Text Generation Pipeline</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch text flow through the AI generation pipeline! From input to tokenization to generation to output - see each step in 3D.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Text generation involves tokenization, embedding lookup, transformer forward pass, logit computation, sampling strategy (temperature, top-k, top-p), and detokenization.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="textGen3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">Rotate Left</button>
+                    <button class="canvas-btn" id="animateGenBtn">Animate Pipeline</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Text Generation Across Industries</h4>
+                <p>Select your industry to see how text generation is transforming workflows.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="marketing">Marketing</button>
+                <button class="role-btn" data-role="education">Education</button>
+                <button class="role-btn" data-role="healthcare">Healthcare</button>
+                <button class="role-btn" data-role="legal">Legal</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Use Case Explorer -->
         <section class="demo-section">
             <h2>Step 1: Explore Use Cases</h2>
@@ -386,6 +430,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

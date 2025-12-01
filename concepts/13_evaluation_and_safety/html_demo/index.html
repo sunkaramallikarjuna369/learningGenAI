@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Metrics Visualization -->
+        <section class="demo-section">
+            <h2>3D Evaluation Metrics</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>See AI quality metrics visualized in 3D! Each axis represents a different quality dimension - accuracy, safety, and helpfulness. Good AI systems score high on all three.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Multi-dimensional evaluation uses metrics like BLEU, ROUGE, BERTScore for quality, toxicity classifiers for safety, and human preference ratings for helpfulness. The 3D space shows trade-offs between dimensions.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="metrics3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateMetricsBtn">Animate Evaluation</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>AI Safety Across Industries</h4>
+                <p>Select your field to see how evaluation and safety measures are applied.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="enterprise">Enterprise</button>
+                <button class="role-btn" data-role="healthcare">Healthcare</button>
+                <button class="role-btn" data-role="finance">Finance</button>
+                <button class="role-btn" data-role="content">Content Platforms</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Common AI Problems -->
         <section class="demo-section">
             <h2>Step 1: Common AI Problems</h2>
@@ -362,6 +406,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

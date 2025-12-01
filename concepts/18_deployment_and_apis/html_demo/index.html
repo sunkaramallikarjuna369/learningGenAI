@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Deployment Architecture -->
+        <section class="demo-section">
+            <h2>3D Deployment Architecture</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>See how AI systems are deployed in 3D! Watch requests flow from users through load balancers to AI models and back with responses.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Production deployments use load balancers for traffic distribution, API gateways for authentication/rate limiting, model servers (TensorRT, vLLM) for inference, and caching layers for performance optimization.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="deploy3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateDeployBtn">Animate Request</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Deployment Scenarios</h4>
+                <p>Select your deployment scenario to see specific considerations.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="startup">Startup</button>
+                <button class="role-btn" data-role="enterprise">Enterprise</button>
+                <button class="role-btn" data-role="realtime">Real-time</button>
+                <button class="role-btn" data-role="privacy">Privacy-First</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: API Request Flow -->
         <section class="demo-section">
             <h2>Step 1: How APIs Work</h2>
@@ -321,6 +365,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

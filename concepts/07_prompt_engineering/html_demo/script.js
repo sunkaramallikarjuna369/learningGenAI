@@ -5,14 +5,222 @@
  * good vs bad prompts, prompt components, and advanced techniques.
  */
 
+// Role-based applications data
+const roleApplications = {
+    writer: {
+        title: 'Content Writer',
+        apps: [
+            { name: 'Blog Post Generation', desc: 'Create SEO-optimized articles with specific tone and structure' },
+            { name: 'Social Media Content', desc: 'Platform-specific posts with hashtags and engagement hooks' },
+            { name: 'Email Campaigns', desc: 'Personalized marketing emails with A/B test variations' },
+            { name: 'Product Descriptions', desc: 'Compelling copy that highlights features and benefits' }
+        ]
+    },
+    developer: {
+        title: 'Developer',
+        apps: [
+            { name: 'Code Generation', desc: 'Generate functions, classes, and boilerplate with specific patterns' },
+            { name: 'Documentation', desc: 'Auto-generate API docs, README files, and code comments' },
+            { name: 'Bug Analysis', desc: 'Describe errors and get debugging suggestions' },
+            { name: 'Code Review', desc: 'Get feedback on code quality and best practices' }
+        ]
+    },
+    analyst: {
+        title: 'Data Analyst',
+        apps: [
+            { name: 'SQL Query Generation', desc: 'Convert natural language questions to SQL queries' },
+            { name: 'Data Interpretation', desc: 'Explain statistical results in plain language' },
+            { name: 'Report Summarization', desc: 'Condense lengthy reports into executive summaries' },
+            { name: 'Visualization Suggestions', desc: 'Get chart type recommendations for your data' }
+        ]
+    },
+    support: {
+        title: 'Customer Support',
+        apps: [
+            { name: 'Response Templates', desc: 'Generate empathetic, helpful responses to common issues' },
+            { name: 'Ticket Summarization', desc: 'Quickly understand long customer conversation threads' },
+            { name: 'Knowledge Base Articles', desc: 'Create self-service help documentation' },
+            { name: 'Escalation Analysis', desc: 'Identify when issues need human intervention' }
+        ]
+    }
+};
+
+// 3D Prompt visualization state
+let prompt3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    flowProgress: 0
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DPrompt();
+    initRoleApplications();
     initComparison();
     initPromptBuilder();
     initTechniques();
     initPromptLab();
 });
+
+// ============================================================================
+// 3D Prompt Visualization
+// ============================================================================
+
+function init3DPrompt() {
+    const canvas = document.getElementById('prompt3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    prompt3D.mini3d = new Mini3D(canvas);
+    
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        prompt3D.rotationY -= 0.3;
+        render3DPrompt();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        prompt3D.rotationY += 0.3;
+        render3DPrompt();
+    });
+    
+    document.getElementById('animatePromptBtn')?.addEventListener('click', () => {
+        if (!prompt3D.animating) {
+            prompt3D.animating = true;
+            prompt3D.flowProgress = 0;
+            animatePromptFlow();
+        }
+    });
+    
+    render3DPrompt();
+}
+
+function animatePromptFlow() {
+    if (!prompt3D.animating) return;
+    
+    prompt3D.flowProgress += 0.02;
+    render3DPrompt();
+    
+    if (prompt3D.flowProgress < 1) {
+        requestAnimationFrame(animatePromptFlow);
+    } else {
+        prompt3D.animating = false;
+        prompt3D.flowProgress = 0;
+    }
+}
+
+function render3DPrompt() {
+    const mini3d = prompt3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, prompt3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    const components = [
+        { name: 'Role', color: '#4A90D9', z: -200 },
+        { name: 'Task', color: '#50C878', z: -100 },
+        { name: 'Format', color: '#E67E22', z: 0 },
+        { name: 'Examples', color: '#9B59B6', z: 100 },
+        { name: 'Constraints', color: '#E74C3C', z: 200 }
+    ];
+    
+    // Draw connecting lines
+    for (let i = 0; i < components.length - 1; i++) {
+        const c1 = components[i];
+        const c2 = components[i + 1];
+        
+        const p1 = mini3d.rotatePoint(0, 0, c1.z);
+        const p2 = mini3d.rotatePoint(0, 0, c2.z);
+        
+        const proj1 = mini3d.project(p1.x + centerX, p1.y + centerY, p1.z);
+        const proj2 = mini3d.project(p2.x + centerX, p2.y + centerY, p2.z);
+        
+        mini3d.ctx.strokeStyle = '#666';
+        mini3d.ctx.lineWidth = 2;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(proj1.x, proj1.y);
+        mini3d.ctx.lineTo(proj2.x, proj2.y);
+        mini3d.ctx.stroke();
+    }
+    
+    // Draw component spheres
+    components.forEach((comp, i) => {
+        const rotated = mini3d.rotatePoint(0, 0, comp.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Glow effect
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 50 * proj.scale);
+        gradient.addColorStop(0, comp.color);
+        gradient.addColorStop(1, 'transparent');
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 50 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        // Solid sphere
+        mini3d.ctx.fillStyle = comp.color;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 30 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        // Label
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `bold ${14 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.textBaseline = 'middle';
+        mini3d.ctx.fillText(comp.name, proj.x, proj.y);
+    });
+    
+    // Animate flow particles
+    if (prompt3D.animating) {
+        const particleZ = (prompt3D.flowProgress - 0.5) * 500;
+        const rotated = mini3d.rotatePoint(0, 0, particleZ);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 20);
+        gradient.addColorStop(0, '#fff');
+        gradient.addColorStop(1, 'transparent');
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 20, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+    }
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('writer');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

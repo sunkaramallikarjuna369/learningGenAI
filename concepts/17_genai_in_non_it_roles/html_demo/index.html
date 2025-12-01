@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Workflow Visualization -->
+        <section class="demo-section">
+            <h2>3D AI Workflow</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>See how AI fits into your daily workflow! Watch tasks flow from input through AI processing to polished output, saving you hours of work.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Non-technical AI workflows typically use prompt templates, role-based system prompts, and output formatting. Key success factors: clear instructions, domain context, and iterative refinement.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="workflow3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateWorkflowBtn">Animate Workflow</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>AI for Every Profession</h4>
+                <p>Select your role to see specific AI use cases.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="teacher">Education</button>
+                <button class="role-btn" data-role="marketing">Marketing</button>
+                <button class="role-btn" data-role="hr">HR</button>
+                <button class="role-btn" data-role="legal">Legal</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: Role Explorer -->
         <section class="demo-section">
             <h2>Step 1: Find Your Role</h2>
@@ -304,6 +348,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

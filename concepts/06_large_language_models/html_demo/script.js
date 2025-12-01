@@ -5,6 +5,54 @@
  * training pipeline, and capabilities/limitations.
  */
 
+// Role-based applications data
+const roleApplications = {
+    business: {
+        title: 'Business Applications',
+        apps: [
+            { name: 'Customer Service Automation', desc: 'Deploy AI chatbots that handle 80% of customer inquiries 24/7' },
+            { name: 'Document Analysis', desc: 'Extract insights from contracts, reports, and legal documents instantly' },
+            { name: 'Market Research', desc: 'Analyze competitor data, trends, and customer feedback at scale' },
+            { name: 'Email & Communication', desc: 'Draft professional emails, proposals, and presentations' }
+        ]
+    },
+    developer: {
+        title: 'Developer Applications',
+        apps: [
+            { name: 'Code Generation', desc: 'Generate boilerplate code, functions, and entire modules from descriptions' },
+            { name: 'Code Review & Debugging', desc: 'Find bugs, suggest improvements, and explain complex code' },
+            { name: 'Documentation', desc: 'Auto-generate API docs, README files, and code comments' },
+            { name: 'Test Generation', desc: 'Create unit tests, integration tests, and edge case scenarios' }
+        ]
+    },
+    creative: {
+        title: 'Creative Applications',
+        apps: [
+            { name: 'Content Writing', desc: 'Generate blog posts, articles, social media content, and ad copy' },
+            { name: 'Storytelling', desc: 'Create narratives, character dialogues, and plot outlines' },
+            { name: 'Brainstorming', desc: 'Generate creative ideas, concepts, and alternative approaches' },
+            { name: 'Editing & Refinement', desc: 'Improve tone, style, and clarity of existing content' }
+        ]
+    },
+    research: {
+        title: 'Research Applications',
+        apps: [
+            { name: 'Literature Review', desc: 'Summarize papers, identify key findings, and find connections' },
+            { name: 'Data Analysis', desc: 'Interpret results, suggest statistical methods, and explain findings' },
+            { name: 'Hypothesis Generation', desc: 'Propose research questions and experimental designs' },
+            { name: 'Grant Writing', desc: 'Draft proposals, abstracts, and research summaries' }
+        ]
+    }
+};
+
+// 3D LLM visualization state
+let llm3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    flowProgress: 0
+};
+
 // Model data for scale comparison
 const models = [
     { name: 'GPT-2', params: '1.5B', paramsNum: 1.5, year: 2019, color: '#3498DB' },
@@ -82,11 +130,184 @@ let isAutoGenerating = false;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DLLM();
+    initRoleApplications();
     initScaleComparison();
     initGeneration();
     initTrainingPipeline();
     initCapabilities();
 });
+
+// ============================================================================
+// 3D LLM Architecture Visualization
+// ============================================================================
+
+function init3DLLM() {
+    const canvas = document.getElementById('llm3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    llm3D.mini3d = new Mini3D(canvas);
+    
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        llm3D.rotationY -= 0.3;
+        render3DLLM();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        llm3D.rotationY += 0.3;
+        render3DLLM();
+    });
+    
+    document.getElementById('animateFlowBtn')?.addEventListener('click', () => {
+        if (!llm3D.animating) {
+            llm3D.animating = true;
+            llm3D.flowProgress = 0;
+            animateLLMFlow();
+        }
+    });
+    
+    render3DLLM();
+}
+
+function animateLLMFlow() {
+    if (!llm3D.animating) return;
+    
+    llm3D.flowProgress += 0.015;
+    render3DLLM();
+    
+    if (llm3D.flowProgress < 1) {
+        requestAnimationFrame(animateLLMFlow);
+    } else {
+        llm3D.animating = false;
+        llm3D.flowProgress = 0;
+    }
+}
+
+function render3DLLM() {
+    const mini3d = llm3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, llm3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    const layers = 6;
+    const layerSpacing = 80;
+    const layerWidth = 60;
+    const layerHeight = 200;
+    
+    // Draw transformer layers as 3D blocks
+    for (let i = 0; i < layers; i++) {
+        const z = (i - layers/2) * layerSpacing;
+        const color = `hsl(${210 + i * 20}, 70%, 50%)`;
+        
+        // Draw layer block
+        const corners = [
+            { x: -layerWidth/2, y: -layerHeight/2, z: z - 20 },
+            { x: layerWidth/2, y: -layerHeight/2, z: z - 20 },
+            { x: layerWidth/2, y: layerHeight/2, z: z - 20 },
+            { x: -layerWidth/2, y: layerHeight/2, z: z - 20 },
+            { x: -layerWidth/2, y: -layerHeight/2, z: z + 20 },
+            { x: layerWidth/2, y: -layerHeight/2, z: z + 20 },
+            { x: layerWidth/2, y: layerHeight/2, z: z + 20 },
+            { x: -layerWidth/2, y: layerHeight/2, z: z + 20 }
+        ];
+        
+        // Project corners
+        const projected = corners.map(c => {
+            const rot = mini3d.rotatePoint(c.x, c.y, c.z);
+            return mini3d.project(rot.x + centerX, rot.y + centerY, rot.z);
+        });
+        
+        // Draw faces
+        mini3d.ctx.fillStyle = color;
+        mini3d.ctx.globalAlpha = 0.7;
+        
+        // Front face
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(projected[4].x, projected[4].y);
+        mini3d.ctx.lineTo(projected[5].x, projected[5].y);
+        mini3d.ctx.lineTo(projected[6].x, projected[6].y);
+        mini3d.ctx.lineTo(projected[7].x, projected[7].y);
+        mini3d.ctx.closePath();
+        mini3d.ctx.fill();
+        
+        // Top face
+        mini3d.ctx.fillStyle = `hsl(${210 + i * 20}, 70%, 60%)`;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(projected[0].x, projected[0].y);
+        mini3d.ctx.lineTo(projected[1].x, projected[1].y);
+        mini3d.ctx.lineTo(projected[5].x, projected[5].y);
+        mini3d.ctx.lineTo(projected[4].x, projected[4].y);
+        mini3d.ctx.closePath();
+        mini3d.ctx.fill();
+        
+        // Layer label
+        mini3d.ctx.globalAlpha = 1;
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = '12px Arial';
+        mini3d.ctx.textAlign = 'center';
+        const labelPos = mini3d.project(centerX, centerY + layerHeight/2 + 20, 0);
+        mini3d.ctx.fillText(`Layer ${i + 1}`, projected[6].x, projected[6].y + 15);
+    }
+    
+    // Draw data flow particles
+    if (llm3D.animating) {
+        const numParticles = 5;
+        for (let p = 0; p < numParticles; p++) {
+            const particleProgress = (llm3D.flowProgress + p * 0.15) % 1;
+            const z = (particleProgress - 0.5) * layers * layerSpacing;
+            const y = Math.sin(particleProgress * Math.PI * 4) * 30;
+            
+            const rot = mini3d.rotatePoint(0, y, z);
+            const proj = mini3d.project(rot.x + centerX, rot.y + centerY, rot.z);
+            
+            const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 15);
+            gradient.addColorStop(0, '#50C878');
+            gradient.addColorStop(1, 'transparent');
+            mini3d.ctx.fillStyle = gradient;
+            mini3d.ctx.beginPath();
+            mini3d.ctx.arc(proj.x, proj.y, 15, 0, Math.PI * 2);
+            mini3d.ctx.fill();
+        }
+    }
+    
+    mini3d.ctx.globalAlpha = 1;
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('business');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

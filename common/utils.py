@@ -1,373 +1,700 @@
 """
-Generative AI 360° - Shared Utilities
-=====================================
-Common helper functions for visualizations, demos, and educational content.
+Generative AI 360° - Shared Utility Functions
+
+This module provides helper functions used across notebooks for:
+- Visualization helpers
+- Data loading utilities
+- Simple UI components for notebooks
+- Common GenAI operations
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from IPython.display import HTML, display
-import warnings
-warnings.filterwarnings('ignore')
+import matplotlib.colors as mcolors
+from matplotlib.patches import FancyBboxPatch
+import plotly.graph_objects as go
+import plotly.express as px
+from IPython.display import display, HTML, clear_output
+import ipywidgets as widgets
+from typing import List, Dict, Tuple, Optional, Union, Any
+import json
+import os
 
-# Color scheme for consistent styling
+
+# =============================================================================
+# Color Schemes and Styling
+# =============================================================================
+
 COLORS = {
-    'primary': '#4a90d9',
-    'secondary': '#50c878',
-    'accent': '#ff6b6b',
-    'background': '#1a1a2e',
-    'text': '#ffffff',
-    'muted': '#8892b0',
-    'success': '#00ff88',
-    'warning': '#ffaa00',
-    'error': '#ff4444'
+    'primary': '#4A90D9',
+    'secondary': '#7B68EE',
+    'accent': '#50C878',
+    'warning': '#FFB347',
+    'error': '#FF6B6B',
+    'text': '#333333',
+    'background': '#F8F9FA',
+    'highlight': '#FFE066',
 }
 
-# ============================================
-# Text and Token Visualization Helpers
-# ============================================
+TRACK_COLORS = {
+    'non_technical': '#4ECDC4',
+    'technical': '#FF6B6B',
+}
 
-def visualize_tokens(text, tokens, token_ids=None):
+
+# =============================================================================
+# Visualization Helpers
+# =============================================================================
+
+def create_token_visualization(text: str, tokens: List[str], 
+                                probabilities: Optional[List[float]] = None) -> go.Figure:
     """
-    Visualize how text is split into tokens with color coding.
+    Create an interactive visualization of tokenized text with optional probabilities.
     
     Args:
-        text: Original text string
-        tokens: List of token strings
-        token_ids: Optional list of token IDs
+        text: Original text
+        tokens: List of tokens
+        probabilities: Optional list of probabilities for each token
+    
+    Returns:
+        Plotly figure object
     """
-    colors = plt.cm.Set3(np.linspace(0, 1, len(tokens)))
+    colors = px.colors.qualitative.Set3[:len(tokens)]
     
-    fig, ax = plt.subplots(figsize=(14, 3))
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 2)
-    ax.axis('off')
+    fig = go.Figure()
     
-    x_pos = 0.5
+    x_pos = 0
     for i, token in enumerate(tokens):
-        width = len(token) * 0.15 + 0.3
-        rect = plt.Rectangle((x_pos, 0.8), width, 0.8, 
-                             facecolor=colors[i], edgecolor='white', linewidth=2)
-        ax.add_patch(rect)
-        ax.text(x_pos + width/2, 1.2, token.replace('▁', '_'), 
-               ha='center', va='center', fontsize=10, fontweight='bold')
-        if token_ids is not None:
-            ax.text(x_pos + width/2, 0.5, f'ID: {token_ids[i]}', 
-                   ha='center', va='center', fontsize=8, color='gray')
-        x_pos += width + 0.1
+        width = len(token) * 0.1 + 0.2
+        
+        hover_text = f"Token: '{token}'"
+        if probabilities:
+            hover_text += f"<br>Probability: {probabilities[i]:.4f}"
+        
+        fig.add_trace(go.Bar(
+            x=[x_pos + width/2],
+            y=[1],
+            width=[width],
+            name=token,
+            text=[token],
+            textposition='inside',
+            hovertext=[hover_text],
+            hoverinfo='text',
+            marker_color=colors[i % len(colors)],
+            showlegend=False
+        ))
+        x_pos += width + 0.05
     
-    ax.set_title(f'Tokenization: "{text}"', fontsize=12, pad=20)
-    plt.tight_layout()
+    fig.update_layout(
+        title="Token Visualization",
+        xaxis=dict(showticklabels=False, showgrid=False),
+        yaxis=dict(showticklabels=False, showgrid=False, range=[0, 1.5]),
+        height=200,
+        margin=dict(l=20, r=20, t=40, b=20),
+        plot_bgcolor='white'
+    )
+    
     return fig
 
-def visualize_probability_distribution(tokens, probabilities, title="Next Token Probabilities"):
+
+def create_probability_distribution(tokens: List[str], 
+                                     probabilities: List[float],
+                                     top_k: int = 10) -> go.Figure:
     """
-    Visualize probability distribution over next tokens.
+    Create a bar chart showing probability distribution over tokens.
     
     Args:
         tokens: List of token strings
-        probabilities: List of probabilities (should sum to ~1)
-        title: Chart title
+        probabilities: Corresponding probabilities
+        top_k: Number of top tokens to display
+    
+    Returns:
+        Plotly figure object
     """
-    fig, ax = plt.subplots(figsize=(10, 6))
+    sorted_indices = np.argsort(probabilities)[::-1][:top_k]
+    top_tokens = [tokens[i] for i in sorted_indices]
+    top_probs = [probabilities[i] for i in sorted_indices]
     
-    colors = [COLORS['primary'] if p == max(probabilities) else COLORS['muted'] 
-              for p in probabilities]
+    fig = go.Figure(data=[
+        go.Bar(
+            x=top_tokens,
+            y=top_probs,
+            marker_color=COLORS['primary'],
+            text=[f'{p:.2%}' for p in top_probs],
+            textposition='outside'
+        )
+    ])
     
-    bars = ax.barh(tokens, probabilities, color=colors, edgecolor='white')
-    ax.set_xlabel('Probability', fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight='bold')
-    ax.set_xlim(0, 1)
+    fig.update_layout(
+        title=f"Top {top_k} Token Probabilities",
+        xaxis_title="Token",
+        yaxis_title="Probability",
+        yaxis=dict(range=[0, max(top_probs) * 1.2]),
+        height=400,
+        margin=dict(l=50, r=50, t=50, b=50)
+    )
     
-    for bar, prob in zip(bars, probabilities):
-        ax.text(bar.get_width() + 0.02, bar.get_y() + bar.get_height()/2,
-               f'{prob:.1%}', va='center', fontsize=10)
-    
-    plt.tight_layout()
     return fig
 
-# ============================================
-# Neural Network Visualization Helpers
-# ============================================
 
-def draw_neural_network(layer_sizes, ax=None, title="Neural Network"):
+def create_attention_heatmap(attention_weights: np.ndarray,
+                              tokens: List[str],
+                              layer: int = 0,
+                              head: int = 0) -> go.Figure:
     """
-    Draw a simple neural network diagram.
+    Create an attention heatmap visualization.
     
     Args:
-        layer_sizes: List of integers representing neurons per layer
-        ax: Matplotlib axis (creates new if None)
-        title: Diagram title
+        attention_weights: Attention matrix (seq_len x seq_len)
+        tokens: List of token strings
+        layer: Layer number for title
+        head: Head number for title
+    
+    Returns:
+        Plotly figure object
     """
-    if ax is None:
-        fig, ax = plt.subplots(figsize=(12, 8))
+    fig = go.Figure(data=go.Heatmap(
+        z=attention_weights,
+        x=tokens,
+        y=tokens,
+        colorscale='Blues',
+        hoverongaps=False,
+        hovertemplate='From: %{y}<br>To: %{x}<br>Attention: %{z:.4f}<extra></extra>'
+    ))
+    
+    fig.update_layout(
+        title=f"Attention Weights (Layer {layer}, Head {head})",
+        xaxis_title="Key Tokens",
+        yaxis_title="Query Tokens",
+        height=500,
+        width=600
+    )
+    
+    return fig
+
+
+def create_embedding_visualization(embeddings: np.ndarray,
+                                    labels: List[str],
+                                    method: str = 'pca') -> go.Figure:
+    """
+    Create a 2D/3D visualization of embeddings.
+    
+    Args:
+        embeddings: Array of shape (n_samples, embedding_dim)
+        labels: List of labels for each embedding
+        method: Dimensionality reduction method ('pca', 'tsne', 'umap')
+    
+    Returns:
+        Plotly figure object
+    """
+    from sklearn.decomposition import PCA
+    
+    if method == 'pca':
+        reducer = PCA(n_components=2)
+        reduced = reducer.fit_transform(embeddings)
     else:
-        fig = ax.figure
+        reduced = embeddings[:, :2]
     
-    ax.set_xlim(-0.5, len(layer_sizes) - 0.5)
-    ax.set_ylim(-0.5, max(layer_sizes) - 0.5)
-    ax.axis('off')
-    ax.set_title(title, fontsize=14, fontweight='bold')
+    fig = go.Figure(data=go.Scatter(
+        x=reduced[:, 0],
+        y=reduced[:, 1],
+        mode='markers+text',
+        text=labels,
+        textposition='top center',
+        marker=dict(
+            size=10,
+            color=list(range(len(labels))),
+            colorscale='Viridis',
+            showscale=True
+        ),
+        hovertemplate='%{text}<br>x: %{x:.2f}<br>y: %{y:.2f}<extra></extra>'
+    ))
     
-    layer_positions = []
-    for i, size in enumerate(layer_sizes):
-        positions = []
-        for j in range(size):
-            y = (max(layer_sizes) - size) / 2 + j
-            positions.append((i, y))
-            circle = plt.Circle((i, y), 0.15, color=COLORS['primary'], 
-                               ec='white', linewidth=2)
-            ax.add_patch(circle)
-        layer_positions.append(positions)
-    
-    # Draw connections
-    for i in range(len(layer_positions) - 1):
-        for pos1 in layer_positions[i]:
-            for pos2 in layer_positions[i + 1]:
-                ax.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], 
-                       color=COLORS['muted'], alpha=0.3, linewidth=0.5)
-    
-    # Layer labels
-    labels = ['Input'] + [f'Hidden {i}' for i in range(1, len(layer_sizes)-1)] + ['Output']
-    for i, label in enumerate(labels):
-        ax.text(i, -0.8, label, ha='center', fontsize=10)
+    fig.update_layout(
+        title=f"Embedding Visualization ({method.upper()})",
+        xaxis_title="Component 1",
+        yaxis_title="Component 2",
+        height=500
+    )
     
     return fig
 
-# ============================================
-# Attention Visualization Helpers
-# ============================================
 
-def visualize_attention(tokens, attention_weights, title="Attention Weights"):
+def create_diffusion_steps_visualization(images: List[np.ndarray],
+                                          step_labels: List[str]) -> go.Figure:
     """
-    Visualize attention weights as a heatmap.
+    Create a visualization showing diffusion process steps.
     
     Args:
-        tokens: List of token strings
-        attention_weights: 2D numpy array of attention weights
-        title: Chart title
+        images: List of image arrays at different steps
+        step_labels: Labels for each step
+    
+    Returns:
+        Plotly figure with subplots
     """
-    fig, ax = plt.subplots(figsize=(10, 8))
+    from plotly.subplots import make_subplots
     
-    im = ax.imshow(attention_weights, cmap='Blues', aspect='auto')
+    n_steps = len(images)
+    fig = make_subplots(rows=1, cols=n_steps, subplot_titles=step_labels)
     
-    ax.set_xticks(range(len(tokens)))
-    ax.set_yticks(range(len(tokens)))
-    ax.set_xticklabels(tokens, rotation=45, ha='right')
-    ax.set_yticklabels(tokens)
+    for i, img in enumerate(images):
+        fig.add_trace(
+            go.Heatmap(z=img, colorscale='gray', showscale=False),
+            row=1, col=i+1
+        )
     
-    ax.set_xlabel('Key (attending to)', fontsize=12)
-    ax.set_ylabel('Query (from)', fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight='bold')
+    fig.update_layout(
+        title="Diffusion Process Steps",
+        height=300,
+        showlegend=False
+    )
     
-    plt.colorbar(im, ax=ax, label='Attention Weight')
-    plt.tight_layout()
+    for i in range(n_steps):
+        fig.update_xaxes(showticklabels=False, row=1, col=i+1)
+        fig.update_yaxes(showticklabels=False, row=1, col=i+1)
+    
     return fig
 
-# ============================================
-# Embedding Visualization Helpers
-# ============================================
 
-def visualize_embeddings_2d(embeddings, labels, title="Embedding Space"):
+# =============================================================================
+# Interactive Widget Helpers
+# =============================================================================
+
+def create_temperature_slider(callback, min_val=0.1, max_val=2.0, default=1.0):
     """
-    Visualize embeddings in 2D using PCA or t-SNE.
+    Create an interactive temperature slider widget.
     
     Args:
-        embeddings: 2D numpy array of shape (n_samples, 2)
-        labels: List of labels for each point
-        title: Chart title
+        callback: Function to call when slider value changes
+        min_val: Minimum temperature value
+        max_val: Maximum temperature value
+        default: Default temperature value
+    
+    Returns:
+        ipywidgets slider
     """
-    fig, ax = plt.subplots(figsize=(10, 8))
-    
-    scatter = ax.scatter(embeddings[:, 0], embeddings[:, 1], 
-                        c=range(len(labels)), cmap='viridis', s=100, alpha=0.7)
-    
-    for i, label in enumerate(labels):
-        ax.annotate(label, (embeddings[i, 0], embeddings[i, 1]),
-                   xytext=(5, 5), textcoords='offset points', fontsize=9)
-    
-    ax.set_xlabel('Dimension 1', fontsize=12)
-    ax.set_ylabel('Dimension 2', fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight='bold')
-    ax.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    return fig
+    slider = widgets.FloatSlider(
+        value=default,
+        min=min_val,
+        max=max_val,
+        step=0.1,
+        description='Temperature:',
+        continuous_update=False,
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='400px')
+    )
+    slider.observe(callback, names='value')
+    return slider
 
-# ============================================
-# Diffusion Process Visualization
-# ============================================
 
-def visualize_diffusion_steps(steps=10):
+def create_top_k_slider(callback, min_val=1, max_val=100, default=50):
     """
-    Create a simple visualization of the diffusion process.
+    Create an interactive top-k slider widget.
     
     Args:
-        steps: Number of diffusion steps to show
+        callback: Function to call when slider value changes
+        min_val: Minimum top-k value
+        max_val: Maximum top-k value
+        default: Default top-k value
+    
+    Returns:
+        ipywidgets slider
     """
-    fig, axes = plt.subplots(2, steps, figsize=(2*steps, 4))
-    
-    # Create a simple "image" (gradient pattern)
-    original = np.outer(np.linspace(0, 1, 32), np.linspace(0, 1, 32))
-    
-    # Forward diffusion (adding noise)
-    for i in range(steps):
-        noise_level = i / (steps - 1)
-        noise = np.random.randn(32, 32) * noise_level
-        noisy = original * (1 - noise_level) + noise * noise_level
-        axes[0, i].imshow(noisy, cmap='gray', vmin=-1, vmax=2)
-        axes[0, i].axis('off')
-        axes[0, i].set_title(f't={i}', fontsize=8)
-    
-    # Reverse diffusion (denoising)
-    for i in range(steps):
-        noise_level = 1 - i / (steps - 1)
-        noise = np.random.randn(32, 32) * noise_level
-        denoised = original * (1 - noise_level) + noise * noise_level
-        axes[1, steps - 1 - i].imshow(denoised, cmap='gray', vmin=-1, vmax=2)
-        axes[1, steps - 1 - i].axis('off')
-    
-    axes[0, 0].set_ylabel('Forward\n(add noise)', fontsize=10)
-    axes[1, 0].set_ylabel('Reverse\n(denoise)', fontsize=10)
-    
-    fig.suptitle('Diffusion Process: Forward and Reverse', fontsize=14, fontweight='bold')
-    plt.tight_layout()
-    return fig
+    slider = widgets.IntSlider(
+        value=default,
+        min=min_val,
+        max=max_val,
+        step=1,
+        description='Top-K:',
+        continuous_update=False,
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='400px')
+    )
+    slider.observe(callback, names='value')
+    return slider
 
-# ============================================
-# RAG Pipeline Visualization
-# ============================================
 
-def visualize_rag_pipeline():
+def create_prompt_input(callback, placeholder="Enter your prompt here..."):
     """
-    Create a visual diagram of the RAG pipeline.
-    """
-    fig, ax = plt.subplots(figsize=(14, 6))
-    ax.set_xlim(0, 14)
-    ax.set_ylim(0, 6)
-    ax.axis('off')
-    
-    # Components
-    components = [
-        (1, 3, 2, 1.5, 'User Query', COLORS['primary']),
-        (4, 3, 2, 1.5, 'Retriever', COLORS['secondary']),
-        (4, 0.5, 2, 1.5, 'Vector DB', COLORS['accent']),
-        (7.5, 3, 2.5, 1.5, 'Context +\nQuery', COLORS['warning']),
-        (11, 3, 2, 1.5, 'LLM', COLORS['success']),
-    ]
-    
-    for x, y, w, h, label, color in components:
-        rect = plt.Rectangle((x, y), w, h, facecolor=color, 
-                             edgecolor='white', linewidth=2, alpha=0.8)
-        ax.add_patch(rect)
-        ax.text(x + w/2, y + h/2, label, ha='center', va='center',
-               fontsize=11, fontweight='bold', color='white')
-    
-    # Arrows
-    arrows = [
-        (3, 3.75, 0.8, 0),      # Query to Retriever
-        (5, 3, 0, -0.8),        # Retriever to Vector DB
-        (5, 2, 0, 0.8),         # Vector DB to Retriever
-        (6, 3.75, 1.3, 0),      # Retriever to Context
-        (10, 3.75, 0.8, 0),     # Context to LLM
-    ]
-    
-    for x, y, dx, dy in arrows:
-        ax.annotate('', xy=(x+dx, y+dy), xytext=(x, y),
-                   arrowprops=dict(arrowstyle='->', color='white', lw=2))
-    
-    ax.set_title('RAG (Retrieval-Augmented Generation) Pipeline', 
-                fontsize=16, fontweight='bold', color=COLORS['text'])
-    
-    return fig
-
-# ============================================
-# Educational Display Helpers
-# ============================================
-
-def create_comparison_table(items, headers):
-    """
-    Create a formatted comparison table for display.
+    Create a text input widget for prompts.
     
     Args:
-        items: List of dictionaries with comparison data
-        headers: List of column headers
-    """
-    html = '<table style="width:100%; border-collapse: collapse;">'
-    html += '<tr style="background-color: #4a90d9; color: white;">'
-    for h in headers:
-        html += f'<th style="padding: 12px; text-align: left;">{h}</th>'
-    html += '</tr>'
+        callback: Function to call when text is submitted
+        placeholder: Placeholder text
     
-    for i, item in enumerate(items):
-        bg = '#f8f9fa' if i % 2 == 0 else '#ffffff'
-        html += f'<tr style="background-color: {bg};">'
-        for h in headers:
-            html += f'<td style="padding: 10px; border-bottom: 1px solid #ddd;">{item.get(h, "")}</td>'
-        html += '</tr>'
+    Returns:
+        ipywidgets text area
+    """
+    text_area = widgets.Textarea(
+        value='',
+        placeholder=placeholder,
+        description='Prompt:',
+        layout=widgets.Layout(width='500px', height='100px'),
+        style={'description_width': 'initial'}
+    )
     
-    html += '</table>'
-    return HTML(html)
+    submit_button = widgets.Button(
+        description='Generate',
+        button_style='primary',
+        layout=widgets.Layout(width='100px')
+    )
+    
+    output = widgets.Output()
+    
+    def on_submit(b):
+        with output:
+            clear_output()
+            callback(text_area.value)
+    
+    submit_button.on_click(on_submit)
+    
+    return widgets.VBox([text_area, submit_button, output])
 
-def display_key_concept(title, description, icon="💡"):
-    """
-    Display a key concept in a styled box.
-    """
-    html = f'''
-    <div style="background: linear-gradient(135deg, #4a90d9 0%, #357abd 100%); 
-                padding: 20px; border-radius: 10px; margin: 10px 0;">
-        <h3 style="color: white; margin: 0 0 10px 0;">{icon} {title}</h3>
-        <p style="color: #e8e8e8; margin: 0; line-height: 1.6;">{description}</p>
-    </div>
-    '''
-    display(HTML(html))
 
-def display_for_audience(non_tech_content, tech_content):
-    """
-    Display content split for different audiences.
-    """
-    html = f'''
-    <div style="display: flex; gap: 20px; margin: 20px 0;">
-        <div style="flex: 1; background: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 4px solid #4a90d9;">
-            <h4 style="color: #4a90d9; margin: 0 0 10px 0;">For Everyone</h4>
-            <p style="color: #333; margin: 0;">{non_tech_content}</p>
-        </div>
-        <div style="flex: 1; background: #f0f8e8; padding: 15px; border-radius: 10px; border-left: 4px solid #50c878;">
-            <h4 style="color: #50c878; margin: 0 0 10px 0;">For Technical Readers</h4>
-            <p style="color: #333; margin: 0;">{tech_content}</p>
-        </div>
-    </div>
-    '''
-    display(HTML(html))
+# =============================================================================
+# Data Loading Utilities
+# =============================================================================
 
-# ============================================
-# Simple Demo Data Generators
-# ============================================
-
-def generate_sample_embeddings(words, dim=2):
+def load_sample_text(name: str = 'default') -> str:
     """
-    Generate sample embeddings for demonstration.
-    Clusters similar words together.
+    Load sample text for demonstrations.
+    
+    Args:
+        name: Name of the sample text to load
+    
+    Returns:
+        Sample text string
+    """
+    samples = {
+        'default': "The quick brown fox jumps over the lazy dog.",
+        'shakespeare': "To be, or not to be, that is the question.",
+        'technical': "Machine learning models learn patterns from data to make predictions.",
+        'business': "Our Q3 revenue exceeded expectations, driven by strong product adoption.",
+        'creative': "In a hole in the ground there lived a hobbit.",
+    }
+    return samples.get(name, samples['default'])
+
+
+def load_sample_embeddings(n_samples: int = 20, dim: int = 768) -> Tuple[np.ndarray, List[str]]:
+    """
+    Generate sample embeddings for visualization demos.
+    
+    Args:
+        n_samples: Number of sample embeddings
+        dim: Embedding dimension
+    
+    Returns:
+        Tuple of (embeddings array, labels list)
     """
     np.random.seed(42)
-    embeddings = np.random.randn(len(words), dim)
-    return embeddings
+    
+    categories = ['technology', 'nature', 'food', 'sports', 'music']
+    words = {
+        'technology': ['computer', 'software', 'algorithm', 'data'],
+        'nature': ['forest', 'ocean', 'mountain', 'river'],
+        'food': ['pizza', 'sushi', 'pasta', 'salad'],
+        'sports': ['football', 'basketball', 'tennis', 'swimming'],
+        'music': ['guitar', 'piano', 'drums', 'violin']
+    }
+    
+    embeddings = []
+    labels = []
+    
+    for cat in categories:
+        base_vector = np.random.randn(dim)
+        for word in words[cat]:
+            noise = np.random.randn(dim) * 0.3
+            embeddings.append(base_vector + noise)
+            labels.append(word)
+    
+    return np.array(embeddings), labels
 
-def generate_sample_attention(seq_len):
+
+def generate_sample_attention(seq_len: int = 8) -> np.ndarray:
     """
-    Generate sample attention weights for demonstration.
+    Generate sample attention weights for visualization.
+    
+    Args:
+        seq_len: Sequence length
+    
+    Returns:
+        Attention weight matrix
     """
     np.random.seed(42)
     attention = np.random.rand(seq_len, seq_len)
-    attention = attention / attention.sum(axis=1, keepdims=True)
+    attention = attention / attention.sum(axis=-1, keepdims=True)
     return attention
 
-def generate_sample_probabilities(vocab_size=10):
+
+# =============================================================================
+# Display Helpers
+# =============================================================================
+
+def display_track_badge(track: str):
     """
-    Generate sample probability distribution over vocabulary.
+    Display a colored badge indicating the content track.
+    
+    Args:
+        track: Either 'technical' or 'non_technical'
+    """
+    color = TRACK_COLORS.get(track, COLORS['primary'])
+    label = "Technical Track" if track == 'technical' else "Non-Technical Track"
+    
+    html = f"""
+    <div style="
+        display: inline-block;
+        padding: 5px 15px;
+        background-color: {color};
+        color: white;
+        border-radius: 15px;
+        font-weight: bold;
+        margin: 10px 0;
+    ">
+        {label}
+    </div>
+    """
+    display(HTML(html))
+
+
+def display_concept_card(title: str, description: str, 
+                          related_concepts: List[str] = None):
+    """
+    Display a styled concept card.
+    
+    Args:
+        title: Concept title
+        description: Brief description
+        related_concepts: List of related concept names
+    """
+    related_html = ""
+    if related_concepts:
+        links = ", ".join([f"<code>{c}</code>" for c in related_concepts])
+        related_html = f"<p><strong>Related:</strong> {links}</p>"
+    
+    html = f"""
+    <div style="
+        border: 2px solid {COLORS['primary']};
+        border-radius: 10px;
+        padding: 20px;
+        margin: 15px 0;
+        background-color: {COLORS['background']};
+    ">
+        <h3 style="color: {COLORS['primary']}; margin-top: 0;">{title}</h3>
+        <p>{description}</p>
+        {related_html}
+    </div>
+    """
+    display(HTML(html))
+
+
+def display_learning_objectives(objectives: List[str]):
+    """
+    Display learning objectives in a styled box.
+    
+    Args:
+        objectives: List of learning objective strings
+    """
+    items = "".join([f"<li>{obj}</li>" for obj in objectives])
+    
+    html = f"""
+    <div style="
+        border-left: 4px solid {COLORS['accent']};
+        padding: 15px 20px;
+        margin: 15px 0;
+        background-color: #E8F5E9;
+    ">
+        <h4 style="margin-top: 0; color: {COLORS['accent']};">Learning Objectives</h4>
+        <ul style="margin-bottom: 0;">
+            {items}
+        </ul>
+    </div>
+    """
+    display(HTML(html))
+
+
+def display_warning(message: str):
+    """
+    Display a warning message.
+    
+    Args:
+        message: Warning text
+    """
+    html = f"""
+    <div style="
+        border-left: 4px solid {COLORS['warning']};
+        padding: 15px 20px;
+        margin: 15px 0;
+        background-color: #FFF3E0;
+    ">
+        <strong style="color: {COLORS['warning']};">Note:</strong> {message}
+    </div>
+    """
+    display(HTML(html))
+
+
+def display_code_explanation(code: str, explanation: str):
+    """
+    Display code with an explanation side by side.
+    
+    Args:
+        code: Code snippet
+        explanation: Plain language explanation
+    """
+    html = f"""
+    <div style="display: flex; gap: 20px; margin: 15px 0;">
+        <div style="flex: 1; background-color: #2D2D2D; color: #F8F8F2; padding: 15px; border-radius: 5px;">
+            <pre style="margin: 0; white-space: pre-wrap;"><code>{code}</code></pre>
+        </div>
+        <div style="flex: 1; padding: 15px; background-color: {COLORS['background']}; border-radius: 5px;">
+            <p style="margin: 0;">{explanation}</p>
+        </div>
+    </div>
+    """
+    display(HTML(html))
+
+
+# =============================================================================
+# Simple Model Wrappers (for demos)
+# =============================================================================
+
+def simple_tokenize(text: str) -> List[str]:
+    """
+    Simple word-level tokenization for demos.
+    
+    Args:
+        text: Input text
+    
+    Returns:
+        List of tokens
+    """
+    import re
+    tokens = re.findall(r'\b\w+\b|[^\w\s]', text)
+    return tokens
+
+
+def simulate_next_token_probs(vocab: List[str], 
+                               temperature: float = 1.0) -> Dict[str, float]:
+    """
+    Simulate next token probabilities for demos.
+    
+    Args:
+        vocab: List of vocabulary tokens
+        temperature: Sampling temperature
+    
+    Returns:
+        Dictionary mapping tokens to probabilities
     """
     np.random.seed(42)
-    probs = np.random.exponential(1, vocab_size)
-    probs = probs / probs.sum()
-    return np.sort(probs)[::-1]
+    logits = np.random.randn(len(vocab))
+    logits = logits / temperature
+    probs = np.exp(logits) / np.sum(np.exp(logits))
+    return dict(zip(vocab, probs))
+
+
+def simulate_embedding(text: str, dim: int = 768) -> np.ndarray:
+    """
+    Simulate text embedding for demos.
+    
+    Args:
+        text: Input text
+        dim: Embedding dimension
+    
+    Returns:
+        Embedding vector
+    """
+    np.random.seed(hash(text) % (2**32))
+    return np.random.randn(dim)
+
+
+# =============================================================================
+# Exercise Helpers
+# =============================================================================
+
+def check_answer(user_answer: Any, correct_answer: Any, 
+                  tolerance: float = 0.01) -> bool:
+    """
+    Check if user's answer matches the correct answer.
+    
+    Args:
+        user_answer: User's submitted answer
+        correct_answer: Expected correct answer
+        tolerance: Tolerance for numerical comparisons
+    
+    Returns:
+        Boolean indicating correctness
+    """
+    if isinstance(correct_answer, (int, float)):
+        return abs(user_answer - correct_answer) < tolerance
+    elif isinstance(correct_answer, np.ndarray):
+        return np.allclose(user_answer, correct_answer, atol=tolerance)
+    else:
+        return user_answer == correct_answer
+
+
+def display_exercise_result(is_correct: bool, feedback: str = ""):
+    """
+    Display exercise result with appropriate styling.
+    
+    Args:
+        is_correct: Whether the answer was correct
+        feedback: Additional feedback message
+    """
+    if is_correct:
+        color = COLORS['accent']
+        icon = "&#10004;"
+        status = "Correct!"
+    else:
+        color = COLORS['error']
+        icon = "&#10008;"
+        status = "Not quite right"
+    
+    html = f"""
+    <div style="
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: {'#E8F5E9' if is_correct else '#FFEBEE'};
+        border-left: 4px solid {color};
+    ">
+        <span style="font-size: 1.2em; color: {color};">{icon}</span>
+        <strong style="color: {color};"> {status}</strong>
+        {f'<p style="margin: 10px 0 0 0;">{feedback}</p>' if feedback else ''}
+    </div>
+    """
+    display(HTML(html))
+
+
+def create_hint_button(hint_text: str):
+    """
+    Create a button that reveals a hint when clicked.
+    
+    Args:
+        hint_text: The hint to display
+    
+    Returns:
+        Widget with hint functionality
+    """
+    button = widgets.Button(
+        description='Show Hint',
+        button_style='info',
+        layout=widgets.Layout(width='100px')
+    )
+    
+    output = widgets.Output()
+    
+    def show_hint(b):
+        with output:
+            clear_output()
+            display(HTML(f"""
+                <div style="
+                    padding: 10px;
+                    background-color: #E3F2FD;
+                    border-radius: 5px;
+                    margin-top: 10px;
+                ">
+                    <strong>Hint:</strong> {hint_text}
+                </div>
+            """))
+    
+    button.on_click(show_hint)
+    return widgets.VBox([button, output])

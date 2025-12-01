@@ -5,6 +5,55 @@
  * can use AI to improve their productivity.
  */
 
+// Role-based applications data for 3D section
+const roleApplications3D = {
+    teacher: {
+        title: 'Education',
+        apps: [
+            { name: 'Lesson Planning', desc: 'Generate comprehensive lesson plans with objectives and activities' },
+            { name: 'Quiz Generation', desc: 'Create assessments with varied question types automatically' },
+            { name: 'Feedback Writing', desc: 'Personalized student feedback at scale' },
+            { name: 'Differentiation', desc: 'Adapt materials for different learning levels' }
+        ]
+    },
+    marketing: {
+        title: 'Marketing',
+        apps: [
+            { name: 'Content Creation', desc: 'Blog posts, social media, and ad copy generation' },
+            { name: 'Campaign Ideas', desc: 'Brainstorm creative campaign concepts' },
+            { name: 'Email Sequences', desc: 'Automated email marketing content' },
+            { name: 'SEO Optimization', desc: 'Keyword research and content optimization' }
+        ]
+    },
+    hr: {
+        title: 'HR',
+        apps: [
+            { name: 'Job Descriptions', desc: 'Create compelling and inclusive job postings' },
+            { name: 'Interview Questions', desc: 'Role-specific behavioral and technical questions' },
+            { name: 'Policy Documents', desc: 'Draft HR policies and handbooks' },
+            { name: 'Onboarding Materials', desc: 'Create training and orientation content' }
+        ]
+    },
+    legal: {
+        title: 'Legal',
+        apps: [
+            { name: 'Contract Review', desc: 'Summarize and analyze contract terms' },
+            { name: 'Legal Research', desc: 'Find relevant cases and precedents' },
+            { name: 'Document Drafting', desc: 'Create standard legal documents' },
+            { name: 'Compliance Checks', desc: 'Review documents for regulatory compliance' }
+        ]
+    }
+};
+
+// 3D Workflow visualization state
+let workflow3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    nodes: []
+};
+
 // Role data
 const roleData = {
     teacher: {
@@ -456,11 +505,177 @@ const taskData = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DWorkflow();
+    initRoleApplications3D();
     initRoleExplorer();
     initTaskAssistant();
     initPromptBuilder();
     initSavingsCalculator();
 });
+
+// ============================================================================
+// 3D Workflow Visualization
+// ============================================================================
+
+function init3DWorkflow() {
+    const canvas = document.getElementById('workflow3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    workflow3D.mini3d = new Mini3D(canvas);
+    
+    // Create workflow nodes
+    const nodeData = [
+        { name: 'Task', color: '#4A90D9', x: -180, y: 0, z: 0 },
+        { name: 'Prompt', color: '#9B59B6', x: -60, y: -60, z: 50 },
+        { name: 'AI', color: '#E67E22', x: 60, y: 0, z: 0 },
+        { name: 'Review', color: '#50C878', x: 180, y: -60, z: -50 },
+        { name: 'Output', color: '#E74C3C', x: 180, y: 60, z: 50 }
+    ];
+    
+    nodeData.forEach(n => {
+        workflow3D.nodes.push({
+            x: n.x,
+            y: n.y,
+            z: n.z,
+            name: n.name,
+            color: n.color,
+            active: false,
+            scale: 1
+        });
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        workflow3D.rotationY -= 0.3;
+        render3DWorkflow();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        workflow3D.rotationY += 0.3;
+        render3DWorkflow();
+    });
+    
+    document.getElementById('animateWorkflowBtn')?.addEventListener('click', () => {
+        if (!workflow3D.animating) {
+            workflow3D.animating = true;
+            workflow3D.progress = 0;
+            workflow3D.nodes.forEach(n => n.active = false);
+            animateWorkflow3D();
+        }
+    });
+    
+    render3DWorkflow();
+}
+
+function animateWorkflow3D() {
+    if (!workflow3D.animating) return;
+    
+    workflow3D.progress += 0.015;
+    workflow3D.rotationY += 0.005;
+    
+    // Activate nodes progressively
+    const nodeIndex = Math.floor(workflow3D.progress * workflow3D.nodes.length);
+    workflow3D.nodes.forEach((n, i) => {
+        n.active = i <= nodeIndex;
+        n.scale = n.active ? 1.2 : 1;
+    });
+    
+    render3DWorkflow();
+    
+    if (workflow3D.progress < 1) {
+        requestAnimationFrame(animateWorkflow3D);
+    } else {
+        workflow3D.animating = false;
+    }
+}
+
+function render3DWorkflow() {
+    const mini3d = workflow3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0.2, workflow3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw connections
+    const connections = [[0, 1], [1, 2], [2, 3], [2, 4]];
+    connections.forEach(([i, j]) => {
+        const n1 = workflow3D.nodes[i];
+        const n2 = workflow3D.nodes[j];
+        
+        const r1 = mini3d.rotatePoint(n1.x, n1.y, n1.z);
+        const r2 = mini3d.rotatePoint(n2.x, n2.y, n2.z);
+        const p1 = mini3d.project(r1.x + centerX, r1.y + centerY, r1.z);
+        const p2 = mini3d.project(r2.x + centerX, r2.y + centerY, r2.z);
+        
+        mini3d.ctx.strokeStyle = n1.active && n2.active ? '#50C878' : 'rgba(150, 150, 150, 0.3)';
+        mini3d.ctx.lineWidth = n1.active && n2.active ? 3 : 1;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(p1.x, p1.y);
+        mini3d.ctx.lineTo(p2.x, p2.y);
+        mini3d.ctx.stroke();
+    });
+    
+    // Draw nodes
+    workflow3D.nodes.forEach(node => {
+        const rotated = mini3d.rotatePoint(node.x, node.y, node.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        const nodeSize = 40 * node.scale;
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, nodeSize * proj.scale);
+        gradient.addColorStop(0, node.active ? node.color : node.color + '66');
+        gradient.addColorStop(1, 'transparent');
+        
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, nodeSize * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `${10 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.fillText(node.name, proj.x, proj.y + 4);
+    });
+    
+    // Draw title
+    mini3d.ctx.fillStyle = '#ccc';
+    mini3d.ctx.font = '14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('AI-Assisted Workflow', centerX, 30);
+}
+
+// ============================================================================
+// Role-based Applications (3D section)
+// ============================================================================
+
+function initRoleApplications3D() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications3D(btn.dataset.role);
+        });
+    });
+    
+    updateApplications3D('teacher');
+}
+
+function updateApplications3D(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications3D[role]) return;
+    
+    const data = roleApplications3D[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

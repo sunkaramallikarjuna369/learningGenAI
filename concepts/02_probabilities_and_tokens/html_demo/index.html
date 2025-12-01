@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tokens & Probabilities - Interactive Demo</title>
+    <title>Tokens & Probabilities - Interactive 3D Demo</title>
     <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -20,6 +20,58 @@
             <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
+
+        <!-- 3D Token Visualization -->
+        <section class="demo-section">
+            <h2>3D Token Flow Visualization</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch tokens flow through the AI in 3D! Each cube represents a token, and the probability bars show how likely each next word is. Drag to rotate the view!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>This 3D visualization shows the autoregressive token prediction process. Each token passes through transformer layers, and the output distribution is computed via softmax over the vocabulary.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="token3DCanvas" width="800" height="400"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">↺ Rotate</button>
+                    <button class="canvas-btn" id="animateBtn">Animate Flow</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate ↻</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>How Tokens & Probabilities Help You</h4>
+                <p>Understanding tokens and probabilities helps you write better prompts and understand AI behavior!</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="writer">✍️ Writer</button>
+                <button class="role-btn" data-role="coder">💻 Coder</button>
+                <button class="role-btn" data-role="analyst">📊 Analyst</button>
+                <button class="role-btn" data-role="student">🎓 Student</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+                <div class="app-card">
+                    <h4>Token Applications</h4>
+                    <ul id="tokenAppsList"></ul>
+                </div>
+                <div class="app-card">
+                    <h4>Probability Applications</h4>
+                    <ul id="probAppsList"></ul>
+                </div>
+            </div>
+        </section>
 
         <!-- Section 1: Tokenization -->
         <section class="demo-section">
@@ -215,6 +267,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
