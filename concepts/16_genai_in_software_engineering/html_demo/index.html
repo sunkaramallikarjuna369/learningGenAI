@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI in Software Engineering - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>GenAI in Software Engineering</h1>
+            <p class="subtitle">AI-powered coding assistance</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Code Completion -->
+        <section class="demo-section">
+            <h2>Step 1: Code Completion</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI watches what you type and suggests the next lines of code, like autocomplete on steroids. It understands programming patterns and can complete entire functions based on context.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Code completion models (Codex, StarCoder, CodeLlama) are trained on billions of lines of code. They use transformer architecture with fill-in-the-middle (FIM) capabilities for inline suggestions. Context window includes surrounding code, imports, and comments.</p>
+            </div>
+
+            <div class="animation-canvas" id="completionCanvas">
+                <div class="code-completion-demo">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <span class="file-name">utils.py</span>
+                            <span class="language-badge">Python</span>
+                        </div>
+                        <div class="editor-content">
+                            <div class="line-numbers">
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                                <span>6</span>
+                                <span>7</span>
+                            </div>
+                            <div class="code-area">
+                                <pre id="codeDisplay">def calculate_discount(price, percent):
+    """Calculate discounted price."""
+    <span class="cursor">|</span></pre>
+                                <div class="ai-suggestion" id="aiSuggestion">
+                                    <span class="suggestion-label">AI Suggestion (Tab to accept)</span>
+                                    <pre>discount = price * (percent / 100)
+    return price - discount</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="completion-controls">
+                        <button class="action-btn primary" id="showSuggestionBtn">Show AI Suggestion</button>
+                        <button class="action-btn secondary" id="acceptSuggestionBtn">Accept (Tab)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Code Generation -->
+        <section class="demo-section">
+            <h2>Step 2: Code Generation</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Describe what you want in plain English, and AI writes the code for you. It's like having a coding assistant who understands your requirements and implements them.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Generation uses instruction-tuned models with system prompts for code style. Best practices: provide context (language, framework), specify requirements clearly, include examples of desired output format. Temperature ~0.2 for deterministic code.</p>
+            </div>
+
+            <div class="animation-canvas" id="generationCanvas">
+                <div class="code-generation-demo">
+                    <div class="prompt-input">
+                        <label>Describe what you want:</label>
+                        <select id="promptSelect">
+                            <option value="validate">Validate email address with regex</option>
+                            <option value="sort">Sort a list of objects by property</option>
+                            <option value="api">Make an API request with error handling</option>
+                            <option value="test">Write unit tests for a function</option>
+                        </select>
+                        <button class="action-btn primary" id="generateCodeBtn">Generate Code</button>
+                    </div>
+                    
+                    <div class="generation-result">
+                        <div class="result-header">
+                            <span>Generated Code</span>
+                            <button class="copy-btn" id="copyCodeBtn">Copy</button>
+                        </div>
+                        <pre class="generated-code" id="generatedCode">
+<span class="placeholder">Select a prompt and click Generate...</span></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Code Explanation -->
+        <section class="demo-section">
+            <h2>Step 3: Code Explanation</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Don't understand some code? AI can explain it in plain language, breaking down complex logic into simple steps that anyone can understand.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Explanation leverages the model's understanding of code semantics. Effective prompts ask for line-by-line breakdown, complexity analysis, or comparison to simpler alternatives. Can also identify potential bugs or improvements.</p>
+            </div>
+
+            <div class="animation-canvas" id="explanationCanvas">
+                <div class="code-explanation-demo">
+                    <div class="code-to-explain">
+                        <h4>Code to Explain</h4>
+                        <pre id="codeToExplain">const debounce = (fn, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+};</pre>
+                    </div>
+                    
+                    <button class="action-btn primary" id="explainCodeBtn">Explain This Code</button>
+                    
+                    <div class="explanation-result" id="explanationResult">
+                        <span class="placeholder">Click to see AI explanation...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Development Workflow -->
+        <section class="demo-section">
+            <h2>Step 4: AI in Development Workflow</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI helps throughout the entire development process - from writing code to testing, debugging, and documentation. See how AI fits into each stage of building software.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Integration points: IDE plugins (real-time), CLI tools (batch), CI/CD (automated review), chat interfaces (interactive). Key metrics: acceptance rate, time saved, bug rate in AI-generated code, developer satisfaction.</p>
+            </div>
+
+            <div class="animation-canvas" id="workflowCanvas">
+                <div class="workflow-demo">
+                    <div class="workflow-stages">
+                        <div class="stage" data-stage="design">
+                            <div class="stage-icon">📐</div>
+                            <div class="stage-name">Design</div>
+                            <div class="stage-ai">Architecture suggestions</div>
+                        </div>
+                        <div class="stage-arrow">→</div>
+                        <div class="stage" data-stage="code">
+                            <div class="stage-icon">💻</div>
+                            <div class="stage-name">Code</div>
+                            <div class="stage-ai">Completion & generation</div>
+                        </div>
+                        <div class="stage-arrow">→</div>
+                        <div class="stage" data-stage="test">
+                            <div class="stage-icon">🧪</div>
+                            <div class="stage-name">Test</div>
+                            <div class="stage-ai">Test generation</div>
+                        </div>
+                        <div class="stage-arrow">→</div>
+                        <div class="stage" data-stage="review">
+                            <div class="stage-icon">🔍</div>
+                            <div class="stage-name">Review</div>
+                            <div class="stage-ai">Bug detection</div>
+                        </div>
+                        <div class="stage-arrow">→</div>
+                        <div class="stage" data-stage="deploy">
+                            <div class="stage-icon">🚀</div>
+                            <div class="stage-name">Deploy</div>
+                            <div class="stage-ai">Config & scripts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-detail" id="workflowDetail">
+                        <h4>Click a stage to see AI capabilities</h4>
+                        <p>AI assists throughout the entire software development lifecycle.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚡</div>
+                    <h4>Faster Coding</h4>
+                    <p>AI suggestions can speed up development by 30-50%</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔍</div>
+                    <h4>Always Review</h4>
+                    <p>AI code needs human review for security and correctness</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">📝</div>
+                    <h4>Context Matters</h4>
+                    <p>Better prompts and context lead to better code</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🛠️</div>
+                    <h4>Tool, Not Replacement</h4>
+                    <p>AI augments developers, doesn't replace them</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>User Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>AI Suggestion</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Output</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../15_business_and_product_use_cases/html_demo/">← Previous: Business Use Cases</a> | <a href="../17_genai_in_non_it_roles/html_demo/">Next: GenAI for Non-IT Roles →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

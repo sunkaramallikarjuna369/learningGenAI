@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimodal Models - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Multimodal Models</h1>
+            <p class="subtitle">AI that sees, reads, and understands</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: What is Multimodal -->
+        <section class="demo-section">
+            <h2>Step 1: Understanding Multimodal</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Multimodal AI can understand different types of content - text, images, audio, and video - all at once. It's like having an assistant who can read, see, and hear!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Multimodal models use separate encoders for each modality (e.g., ViT for images, transformer for text), then fuse representations through cross-attention or concatenation. Training uses contrastive learning and instruction tuning.</p>
+            </div>
+
+            <div class="animation-canvas" id="modalityCanvas">
+                <div class="modality-demo">
+                    <div class="modality-inputs">
+                        <div class="modality-card" data-modality="text">
+                            <div class="modality-icon">📝</div>
+                            <h4>Text</h4>
+                            <p>Words, sentences, documents</p>
+                        </div>
+                        <div class="modality-card" data-modality="image">
+                            <div class="modality-icon">🖼️</div>
+                            <h4>Image</h4>
+                            <p>Photos, diagrams, screenshots</p>
+                        </div>
+                        <div class="modality-card" data-modality="audio">
+                            <div class="modality-icon">🔊</div>
+                            <h4>Audio</h4>
+                            <p>Speech, music, sounds</p>
+                        </div>
+                        <div class="modality-card" data-modality="video">
+                            <div class="modality-icon">🎬</div>
+                            <h4>Video</h4>
+                            <p>Moving images with audio</p>
+                        </div>
+                    </div>
+                    
+                    <div class="fusion-arrow">
+                        <div class="arrow-lines">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-line"></div>
+                            <div class="arrow-line"></div>
+                            <div class="arrow-line"></div>
+                        </div>
+                        <span>Fusion</span>
+                    </div>
+                    
+                    <div class="multimodal-brain">
+                        <div class="brain-icon">🧠</div>
+                        <h4>Multimodal AI</h4>
+                        <p>Unified understanding</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Vision-Language -->
+        <section class="demo-section">
+            <h2>Step 2: Vision + Language</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Vision-language models can look at an image and answer questions about it, describe what they see, or follow instructions involving the image. Try it below!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Images are encoded via ViT/CLIP into patch embeddings. These are projected to the LLM's embedding space and concatenated with text tokens. Cross-attention allows text to attend to image features.</p>
+            </div>
+
+            <div class="animation-canvas" id="visionCanvas">
+                <div class="vision-demo">
+                    <div class="image-display">
+                        <div class="sample-image" id="sampleImage">
+                            <canvas id="sceneCanvas" width="200" height="200"></canvas>
+                        </div>
+                        <div class="image-selector">
+                            <button class="image-btn active" data-scene="park">Park Scene</button>
+                            <button class="image-btn" data-scene="office">Office</button>
+                            <button class="image-btn" data-scene="food">Food</button>
+                        </div>
+                    </div>
+                    
+                    <div class="qa-section">
+                        <div class="question-input">
+                            <label>Ask about the image:</label>
+                            <select id="questionSelect">
+                                <option value="describe">What do you see in this image?</option>
+                                <option value="count">How many objects are there?</option>
+                                <option value="color">What colors are prominent?</option>
+                                <option value="mood">What's the mood of this scene?</option>
+                            </select>
+                        </div>
+                        
+                        <div class="answer-display" id="answerDisplay">
+                            <span class="placeholder">Select a question to see the AI's response...</span>
+                        </div>
+                        
+                        <button class="action-btn primary" id="askQuestionBtn">Ask Question</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Architecture -->
+        <section class="demo-section">
+            <h2>Step 3: How It Works</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Multimodal models have specialized parts for each type of input. Images go through a vision encoder, text through a text encoder, and then they're combined so the AI can understand both together.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Architecture typically includes: (1) Vision encoder (ViT/CLIP) producing patch embeddings, (2) Projection layer mapping to LLM space, (3) LLM backbone processing combined sequence, (4) Output head for text generation.</p>
+            </div>
+
+            <div class="animation-canvas" id="architectureCanvas">
+                <div class="architecture-demo">
+                    <div class="arch-flow">
+                        <!-- Image Path -->
+                        <div class="arch-path image-path">
+                            <div class="arch-node input">
+                                <div class="node-icon">🖼️</div>
+                                <span>Image</span>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-node encoder">
+                                <div class="node-icon">📊</div>
+                                <span>Vision Encoder</span>
+                                <small>(ViT/CLIP)</small>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-node projection">
+                                <div class="node-icon">🔄</div>
+                                <span>Projection</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Fusion Point -->
+                        <div class="fusion-point">
+                            <div class="arch-node llm">
+                                <div class="node-icon">🧠</div>
+                                <span>LLM</span>
+                                <small>(GPT/LLaMA)</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Text Path -->
+                        <div class="arch-path text-path">
+                            <div class="arch-node input">
+                                <div class="node-icon">📝</div>
+                                <span>Text</span>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-node encoder">
+                                <div class="node-icon">🔤</div>
+                                <span>Tokenizer</span>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-node projection">
+                                <div class="node-icon">📐</div>
+                                <span>Embeddings</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Output -->
+                        <div class="arch-output">
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-node output">
+                                <div class="node-icon">💬</div>
+                                <span>Response</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="arch-controls">
+                        <button class="action-btn primary" id="animateArchBtn">Animate Flow</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Use Cases -->
+        <section class="demo-section">
+            <h2>Step 4: Real-World Applications</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Multimodal AI enables many practical applications - from helping visually impaired users understand images to analyzing documents with charts and tables.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Applications leverage different capabilities: OCR + understanding for documents, object detection + reasoning for visual search, speech recognition + LLM for voice assistants, video understanding for content analysis.</p>
+            </div>
+
+            <div class="animation-canvas" id="useCasesCanvas">
+                <div class="use-cases-demo">
+                    <div class="use-case-grid">
+                        <div class="use-case-card" data-case="accessibility">
+                            <div class="case-icon">👁️</div>
+                            <h4>Accessibility</h4>
+                            <p>Describe images for visually impaired users</p>
+                            <div class="case-example">
+                                <span class="input-label">Image:</span> Photo of a park
+                                <span class="output-label">Output:</span> "A sunny park with green trees, a wooden bench, and people walking on a path"
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card" data-case="documents">
+                            <div class="case-icon">📄</div>
+                            <h4>Document Analysis</h4>
+                            <p>Extract info from PDFs with charts and tables</p>
+                            <div class="case-example">
+                                <span class="input-label">Input:</span> Financial report PDF
+                                <span class="output-label">Output:</span> "Q3 revenue increased 15% to $2.3M"
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card" data-case="search">
+                            <div class="case-icon">🔍</div>
+                            <h4>Visual Search</h4>
+                            <p>Find products by uploading photos</p>
+                            <div class="case-example">
+                                <span class="input-label">Image:</span> Photo of a chair
+                                <span class="output-label">Output:</span> Similar chairs from catalog
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card" data-case="education">
+                            <div class="case-icon">📚</div>
+                            <h4>Education</h4>
+                            <p>Explain diagrams and solve visual problems</p>
+                            <div class="case-example">
+                                <span class="input-label">Image:</span> Math problem diagram
+                                <span class="output-label">Output:</span> Step-by-step solution
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card" data-case="medical">
+                            <div class="case-icon">🏥</div>
+                            <h4>Medical Imaging</h4>
+                            <p>Assist in analyzing X-rays and scans</p>
+                            <div class="case-example">
+                                <span class="input-label">Image:</span> Chest X-ray
+                                <span class="output-label">Output:</span> Preliminary findings report
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card" data-case="creative">
+                            <div class="case-icon">🎨</div>
+                            <h4>Creative Tools</h4>
+                            <p>Edit images with natural language</p>
+                            <div class="case-example">
+                                <span class="input-label">Input:</span> "Make the sky more dramatic"
+                                <span class="output-label">Output:</span> Edited image with enhanced sky
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔗</div>
+                    <h4>Multiple Modalities</h4>
+                    <p>Text, images, audio, and video can be understood together</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔄</div>
+                    <h4>Fusion Architecture</h4>
+                    <p>Separate encoders feed into a unified model</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">👁️</div>
+                    <h4>Vision-Language</h4>
+                    <p>AI can see images and discuss them naturally</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🌍</div>
+                    <h4>Wide Applications</h4>
+                    <p>From accessibility to medical imaging to creative tools</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Text Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Image Input</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Fusion/Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E67E22;"></div>
+                <span>Output</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../09_image_generation_diffusion/html_demo/">← Previous: Image Generation</a> | <a href="../11_RAG_and_knowledge_integration/html_demo/">Next: RAG →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

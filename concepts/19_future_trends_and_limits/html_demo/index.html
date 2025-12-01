@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Trends and Limits - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Future Trends & Limits</h1>
+            <p class="subtitle">What's next for Generative AI</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Timeline -->
+        <section class="demo-section">
+            <h2>Step 1: AI Evolution Timeline</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI has evolved rapidly over the past few years. Explore the timeline to see major milestones and what experts predict for the future.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Key inflection points: Transformer architecture (2017), GPT-3 scaling (2020), RLHF alignment (2022), multimodal models (2023). Future directions include reasoning improvements, longer context, and more efficient architectures.</p>
+            </div>
+
+            <div class="animation-canvas" id="timelineCanvas">
+                <div class="timeline-demo">
+                    <div class="timeline-track">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-events">
+                            <div class="timeline-event" data-year="2017">
+                                <div class="event-dot"></div>
+                                <div class="event-year">2017</div>
+                                <div class="event-title">Transformers</div>
+                            </div>
+                            <div class="timeline-event" data-year="2020">
+                                <div class="event-dot"></div>
+                                <div class="event-year">2020</div>
+                                <div class="event-title">GPT-3</div>
+                            </div>
+                            <div class="timeline-event" data-year="2022">
+                                <div class="event-dot"></div>
+                                <div class="event-year">2022</div>
+                                <div class="event-title">ChatGPT</div>
+                            </div>
+                            <div class="timeline-event" data-year="2023">
+                                <div class="event-dot"></div>
+                                <div class="event-year">2023</div>
+                                <div class="event-title">GPT-4 & Multimodal</div>
+                            </div>
+                            <div class="timeline-event future" data-year="2025">
+                                <div class="event-dot"></div>
+                                <div class="event-year">2025</div>
+                                <div class="event-title">AI Agents</div>
+                            </div>
+                            <div class="timeline-event future" data-year="2027">
+                                <div class="event-dot"></div>
+                                <div class="event-year">2027+</div>
+                                <div class="event-title">AGI?</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-detail" id="timelineDetail">
+                        <h4>Click an event to learn more</h4>
+                        <p>Explore the major milestones in AI development and predictions for the future.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Emerging Capabilities -->
+        <section class="demo-section">
+            <h2>Step 2: Emerging Capabilities</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI is gaining new abilities every year. Explore what's becoming possible and what's still on the horizon.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Key research areas: chain-of-thought reasoning, tool use, long-context processing, multimodal understanding, and embodied AI. Efficiency improvements through quantization, distillation, and new architectures.</p>
+            </div>
+
+            <div class="animation-canvas" id="capabilitiesCanvas">
+                <div class="capabilities-demo">
+                    <div class="capability-grid">
+                        <div class="capability-card" data-cap="reasoning">
+                            <div class="cap-icon">🧠</div>
+                            <h4>Advanced Reasoning</h4>
+                            <div class="cap-status available">Emerging</div>
+                        </div>
+                        <div class="capability-card" data-cap="agents">
+                            <div class="cap-icon">🤖</div>
+                            <h4>Autonomous Agents</h4>
+                            <div class="cap-status available">Emerging</div>
+                        </div>
+                        <div class="capability-card" data-cap="video">
+                            <div class="cap-icon">🎬</div>
+                            <h4>Video Generation</h4>
+                            <div class="cap-status available">Available</div>
+                        </div>
+                        <div class="capability-card" data-cap="science">
+                            <div class="cap-icon">🔬</div>
+                            <h4>Scientific Discovery</h4>
+                            <div class="cap-status research">Research</div>
+                        </div>
+                        <div class="capability-card" data-cap="robots">
+                            <div class="cap-icon">🦾</div>
+                            <h4>Robot Control</h4>
+                            <div class="cap-status research">Research</div>
+                        </div>
+                        <div class="capability-card" data-cap="agi">
+                            <div class="cap-icon">✨</div>
+                            <h4>General Intelligence</h4>
+                            <div class="cap-status future">Future</div>
+                        </div>
+                    </div>
+                    
+                    <div class="capability-detail" id="capabilityDetail">
+                        <h4>Select a capability to learn more</h4>
+                        <p>Click on any capability to see its current state and future potential.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Current Limitations -->
+        <section class="demo-section">
+            <h2>Step 3: Current Limitations</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Despite impressive capabilities, AI has real limitations. Understanding these helps set realistic expectations and use AI more effectively.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Fundamental challenges: hallucination (lack of grounding), reasoning failures (correlation vs causation), distribution shift, alignment difficulties, and computational costs. Active research addresses each area.</p>
+            </div>
+
+            <div class="animation-canvas" id="limitationsCanvas">
+                <div class="limitations-demo">
+                    <div class="limitation-list">
+                        <div class="limitation-item" data-limit="hallucination">
+                            <div class="limit-icon">🎭</div>
+                            <div class="limit-content">
+                                <h4>Hallucination</h4>
+                                <p>AI can confidently state false information</p>
+                            </div>
+                            <div class="limit-severity high">High Impact</div>
+                        </div>
+                        <div class="limitation-item" data-limit="reasoning">
+                            <div class="limit-icon">🧩</div>
+                            <div class="limit-content">
+                                <h4>Complex Reasoning</h4>
+                                <p>Struggles with multi-step logic</p>
+                            </div>
+                            <div class="limit-severity medium">Medium Impact</div>
+                        </div>
+                        <div class="limitation-item" data-limit="memory">
+                            <div class="limit-icon">💾</div>
+                            <div class="limit-content">
+                                <h4>Limited Memory</h4>
+                                <p>Can't remember past conversations</p>
+                            </div>
+                            <div class="limit-severity medium">Medium Impact</div>
+                        </div>
+                        <div class="limitation-item" data-limit="realtime">
+                            <div class="limit-icon">⏰</div>
+                            <div class="limit-content">
+                                <h4>No Real-Time Learning</h4>
+                                <p>Can't learn from interactions</p>
+                            </div>
+                            <div class="limit-severity low">Low Impact</div>
+                        </div>
+                        <div class="limitation-item" data-limit="physical">
+                            <div class="limit-icon">🌍</div>
+                            <div class="limit-content">
+                                <h4>Physical World</h4>
+                                <p>Limited understanding of physics</p>
+                            </div>
+                            <div class="limit-severity medium">Medium Impact</div>
+                        </div>
+                    </div>
+                    
+                    <div class="limitation-detail" id="limitationDetail">
+                        <h4>Click a limitation to see details</h4>
+                        <p>Learn about each limitation and how researchers are working to address it.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Prepare for the Future -->
+        <section class="demo-section">
+            <h2>Step 4: Prepare for the Future</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI will continue to transform work and life. Here's how to stay prepared and make the most of these changes.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Key skills: prompt engineering, AI system design, evaluation methods, safety considerations. Stay current with research (arXiv, conferences), experiment with new models, and understand both capabilities and limitations.</p>
+            </div>
+
+            <div class="animation-canvas" id="prepareCanvas">
+                <div class="prepare-demo">
+                    <div class="prepare-categories">
+                        <div class="prepare-category" data-cat="learn">
+                            <div class="cat-icon">📚</div>
+                            <h4>Keep Learning</h4>
+                            <ul>
+                                <li>Follow AI news and research</li>
+                                <li>Take online courses</li>
+                                <li>Experiment with new tools</li>
+                                <li>Join AI communities</li>
+                            </ul>
+                        </div>
+                        <div class="prepare-category" data-cat="skills">
+                            <div class="cat-icon">💪</div>
+                            <h4>Build Human Skills</h4>
+                            <ul>
+                                <li>Critical thinking</li>
+                                <li>Creativity and innovation</li>
+                                <li>Emotional intelligence</li>
+                                <li>Complex problem-solving</li>
+                            </ul>
+                        </div>
+                        <div class="prepare-category" data-cat="adapt">
+                            <div class="cat-icon">🔄</div>
+                            <h4>Stay Adaptable</h4>
+                            <ul>
+                                <li>Embrace change</li>
+                                <li>Learn new tools quickly</li>
+                                <li>Focus on transferable skills</li>
+                                <li>Build diverse expertise</li>
+                            </ul>
+                        </div>
+                        <div class="prepare-category" data-cat="ethics">
+                            <div class="cat-icon">⚖️</div>
+                            <h4>Think Ethically</h4>
+                            <ul>
+                                <li>Consider AI's impact</li>
+                                <li>Advocate for responsible use</li>
+                                <li>Stay informed on regulations</li>
+                                <li>Question AI outputs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🚀</div>
+                    <h4>Rapid Progress</h4>
+                    <p>AI capabilities are advancing faster than ever</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">⚠️</div>
+                    <h4>Real Limitations</h4>
+                    <p>AI isn't magic - understand what it can't do</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎯</div>
+                    <h4>Stay Curious</h4>
+                    <p>Keep learning and experimenting</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🤝</div>
+                    <h4>Human + AI</h4>
+                    <p>The future is collaboration, not replacement</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Available Now</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #F39C12;"></div>
+                <span>Emerging</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9B59B6;"></div>
+                <span>Research Stage</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #3498DB;"></div>
+                <span>Future</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../18_deployment_and_apis/html_demo/">← Previous: Deployment and APIs</a> | <a href="../01_foundations_ai_vs_genai/html_demo/">Start Over: Foundations →</a></p>
+            <p style="margin-top: 20px; font-size: 1.1rem;">🎉 <strong>Congratulations!</strong> You've completed the GenAI 360° learning journey!</p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

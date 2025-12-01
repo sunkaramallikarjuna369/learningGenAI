@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI vs Generative AI - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>AI vs Generative AI</h1>
+            <p class="subtitle">Understanding the fundamental difference between analyzing and creating</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Main Animation Section -->
+        <section class="demo-section">
+            <h2>See the Difference in Action</h2>
+            
+            <!-- Animation Canvas -->
+            <div class="animation-canvas" id="mainCanvas">
+                <!-- Split view: Traditional AI vs Generative AI -->
+                <div class="split-container">
+                    <!-- Traditional AI Side -->
+                    <div class="ai-side traditional">
+                        <div class="side-header">
+                            <h3>Traditional AI</h3>
+                            <span class="side-subtitle">Analyzes & Decides</span>
+                        </div>
+                        <div class="pipeline" id="traditionalPipeline">
+                            <div class="input-area" id="tradInput">
+                                <div class="input-icon">📧</div>
+                                <div class="input-label">Input</div>
+                            </div>
+                            <div class="arrow-container">
+                                <div class="animated-arrow" id="tradArrow1"></div>
+                            </div>
+                            <div class="model-box" id="tradModel">
+                                <div class="model-icon">🧠</div>
+                                <div class="model-label">AI Model</div>
+                                <div class="model-process non-tech-content">Pattern Matching</div>
+                                <div class="model-process tech-content">P(Y|X)</div>
+                            </div>
+                            <div class="arrow-container">
+                                <div class="animated-arrow" id="tradArrow2"></div>
+                            </div>
+                            <div class="output-area" id="tradOutput">
+                                <div class="output-icon">🏷️</div>
+                                <div class="output-label">Output</div>
+                                <div class="output-result" id="tradResult"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="divider">
+                        <div class="vs-badge">VS</div>
+                    </div>
+
+                    <!-- Generative AI Side -->
+                    <div class="ai-side generative">
+                        <div class="side-header">
+                            <h3>Generative AI</h3>
+                            <span class="side-subtitle">Creates & Generates</span>
+                        </div>
+                        <div class="pipeline" id="genPipeline">
+                            <div class="input-area" id="genInput">
+                                <div class="input-icon">💬</div>
+                                <div class="input-label">Prompt</div>
+                            </div>
+                            <div class="arrow-container">
+                                <div class="animated-arrow" id="genArrow1"></div>
+                            </div>
+                            <div class="model-box" id="genModel">
+                                <div class="model-icon">✨</div>
+                                <div class="model-label">GenAI Model</div>
+                                <div class="model-process non-tech-content">Content Creation</div>
+                                <div class="model-process tech-content">P(X)</div>
+                            </div>
+                            <div class="arrow-container">
+                                <div class="animated-arrow" id="genArrow2"></div>
+                            </div>
+                            <div class="output-area" id="genOutput">
+                                <div class="output-icon">📝</div>
+                                <div class="output-label">Output</div>
+                                <div class="output-result" id="genResult"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Display -->
+                <div class="scenario-display" id="scenarioDisplay">
+                    <div class="scenario-title" id="scenarioTitle">Click Play to Start</div>
+                    <div class="scenario-description" id="scenarioDesc">Watch how Traditional AI and Generative AI handle the same task differently</div>
+                </div>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator" id="stepIndicator"></div>
+
+            <!-- Control Bar -->
+            <div class="control-bar">
+                <button class="control-btn" id="prevBtn" title="Previous">⏮</button>
+                <button class="control-btn play" id="playBtn" title="Play">▶</button>
+                <button class="control-btn" id="nextBtn" title="Next">⏭</button>
+                <button class="control-btn" id="resetBtn" title="Reset">↺</button>
+                <div class="slider-control">
+                    <label for="speedSlider">Speed</label>
+                    <input type="range" id="speedSlider" min="20" max="100" value="50">
+                    <span class="slider-value" id="speedValue">1.0x</span>
+                </div>
+            </div>
+
+            <!-- Explanation Panel -->
+            <div class="explanation-panel non-tech-content" id="explanationNonTech">
+                <h4>What's Happening?</h4>
+                <p id="stepExplanation">Press play to see how Traditional AI and Generative AI approach the same problem differently. Traditional AI looks at data and makes decisions (like sorting emails into spam or not spam). Generative AI takes your request and creates something new (like writing a reply to an email).</p>
+            </div>
+
+            <div class="explanation-panel tech-content" id="explanationTech">
+                <h4>Technical Details</h4>
+                <p id="stepExplanationTech">Traditional AI models learn P(Y|X) - the probability of label Y given input X. They're discriminative models that find decision boundaries. Generative AI models learn P(X) - the full data distribution - allowing them to sample new instances that resemble the training data.</p>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section class="demo-section">
+            <h2>Real-World Examples</h2>
+            <div class="examples-grid">
+                <div class="example-card" data-scenario="email">
+                    <div class="example-icon">📧</div>
+                    <h4>Email</h4>
+                    <div class="example-comparison">
+                        <div class="trad-example">
+                            <span class="label">Traditional:</span>
+                            <span>Spam Detection</span>
+                        </div>
+                        <div class="gen-example">
+                            <span class="label">Generative:</span>
+                            <span>Write Reply</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-card" data-scenario="medical">
+                    <div class="example-icon">🏥</div>
+                    <h4>Healthcare</h4>
+                    <div class="example-comparison">
+                        <div class="trad-example">
+                            <span class="label">Traditional:</span>
+                            <span>Diagnose from X-ray</span>
+                        </div>
+                        <div class="gen-example">
+                            <span class="label">Generative:</span>
+                            <span>Explain Diagnosis</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-card" data-scenario="finance">
+                    <div class="example-icon">💰</div>
+                    <h4>Finance</h4>
+                    <div class="example-comparison">
+                        <div class="trad-example">
+                            <span class="label">Traditional:</span>
+                            <span>Fraud Detection</span>
+                        </div>
+                        <div class="gen-example">
+                            <span class="label">Generative:</span>
+                            <span>Write Report</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-card" data-scenario="creative">
+                    <div class="example-icon">🎨</div>
+                    <h4>Creative</h4>
+                    <div class="example-comparison">
+                        <div class="trad-example">
+                            <span class="label">Traditional:</span>
+                            <span>Style Recognition</span>
+                        </div>
+                        <div class="gen-example">
+                            <span class="label">Generative:</span>
+                            <span>Create Artwork</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Concepts Section -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-container">
+                <div class="takeaway-card">
+                    <div class="takeaway-icon">🔍</div>
+                    <h4>Traditional AI</h4>
+                    <ul>
+                        <li>Analyzes existing data</li>
+                        <li>Makes predictions & classifications</li>
+                        <li>Outputs decisions or labels</li>
+                        <li class="tech-content">Learns P(Y|X) - discriminative</li>
+                    </ul>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-icon">✨</div>
+                    <h4>Generative AI</h4>
+                    <ul>
+                        <li>Creates new content</li>
+                        <li>Generates text, images, code</li>
+                        <li>Outputs novel creations</li>
+                        <li class="tech-content">Learns P(X) - generative</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4A90D9;"></div>
+                <span>Traditional AI</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #7B68EE;"></div>
+                <span>Generative AI</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #50C878;"></div>
+                <span>Active/Processing</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../README.md">← Back to Concept</a> | <a href="../../02_probabilities_and_tokens/html_demo/">Next: Tokens & Probabilities →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

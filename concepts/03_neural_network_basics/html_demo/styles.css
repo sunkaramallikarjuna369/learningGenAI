@@ -1,0 +1,596 @@
+/* Neural Network Basics - Custom Styles */
+
+/* Single Neuron Demo */
+.single-neuron-demo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.neuron-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.input-label {
+    font-weight: 600;
+    min-width: 60px;
+    color: var(--text);
+}
+
+.input-slider {
+    width: 100px;
+    cursor: pointer;
+}
+
+.input-value {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 30px;
+}
+
+/* Weights Section */
+.weights-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+}
+
+.weight-line {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+.weight-line::before {
+    content: '';
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: 2px;
+    animation: pulseWidth 2s ease infinite;
+}
+
+@keyframes pulseWidth {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.weight-value {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-left: 5px;
+    background: var(--background);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+/* Neuron Body */
+.neuron-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.neuron-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+}
+
+.neuron-circle.active {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(80, 200, 120, 0.5);
+}
+
+.sum-display {
+    font-size: 2rem;
+    color: var(--white);
+    font-weight: bold;
+}
+
+.neuron-calculation {
+    background: var(--white);
+    padding: 15px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    min-width: 180px;
+}
+
+.calc-step {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--background);
+}
+
+.calc-step:last-child {
+    border-bottom: none;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.calc-label {
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.calc-value {
+    font-family: monospace;
+    font-weight: 600;
+}
+
+/* Neuron Output */
+.neuron-output {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.output-arrow {
+    font-size: 2rem;
+    color: var(--primary);
+    animation: arrowPulse 1s ease infinite;
+}
+
+@keyframes arrowPulse {
+    0%, 100% { transform: translateX(0); opacity: 0.7; }
+    50% { transform: translateX(5px); opacity: 1; }
+}
+
+.output-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.output-label {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.output-bar-container {
+    width: 120px;
+    height: 20px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.output-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+    width: 0%;
+    transition: width var(--transition-normal);
+    border-radius: var(--radius-sm);
+}
+
+.output-value {
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* Network Canvas */
+#networkCanvas {
+    position: relative;
+    min-height: 400px;
+    padding: 20px;
+}
+
+.network-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.network-svg line {
+    stroke: var(--background-dark);
+    stroke-width: 2;
+    transition: all var(--transition-normal);
+}
+
+.network-svg line.active {
+    stroke: var(--accent);
+    stroke-width: 3;
+}
+
+.network-svg line.signal {
+    stroke: var(--warning);
+    stroke-width: 4;
+    filter: drop-shadow(0 0 5px var(--warning));
+}
+
+.network-layers {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 350px;
+    padding: 0 50px;
+    position: relative;
+    z-index: 1;
+}
+
+.network-layer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.layer-label {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.network-node {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    border: 3px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--primary-dark);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+}
+
+.network-node:hover {
+    transform: scale(1.1);
+}
+
+.network-node.input-layer {
+    background: #E3F2FD;
+    border-color: #2196F3;
+    color: #1565C0;
+}
+
+.network-node.hidden-layer {
+    background: #FFF3E0;
+    border-color: #FF9800;
+    color: #E65100;
+}
+
+.network-node.output-layer {
+    background: #E8F5E9;
+    border-color: #4CAF50;
+    color: #2E7D32;
+}
+
+.network-node.active {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px currentColor;
+}
+
+.network-node.processing {
+    animation: processingPulse 0.5s ease infinite;
+}
+
+@keyframes processingPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+/* Learning Demo */
+.learning-demo {
+    padding: 20px;
+}
+
+.learning-visualization {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.prediction-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    grid-column: 1 / -1;
+}
+
+.target-box, .prediction-box {
+    text-align: center;
+    padding: 20px;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    min-width: 120px;
+}
+
+.target-box {
+    border-top: 4px solid var(--accent);
+}
+
+.prediction-box {
+    border-top: 4px solid var(--primary);
+}
+
+.target-display, .prediction-display {
+    font-size: 3rem;
+    margin: 10px 0;
+}
+
+.vs-divider {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.error-display {
+    background: var(--white);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.error-display h4 {
+    margin-bottom: 15px;
+    color: var(--danger);
+}
+
+.error-bar-container {
+    height: 30px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.error-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--danger) 0%, #FF8A80 100%);
+    width: 100%;
+    transition: width 0.5s ease;
+}
+
+.error-value {
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.training-progress {
+    background: var(--white);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.training-progress h4 {
+    margin-bottom: 15px;
+}
+
+.epoch-display {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.epoch-display span {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.loss-chart {
+    background: var(--background);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+}
+
+#lossCanvas {
+    width: 100%;
+    height: auto;
+}
+
+.learning-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Activation Demo */
+.activation-demo {
+    padding: 20px;
+    text-align: center;
+}
+
+.activation-selector {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.activation-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--primary);
+    background: var(--white);
+    color: var(--primary);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.activation-btn:hover {
+    background: var(--primary-light);
+}
+
+.activation-btn.active {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.activation-graph {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    display: inline-block;
+}
+
+#activationGraph {
+    max-width: 100%;
+}
+
+.activation-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.activation-input label {
+    font-weight: 600;
+}
+
+.activation-input input[type="range"] {
+    width: 200px;
+}
+
+#activationInputValue {
+    font-family: monospace;
+    font-weight: 600;
+    min-width: 50px;
+}
+
+.activation-output {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.highlight-value {
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 5px 15px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+}
+
+.activation-formula {
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    padding: 10px 20px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+    display: inline-block;
+}
+
+/* Takeaways Grid */
+.takeaways-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.takeaway-item {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 25px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.takeaway-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.takeaway-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.takeaway-item h4 {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.takeaway-item p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .single-neuron-demo {
+        flex-direction: column;
+    }
+    
+    .weights-section {
+        transform: rotate(90deg);
+        margin: 20px 0;
+    }
+    
+    .network-layers {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+        gap: 30px;
+    }
+    
+    .network-layer {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .learning-visualization {
+        grid-template-columns: 1fr;
+    }
+    
+    .prediction-comparison {
+        flex-direction: column;
+    }
+}

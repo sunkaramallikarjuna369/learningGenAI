@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Generation Use Cases - Interactive Demo</title>
+    <link rel="stylesheet" href="../../../common/html_toolkit/base.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>Text Generation Use Cases</h1>
+            <p class="subtitle">Practical applications of AI writing</p>
+        </header>
+
+        <!-- Track Toggle -->
+        <div class="track-toggle">
+            <button id="nonTechBtn" class="track-btn non-tech active">For Everyone</button>
+            <button id="techBtn" class="track-btn tech">For Techies</button>
+        </div>
+
+        <!-- Section 1: Use Case Explorer -->
+        <section class="demo-section">
+            <h2>Step 1: Explore Use Cases</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Text generation AI can help with many different tasks. Click on each category to see examples of what AI can do in that area!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Each use case requires different prompt engineering strategies, temperature settings, and output constraints. Some tasks benefit from few-shot examples, while others work well with zero-shot prompting.</p>
+            </div>
+
+            <div class="animation-canvas" id="useCaseCanvas">
+                <div class="use-case-explorer">
+                    <div class="category-grid">
+                        <div class="category-card" data-category="writing">
+                            <div class="category-icon">✍️</div>
+                            <h4>Writing</h4>
+                            <p>Emails, reports, articles</p>
+                        </div>
+                        <div class="category-card" data-category="content">
+                            <div class="category-icon">📱</div>
+                            <h4>Content</h4>
+                            <p>Social media, marketing</p>
+                        </div>
+                        <div class="category-card" data-category="analysis">
+                            <div class="category-icon">📊</div>
+                            <h4>Analysis</h4>
+                            <p>Summarize, extract, Q&A</p>
+                        </div>
+                        <div class="category-card" data-category="code">
+                            <div class="category-icon">💻</div>
+                            <h4>Code</h4>
+                            <p>Documentation, debugging</p>
+                        </div>
+                    </div>
+                    
+                    <div class="category-details" id="categoryDetails">
+                        <div class="details-placeholder">
+                            <p>Click a category to see examples</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Live Demo -->
+        <section class="demo-section">
+            <h2>Step 2: Try It Yourself</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Select a task type and see how AI transforms your input. Watch the generation happen in real-time!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Different tasks use different generation parameters. Summarization uses lower temperature for consistency, while creative writing uses higher temperature for variety. Output length is constrained based on task type.</p>
+            </div>
+
+            <div class="animation-canvas" id="liveDemo">
+                <div class="live-demo-container">
+                    <div class="task-selector">
+                        <label>Select Task:</label>
+                        <select id="taskSelect">
+                            <option value="summarize">Summarize Text</option>
+                            <option value="email">Write Email</option>
+                            <option value="simplify">Simplify Language</option>
+                            <option value="expand">Expand Ideas</option>
+                            <option value="translate">Change Tone</option>
+                        </select>
+                    </div>
+                    
+                    <div class="demo-panels">
+                        <div class="input-panel">
+                            <h4>Input</h4>
+                            <textarea id="demoInput" placeholder="Enter your text here..."></textarea>
+                        </div>
+                        
+                        <div class="transform-arrow">
+                            <div class="arrow-animation" id="arrowAnim">→</div>
+                            <span class="task-label" id="taskLabel">Summarize</span>
+                        </div>
+                        
+                        <div class="output-panel">
+                            <h4>Output</h4>
+                            <div class="output-text" id="demoOutput">
+                                <span class="placeholder">Generated text will appear here...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-controls">
+                        <button class="action-btn primary" id="generateBtn">Generate</button>
+                        <button class="action-btn" id="clearBtn">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Industry Applications -->
+        <section class="demo-section">
+            <h2>Step 3: Industry Applications</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Different industries use text generation in unique ways. Explore how various sectors leverage AI for their specific needs!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Industry-specific applications often require domain-specific fine-tuning, custom prompt templates, and integration with existing workflows. Compliance and accuracy requirements vary significantly across sectors.</p>
+            </div>
+
+            <div class="animation-canvas" id="industryCanvas">
+                <div class="industry-showcase">
+                    <div class="industry-tabs">
+                        <button class="industry-tab active" data-industry="marketing">Marketing</button>
+                        <button class="industry-tab" data-industry="education">Education</button>
+                        <button class="industry-tab" data-industry="healthcare">Healthcare</button>
+                        <button class="industry-tab" data-industry="legal">Legal</button>
+                        <button class="industry-tab" data-industry="tech">Tech</button>
+                    </div>
+                    
+                    <div class="industry-content" id="industryContent">
+                        <!-- Marketing -->
+                        <div class="industry-panel active" data-industry="marketing">
+                            <div class="industry-header">
+                                <span class="industry-icon">📈</span>
+                                <h4>Marketing & Sales</h4>
+                            </div>
+                            <div class="use-case-list">
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Ad Copy</span>
+                                    <span class="use-case-desc">Generate compelling headlines and descriptions</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Email Campaigns</span>
+                                    <span class="use-case-desc">Personalized outreach at scale</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Product Descriptions</span>
+                                    <span class="use-case-desc">SEO-optimized product content</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Social Media</span>
+                                    <span class="use-case-desc">Platform-specific content creation</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Education -->
+                        <div class="industry-panel" data-industry="education">
+                            <div class="industry-header">
+                                <span class="industry-icon">🎓</span>
+                                <h4>Education</h4>
+                            </div>
+                            <div class="use-case-list">
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Lesson Plans</span>
+                                    <span class="use-case-desc">Curriculum-aligned teaching materials</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Quiz Generation</span>
+                                    <span class="use-case-desc">Auto-generate assessments</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Explanations</span>
+                                    <span class="use-case-desc">Personalized concept breakdowns</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Feedback</span>
+                                    <span class="use-case-desc">Constructive comments on student work</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Healthcare -->
+                        <div class="industry-panel" data-industry="healthcare">
+                            <div class="industry-header">
+                                <span class="industry-icon">🏥</span>
+                                <h4>Healthcare</h4>
+                            </div>
+                            <div class="use-case-list">
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Clinical Notes</span>
+                                    <span class="use-case-desc">Summarize patient encounters</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Patient Communication</span>
+                                    <span class="use-case-desc">Clear, empathetic messaging</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Literature Review</span>
+                                    <span class="use-case-desc">Summarize research papers</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Documentation</span>
+                                    <span class="use-case-desc">Streamline administrative tasks</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Legal -->
+                        <div class="industry-panel" data-industry="legal">
+                            <div class="industry-header">
+                                <span class="industry-icon">⚖️</span>
+                                <h4>Legal</h4>
+                            </div>
+                            <div class="use-case-list">
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Contract Review</span>
+                                    <span class="use-case-desc">Summarize key terms and risks</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Legal Research</span>
+                                    <span class="use-case-desc">Find relevant precedents</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Document Drafting</span>
+                                    <span class="use-case-desc">Generate initial drafts</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Compliance</span>
+                                    <span class="use-case-desc">Check regulatory requirements</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tech -->
+                        <div class="industry-panel" data-industry="tech">
+                            <div class="industry-header">
+                                <span class="industry-icon">💻</span>
+                                <h4>Technology</h4>
+                            </div>
+                            <div class="use-case-list">
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Documentation</span>
+                                    <span class="use-case-desc">API docs, README files</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Code Comments</span>
+                                    <span class="use-case-desc">Explain complex code</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Bug Reports</span>
+                                    <span class="use-case-desc">Analyze and summarize issues</span>
+                                </div>
+                                <div class="use-case-item">
+                                    <span class="use-case-name">Release Notes</span>
+                                    <span class="use-case-desc">Generate changelogs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Quality Checklist -->
+        <section class="demo-section">
+            <h2>Step 4: Quality Checklist</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>AI-generated text needs human review. Use this checklist to ensure quality before using any generated content!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Quality assurance for LLM outputs includes factual verification, bias detection, consistency checks, and format validation. Automated evaluation metrics (BLEU, ROUGE, etc.) can supplement human review.</p>
+            </div>
+
+            <div class="animation-canvas" id="checklistCanvas">
+                <div class="quality-checklist">
+                    <div class="checklist-items">
+                        <label class="checklist-item">
+                            <input type="checkbox" id="check1">
+                            <span class="checkmark"></span>
+                            <div class="check-content">
+                                <span class="check-title">Accuracy</span>
+                                <span class="check-desc">Verify all facts and claims</span>
+                            </div>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="check2">
+                            <span class="checkmark"></span>
+                            <div class="check-content">
+                                <span class="check-title">Relevance</span>
+                                <span class="check-desc">Content matches the intended purpose</span>
+                            </div>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="check3">
+                            <span class="checkmark"></span>
+                            <div class="check-content">
+                                <span class="check-title">Tone</span>
+                                <span class="check-desc">Appropriate for audience and context</span>
+                            </div>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="check4">
+                            <span class="checkmark"></span>
+                            <div class="check-content">
+                                <span class="check-title">Originality</span>
+                                <span class="check-desc">Not plagiarized or too generic</span>
+                            </div>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="check5">
+                            <span class="checkmark"></span>
+                            <div class="check-content">
+                                <span class="check-title">Bias</span>
+                                <span class="check-desc">Free from harmful stereotypes</span>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="checklist-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="checklistProgress" style="width: 0%;"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0/5 checks complete</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="demo-section">
+            <h2>Key Takeaways</h2>
+            <div class="takeaways-grid">
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🎯</div>
+                    <h4>Many Use Cases</h4>
+                    <p>From emails to code docs, AI assists with diverse writing tasks</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🏢</div>
+                    <h4>Industry-Specific</h4>
+                    <p>Each sector has unique applications and requirements</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔍</div>
+                    <h4>Always Review</h4>
+                    <p>Human oversight ensures quality and accuracy</p>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-icon">🔄</div>
+                    <h4>Iterate</h4>
+                    <p>Refine outputs through follow-up prompts</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 20px; color: #666;">
+            <p>Part of the <strong>Generative AI 360°</strong> Learning Repository</p>
+            <p><a href="../07_prompt_engineering/html_demo/">← Previous: Prompt Engineering</a> | <a href="../09_image_generation_diffusion/html_demo/">Next: Image Generation →</a></p>
+        </footer>
+    </div>
+
+    <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
