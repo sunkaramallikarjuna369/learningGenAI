@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Trends and Limitations - Interactive Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Future Trends and Limitations</h1>
+            <p class="subtitle">Interactive Visual Explanation</p>
+        </header>
+
+        <nav class="track-selector">
+            <button class="track-btn active" data-track="everyone">For Everyone</button>
+            <button class="track-btn" data-track="technical">For Technical Readers</button>
+        </nav>
+
+        <main>
+            <section id="everyone-content" class="track-content active">
+                <div class="card">
+                    <h2>What is Future Trends and Limitations?</h2>
+                    <p>Where GenAI is heading and what it cannot do - understanding both the potential and the boundaries.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Why Does This Matter?</h2>
+                    <p>Understanding trends and limits helps you make informed decisions and set realistic expectations.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Interactive Demo</h2>
+                    <div class="demo-area" id="demo-everyone">
+                        <div class="demo-visualization">
+                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
+                        </div>
+                        <div class="demo-controls">
+                            <button id="btn-start" class="btn-primary">Start Demo</button>
+                            <button id="btn-reset" class="btn-secondary">Reset</button>
+                        </div>
+                        <div class="demo-explanation" id="explanation">
+                            <p>Click "Start Demo" to see future in action!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Real-World Examples</h2>
+                    <ul class="examples-list">
+                        <li>AGI speculation</li><li>Reasoning limitations</li><li>Multimodal advances</li><li>Open vs closed models</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="technical-content" class="track-content">
+                <div class="card">
+                    <h2>Technical Overview</h2>
+                    <p>AGI debate, scaling hypothesis, emergent capabilities, fundamental limitations, and research frontiers.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Key Concepts</h2>
+                    <div class="concept-diagram" id="tech-diagram">
+                        <canvas id="canvas-technical" width="600" height="400"></canvas>
+                    </div>
+                    <div class="demo-controls">
+                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
+                        <span id="param-value">50</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Mathematical Foundation</h2>
+                    <div class="math-content">
+                        <p>Key equations and relationships:</p>
+                        <div class="equation">
+                            f(x) = transform(input, parameters)
+                        </div>
+                        <p class="math-explanation">
+                            Where transform represents the core operation of future.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Implementation Considerations</h2>
+                    <ul class="tech-list">
+                        <li>Performance trade-offs</li>
+                        <li>Scalability concerns</li>
+                        <li>Common pitfalls</li>
+                        <li>Best practices</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
+            <div class="related-links">
+                <h4>Related Concepts:</h4>
+                <a href="../06_large_language_models/html_demo/index.html">Large Language Models (LLMs)</a><a href="../14_responsible_ai_and_ethics/html_demo/index.html">Responsible AI and Ethics</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

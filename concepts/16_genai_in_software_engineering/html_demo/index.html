@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI in Software Engineering - Interactive Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GenAI in Software Engineering</h1>
+            <p class="subtitle">Interactive Visual Explanation</p>
+        </header>
+
+        <nav class="track-selector">
+            <button class="track-btn active" data-track="everyone">For Everyone</button>
+            <button class="track-btn" data-track="technical">For Technical Readers</button>
+        </nav>
+
+        <main>
+            <section id="everyone-content" class="track-content active">
+                <div class="card">
+                    <h2>What is GenAI in Software Engineering?</h2>
+                    <p>How developers use AI to write code faster - tools like GitHub Copilot and AI-assisted development.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Why Does This Matter?</h2>
+                    <p>AI is transforming software development, making developers more productive and enabling new workflows.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Interactive Demo</h2>
+                    <div class="demo-area" id="demo-everyone">
+                        <div class="demo-visualization">
+                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
+                        </div>
+                        <div class="demo-controls">
+                            <button id="btn-start" class="btn-primary">Start Demo</button>
+                            <button id="btn-reset" class="btn-secondary">Reset</button>
+                        </div>
+                        <div class="demo-explanation" id="explanation">
+                            <p>Click "Start Demo" to see software_engineering in action!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Real-World Examples</h2>
+                    <ul class="examples-list">
+                        <li>GitHub Copilot</li><li>Cursor IDE</li><li>AI code review</li><li>Automated testing</li><li>Documentation generation</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="technical-content" class="track-content">
+                <div class="card">
+                    <h2>Technical Overview</h2>
+                    <p>Code generation models, IDE integration, test generation, code review, documentation, and debugging assistance.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Key Concepts</h2>
+                    <div class="concept-diagram" id="tech-diagram">
+                        <canvas id="canvas-technical" width="600" height="400"></canvas>
+                    </div>
+                    <div class="demo-controls">
+                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
+                        <span id="param-value">50</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Mathematical Foundation</h2>
+                    <div class="math-content">
+                        <p>Key equations and relationships:</p>
+                        <div class="equation">
+                            f(x) = transform(input, parameters)
+                        </div>
+                        <p class="math-explanation">
+                            Where transform represents the core operation of software_engineering.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Implementation Considerations</h2>
+                    <ul class="tech-list">
+                        <li>Performance trade-offs</li>
+                        <li>Scalability concerns</li>
+                        <li>Common pitfalls</li>
+                        <li>Best practices</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
+            <div class="related-links">
+                <h4>Related Concepts:</h4>
+                <a href="../08_text_generation_use_cases/html_demo/index.html">Text Generation Use Cases</a><a href="../12_agents_and_tool_use/html_demo/index.html">Agents and Tool Use</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

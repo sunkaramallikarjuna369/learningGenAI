@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probabilities and Tokens - Interactive Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Probabilities and Tokens</h1>
+            <p class="subtitle">Interactive Visual Explanation</p>
+        </header>
+
+        <nav class="track-selector">
+            <button class="track-btn active" data-track="everyone">For Everyone</button>
+            <button class="track-btn" data-track="technical">For Technical Readers</button>
+        </nav>
+
+        <main>
+            <section id="everyone-content" class="track-content active">
+                <div class="card">
+                    <h2>What is Probabilities and Tokens?</h2>
+                    <p>How AI breaks down text into pieces (tokens) and predicts what comes next using probabilities - like a very sophisticated autocomplete.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Why Does This Matter?</h2>
+                    <p>Understanding tokens and probabilities helps you write better prompts and understand why AI sometimes produces unexpected outputs.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Interactive Demo</h2>
+                    <div class="demo-area" id="demo-everyone">
+                        <div class="demo-visualization">
+                            <canvas id="canvas-everyone" width="600" height="400"></canvas>
+                        </div>
+                        <div class="demo-controls">
+                            <button id="btn-start" class="btn-primary">Start Demo</button>
+                            <button id="btn-reset" class="btn-secondary">Reset</button>
+                        </div>
+                        <div class="demo-explanation" id="explanation">
+                            <p>Click "Start Demo" to see tokens in action!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Real-World Examples</h2>
+                    <ul class="examples-list">
+                        <li>Why "ChatGPT" might be multiple tokens</li><li>Temperature affecting creativity</li><li>Token limits in conversations</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="technical-content" class="track-content">
+                <div class="card">
+                    <h2>Technical Overview</h2>
+                    <p>Tokenization algorithms (BPE, WordPiece), probability distributions over vocabulary, sampling strategies (greedy, top-k, nucleus).</p>
+                </div>
+
+                <div class="card">
+                    <h2>Key Concepts</h2>
+                    <div class="concept-diagram" id="tech-diagram">
+                        <canvas id="canvas-technical" width="600" height="400"></canvas>
+                    </div>
+                    <div class="demo-controls">
+                        <label>Parameter: <input type="range" id="param-slider" min="0" max="100" value="50"></label>
+                        <span id="param-value">50</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Mathematical Foundation</h2>
+                    <div class="math-content">
+                        <p>Key equations and relationships:</p>
+                        <div class="equation">
+                            f(x) = transform(input, parameters)
+                        </div>
+                        <p class="math-explanation">
+                            Where transform represents the core operation of tokens.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Implementation Considerations</h2>
+                    <ul class="tech-list">
+                        <li>Performance trade-offs</li>
+                        <li>Scalability concerns</li>
+                        <li>Common pitfalls</li>
+                        <li>Best practices</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Part of <a href="../../README.md">Generative AI 360°</a> Learning Repository</p>
+            <div class="related-links">
+                <h4>Related Concepts:</h4>
+                <a href="../01_foundations_ai_vs_genai/html_demo/index.html">Foundations: AI vs Generative AI</a><a href="../05_transformers_and_attention/html_demo/index.html">Transformers and Attention</a><a href="../07_prompt_engineering/html_demo/index.html">Prompt Engineering</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
