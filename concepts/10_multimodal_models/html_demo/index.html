@@ -21,6 +21,50 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Multimodal Fusion Visualization -->
+        <section class="demo-section">
+            <h2>3D Multimodal Fusion</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What's Happening?</h4>
+                <p>Watch how different types of information (text, images, audio) flow together and merge into unified AI understanding! Each stream represents a different modality.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical Details</h4>
+                <p>Multimodal fusion combines embeddings from different encoders (ViT for images, transformer for text, wav2vec for audio) through cross-attention or concatenation in a shared latent space.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="multimodal3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn3D">Rotate Left</button>
+                    <button class="canvas-btn" id="animateFusionBtn">Animate Fusion</button>
+                    <button class="canvas-btn" id="rotateRightBtn3D">Rotate Right</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Multimodal AI in Action</h4>
+                <p>Select your industry to see how multimodal AI is transforming workflows.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="healthcare">Healthcare</button>
+                <button class="role-btn" data-role="retail">Retail</button>
+                <button class="role-btn" data-role="education">Education</button>
+                <button class="role-btn" data-role="security">Security</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+            </div>
+        </section>
+
         <!-- Section 1: What is Multimodal -->
         <section class="demo-section">
             <h2>Step 1: Understanding Multimodal</h2>
@@ -343,6 +387,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -5,6 +5,55 @@
  * capabilities, architecture, and real-world applications.
  */
 
+// Role-based applications data
+const roleApplications = {
+    healthcare: {
+        title: 'Healthcare',
+        apps: [
+            { name: 'Medical Image Analysis', desc: 'Analyze X-rays, MRIs, and CT scans with AI-assisted diagnosis' },
+            { name: 'Clinical Documentation', desc: 'Convert voice notes and images into structured medical records' },
+            { name: 'Patient Monitoring', desc: 'Combine video, audio, and sensor data for remote patient care' },
+            { name: 'Drug Discovery', desc: 'Analyze molecular structures and research papers together' }
+        ]
+    },
+    retail: {
+        title: 'Retail',
+        apps: [
+            { name: 'Visual Search', desc: 'Find products by uploading photos or describing them' },
+            { name: 'Virtual Try-On', desc: 'See how clothes, glasses, or makeup look on you' },
+            { name: 'Inventory Management', desc: 'Automated shelf monitoring with image recognition' },
+            { name: 'Customer Insights', desc: 'Analyze in-store video and audio for behavior patterns' }
+        ]
+    },
+    education: {
+        title: 'Education',
+        apps: [
+            { name: 'Interactive Tutoring', desc: 'AI that can see student work and explain concepts visually' },
+            { name: 'Accessibility Tools', desc: 'Convert lectures to text, describe images for blind students' },
+            { name: 'Lab Assistance', desc: 'Analyze experiment images and provide guidance' },
+            { name: 'Language Learning', desc: 'Combine speech recognition with visual context' }
+        ]
+    },
+    security: {
+        title: 'Security',
+        apps: [
+            { name: 'Surveillance Analysis', desc: 'Intelligent video monitoring with anomaly detection' },
+            { name: 'Document Verification', desc: 'Verify IDs by combining image and text analysis' },
+            { name: 'Threat Detection', desc: 'Analyze multiple sensor inputs for security threats' },
+            { name: 'Access Control', desc: 'Face recognition combined with voice verification' }
+        ]
+    }
+};
+
+// 3D Multimodal visualization state
+let multimodal3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    streams: []
+};
+
 // Scene data for vision demo
 const scenes = {
     park: {
@@ -41,11 +90,166 @@ let currentScene = 'park';
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DMultimodal();
+    initRoleApplications();
     initModalityDemo();
     initVisionDemo();
     initArchitectureDemo();
     initUseCasesDemo();
 });
+
+// ============================================================================
+// 3D Multimodal Fusion Visualization
+// ============================================================================
+
+function init3DMultimodal() {
+    const canvas = document.getElementById('multimodal3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    multimodal3D.mini3d = new Mini3D(canvas);
+    
+    // Initialize streams (text, image, audio converging to center)
+    const modalities = [
+        { name: 'Text', color: '#4A90D9', startAngle: 0 },
+        { name: 'Image', color: '#50C878', startAngle: 2.09 },
+        { name: 'Audio', color: '#E67E22', startAngle: 4.19 }
+    ];
+    
+    modalities.forEach(m => {
+        for (let i = 0; i < 15; i++) {
+            const radius = 200;
+            multimodal3D.streams.push({
+                x: Math.cos(m.startAngle) * radius,
+                y: (Math.random() - 0.5) * 100,
+                z: Math.sin(m.startAngle) * radius,
+                color: m.color,
+                name: m.name,
+                progress: Math.random()
+            });
+        }
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        multimodal3D.rotationY -= 0.3;
+        render3DMultimodal();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        multimodal3D.rotationY += 0.3;
+        render3DMultimodal();
+    });
+    
+    document.getElementById('animateFusionBtn')?.addEventListener('click', () => {
+        if (!multimodal3D.animating) {
+            multimodal3D.animating = true;
+            multimodal3D.progress = 0;
+            animateMultimodalFusion();
+        }
+    });
+    
+    render3DMultimodal();
+}
+
+function animateMultimodalFusion() {
+    if (!multimodal3D.animating) return;
+    
+    multimodal3D.progress += 0.01;
+    multimodal3D.rotationY += 0.02;
+    
+    // Move particles toward center
+    multimodal3D.streams.forEach(p => {
+        p.progress += 0.02;
+        if (p.progress > 1) p.progress = 0;
+    });
+    
+    render3DMultimodal();
+    
+    if (multimodal3D.progress < 1) {
+        requestAnimationFrame(animateMultimodalFusion);
+    } else {
+        multimodal3D.animating = false;
+    }
+}
+
+function render3DMultimodal() {
+    const mini3d = multimodal3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, multimodal3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw central fusion sphere
+    const centerRotated = mini3d.rotatePoint(0, 0, 0);
+    const centerProj = mini3d.project(centerRotated.x + centerX, centerRotated.y + centerY, centerRotated.z);
+    
+    const gradient = mini3d.ctx.createRadialGradient(centerProj.x, centerProj.y, 0, centerProj.x, centerProj.y, 50);
+    gradient.addColorStop(0, '#9B59B6');
+    gradient.addColorStop(0.7, '#8E44AD');
+    gradient.addColorStop(1, 'transparent');
+    mini3d.ctx.fillStyle = gradient;
+    mini3d.ctx.beginPath();
+    mini3d.ctx.arc(centerProj.x, centerProj.y, 50, 0, Math.PI * 2);
+    mini3d.ctx.fill();
+    
+    mini3d.ctx.fillStyle = '#fff';
+    mini3d.ctx.font = 'bold 14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('Fusion', centerProj.x, centerProj.y + 5);
+    
+    // Draw streaming particles
+    multimodal3D.streams.forEach(p => {
+        const t = p.progress;
+        const x = p.x * (1 - t);
+        const y = p.y * (1 - t);
+        const z = p.z * (1 - t);
+        
+        const rotated = mini3d.rotatePoint(x, y, z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        mini3d.ctx.fillStyle = p.color;
+        mini3d.ctx.globalAlpha = 0.7 * proj.scale;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 6 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+    });
+    
+    mini3d.ctx.globalAlpha = 1;
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('healthcare');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

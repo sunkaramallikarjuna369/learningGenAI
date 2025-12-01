@@ -5,6 +5,56 @@
  * tool use, and multi-agent collaboration.
  */
 
+// Role-based applications data
+const roleApplications = {
+    business: {
+        title: 'Business',
+        apps: [
+            { name: 'Meeting Scheduler', desc: 'Agent that coordinates calendars and books meetings automatically' },
+            { name: 'Report Generator', desc: 'Pulls data from multiple sources and creates executive summaries' },
+            { name: 'Email Assistant', desc: 'Drafts, sends, and follows up on emails based on context' },
+            { name: 'CRM Automation', desc: 'Updates customer records and triggers follow-up actions' }
+        ]
+    },
+    development: {
+        title: 'Development',
+        apps: [
+            { name: 'Code Assistant', desc: 'Writes, tests, and debugs code across multiple files' },
+            { name: 'DevOps Agent', desc: 'Monitors systems, deploys updates, and handles incidents' },
+            { name: 'Documentation Bot', desc: 'Generates and updates technical documentation automatically' },
+            { name: 'PR Reviewer', desc: 'Reviews code changes and suggests improvements' }
+        ]
+    },
+    research: {
+        title: 'Research',
+        apps: [
+            { name: 'Literature Agent', desc: 'Searches papers, extracts findings, and synthesizes insights' },
+            { name: 'Data Analyst', desc: 'Runs experiments, analyzes results, and generates reports' },
+            { name: 'Citation Manager', desc: 'Finds and formats citations for academic papers' },
+            { name: 'Hypothesis Tester', desc: 'Designs and runs experiments to test theories' }
+        ]
+    },
+    personal: {
+        title: 'Personal',
+        apps: [
+            { name: 'Travel Planner', desc: 'Books flights, hotels, and creates itineraries' },
+            { name: 'Shopping Assistant', desc: 'Compares prices, finds deals, and makes purchases' },
+            { name: 'Health Tracker', desc: 'Monitors health data and schedules appointments' },
+            { name: 'Learning Coach', desc: 'Creates personalized study plans and tracks progress' }
+        ]
+    }
+};
+
+// 3D Agent visualization state
+let agent3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    nodes: [],
+    activeNode: 0
+};
+
 // Task data for ReAct demo
 const taskData = {
     weather: {
@@ -62,10 +112,178 @@ const toolSimulations = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DAgent();
+    initRoleApplications();
     initReactDemo();
     initToolsDemo();
     initMultiAgentDemo();
 });
+
+// ============================================================================
+// 3D Agent Decision Tree Visualization
+// ============================================================================
+
+function init3DAgent() {
+    const canvas = document.getElementById('agent3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    agent3D.mini3d = new Mini3D(canvas);
+    
+    // Create decision tree nodes
+    const levels = [
+        [{ x: 0, y: -150, z: 0, label: 'Goal', color: '#4A90D9' }],
+        [
+            { x: -100, y: -50, z: -50, label: 'Plan A', color: '#E67E22' },
+            { x: 0, y: -50, z: 50, label: 'Plan B', color: '#E67E22' },
+            { x: 100, y: -50, z: -50, label: 'Plan C', color: '#E67E22' }
+        ],
+        [
+            { x: -150, y: 50, z: 0, label: 'Tool 1', color: '#9B59B6' },
+            { x: -50, y: 50, z: -80, label: 'Tool 2', color: '#9B59B6' },
+            { x: 50, y: 50, z: 80, label: 'Tool 3', color: '#9B59B6' },
+            { x: 150, y: 50, z: 0, label: 'Tool 4', color: '#9B59B6' }
+        ],
+        [
+            { x: -100, y: 150, z: 0, label: 'Result', color: '#50C878' },
+            { x: 100, y: 150, z: 0, label: 'Result', color: '#50C878' }
+        ]
+    ];
+    
+    levels.forEach((level, i) => {
+        level.forEach(node => {
+            node.level = i;
+            agent3D.nodes.push(node);
+        });
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        agent3D.rotationY -= 0.3;
+        render3DAgent();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        agent3D.rotationY += 0.3;
+        render3DAgent();
+    });
+    
+    document.getElementById('animateAgentBtn')?.addEventListener('click', () => {
+        if (!agent3D.animating) {
+            agent3D.animating = true;
+            agent3D.progress = 0;
+            agent3D.activeNode = 0;
+            animateAgentDecision();
+        }
+    });
+    
+    render3DAgent();
+}
+
+function animateAgentDecision() {
+    if (!agent3D.animating) return;
+    
+    agent3D.progress += 0.02;
+    agent3D.rotationY += 0.01;
+    
+    // Move through decision levels
+    agent3D.activeNode = Math.floor(agent3D.progress * agent3D.nodes.length);
+    
+    render3DAgent();
+    
+    if (agent3D.progress < 1) {
+        requestAnimationFrame(animateAgentDecision);
+    } else {
+        agent3D.animating = false;
+    }
+}
+
+function render3DAgent() {
+    const mini3d = agent3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, agent3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw connections first
+    mini3d.ctx.strokeStyle = 'rgba(150, 150, 150, 0.3)';
+    mini3d.ctx.lineWidth = 1;
+    
+    agent3D.nodes.forEach((node, i) => {
+        if (node.level < 3) {
+            const nextLevel = agent3D.nodes.filter(n => n.level === node.level + 1);
+            nextLevel.forEach(next => {
+                const r1 = mini3d.rotatePoint(node.x, node.y, node.z);
+                const r2 = mini3d.rotatePoint(next.x, next.y, next.z);
+                const p1 = mini3d.project(r1.x + centerX, r1.y + centerY, r1.z);
+                const p2 = mini3d.project(r2.x + centerX, r2.y + centerY, r2.z);
+                
+                mini3d.ctx.beginPath();
+                mini3d.ctx.moveTo(p1.x, p1.y);
+                mini3d.ctx.lineTo(p2.x, p2.y);
+                mini3d.ctx.stroke();
+            });
+        }
+    });
+    
+    // Draw nodes
+    agent3D.nodes.forEach((node, i) => {
+        const rotated = mini3d.rotatePoint(node.x, node.y, node.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        const isActive = i <= agent3D.activeNode;
+        const size = isActive ? 25 : 18;
+        
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size * proj.scale);
+        gradient.addColorStop(0, isActive ? node.color : '#555');
+        gradient.addColorStop(1, 'transparent');
+        
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, size * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        if (isActive) {
+            mini3d.ctx.fillStyle = '#fff';
+            mini3d.ctx.font = `${10 * proj.scale}px Arial`;
+            mini3d.ctx.textAlign = 'center';
+            mini3d.ctx.fillText(node.label, proj.x, proj.y + 4);
+        }
+    });
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('business');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

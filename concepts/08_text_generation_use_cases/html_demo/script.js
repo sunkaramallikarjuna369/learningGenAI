@@ -5,6 +5,54 @@
  * writing, content creation, analysis, and code documentation.
  */
 
+// Role-based applications data
+const roleApplications = {
+    marketing: {
+        title: 'Marketing',
+        apps: [
+            { name: 'Ad Copy Generation', desc: 'Create compelling headlines, taglines, and ad descriptions' },
+            { name: 'Email Campaigns', desc: 'Personalized marketing emails at scale with A/B variations' },
+            { name: 'Social Media Content', desc: 'Platform-optimized posts with hashtags and CTAs' },
+            { name: 'SEO Content', desc: 'Keyword-rich articles and meta descriptions' }
+        ]
+    },
+    education: {
+        title: 'Education',
+        apps: [
+            { name: 'Lesson Plan Generation', desc: 'Create structured lesson plans aligned with curriculum' },
+            { name: 'Quiz & Assessment Creation', desc: 'Generate questions with varying difficulty levels' },
+            { name: 'Personalized Explanations', desc: 'Adapt explanations to student level and learning style' },
+            { name: 'Feedback Generation', desc: 'Constructive feedback on student work' }
+        ]
+    },
+    healthcare: {
+        title: 'Healthcare',
+        apps: [
+            { name: 'Clinical Note Summarization', desc: 'Condense patient encounters into structured notes' },
+            { name: 'Patient Communication', desc: 'Clear, empathetic messages about treatment plans' },
+            { name: 'Research Summarization', desc: 'Digest medical literature and clinical trials' },
+            { name: 'Documentation Assistance', desc: 'Streamline administrative paperwork' }
+        ]
+    },
+    legal: {
+        title: 'Legal',
+        apps: [
+            { name: 'Contract Analysis', desc: 'Summarize key terms, obligations, and risks' },
+            { name: 'Legal Research', desc: 'Find relevant precedents and case summaries' },
+            { name: 'Document Drafting', desc: 'Generate initial drafts of legal documents' },
+            { name: 'Compliance Checking', desc: 'Verify regulatory requirements are met' }
+        ]
+    }
+};
+
+// 3D Text Generation visualization state
+let textGen3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    flowProgress: 0
+};
+
 // Category examples data
 const categoryExamples = {
     writing: {
@@ -77,11 +125,188 @@ const demoData = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DTextGen();
+    initRoleApplications();
     initUseCaseExplorer();
     initLiveDemo();
     initIndustryShowcase();
     initChecklist();
 });
+
+// ============================================================================
+// 3D Text Generation Pipeline Visualization
+// ============================================================================
+
+function init3DTextGen() {
+    const canvas = document.getElementById('textGen3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    textGen3D.mini3d = new Mini3D(canvas);
+    
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        textGen3D.rotationY -= 0.3;
+        render3DTextGen();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        textGen3D.rotationY += 0.3;
+        render3DTextGen();
+    });
+    
+    document.getElementById('animateGenBtn')?.addEventListener('click', () => {
+        if (!textGen3D.animating) {
+            textGen3D.animating = true;
+            textGen3D.flowProgress = 0;
+            animateTextGenFlow();
+        }
+    });
+    
+    render3DTextGen();
+}
+
+function animateTextGenFlow() {
+    if (!textGen3D.animating) return;
+    
+    textGen3D.flowProgress += 0.015;
+    render3DTextGen();
+    
+    if (textGen3D.flowProgress < 1) {
+        requestAnimationFrame(animateTextGenFlow);
+    } else {
+        textGen3D.animating = false;
+        textGen3D.flowProgress = 0;
+    }
+}
+
+function render3DTextGen() {
+    const mini3d = textGen3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, textGen3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    const stages = [
+        { name: 'Input', color: '#4A90D9', z: -250 },
+        { name: 'Tokenize', color: '#9B59B6', z: -125 },
+        { name: 'Embed', color: '#E67E22', z: 0 },
+        { name: 'Generate', color: '#27AE60', z: 125 },
+        { name: 'Output', color: '#E74C3C', z: 250 }
+    ];
+    
+    // Draw pipeline connections
+    for (let i = 0; i < stages.length - 1; i++) {
+        const s1 = stages[i];
+        const s2 = stages[i + 1];
+        
+        const p1 = mini3d.rotatePoint(0, 0, s1.z);
+        const p2 = mini3d.rotatePoint(0, 0, s2.z);
+        
+        const proj1 = mini3d.project(p1.x + centerX, p1.y + centerY, p1.z);
+        const proj2 = mini3d.project(p2.x + centerX, p2.y + centerY, p2.z);
+        
+        mini3d.ctx.strokeStyle = '#555';
+        mini3d.ctx.lineWidth = 3;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(proj1.x, proj1.y);
+        mini3d.ctx.lineTo(proj2.x, proj2.y);
+        mini3d.ctx.stroke();
+    }
+    
+    // Draw stage boxes
+    stages.forEach((stage, i) => {
+        const rotated = mini3d.rotatePoint(0, 0, stage.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        const boxSize = 40 * proj.scale;
+        
+        // Draw 3D box effect
+        mini3d.ctx.fillStyle = stage.color;
+        mini3d.ctx.globalAlpha = 0.8;
+        
+        // Front face
+        mini3d.ctx.fillRect(proj.x - boxSize, proj.y - boxSize, boxSize * 2, boxSize * 2);
+        
+        // Top face (lighter)
+        mini3d.ctx.fillStyle = `${stage.color}cc`;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(proj.x - boxSize, proj.y - boxSize);
+        mini3d.ctx.lineTo(proj.x - boxSize + 15, proj.y - boxSize - 15);
+        mini3d.ctx.lineTo(proj.x + boxSize + 15, proj.y - boxSize - 15);
+        mini3d.ctx.lineTo(proj.x + boxSize, proj.y - boxSize);
+        mini3d.ctx.closePath();
+        mini3d.ctx.fill();
+        
+        // Right face (darker)
+        mini3d.ctx.fillStyle = `${stage.color}99`;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(proj.x + boxSize, proj.y - boxSize);
+        mini3d.ctx.lineTo(proj.x + boxSize + 15, proj.y - boxSize - 15);
+        mini3d.ctx.lineTo(proj.x + boxSize + 15, proj.y + boxSize - 15);
+        mini3d.ctx.lineTo(proj.x + boxSize, proj.y + boxSize);
+        mini3d.ctx.closePath();
+        mini3d.ctx.fill();
+        
+        mini3d.ctx.globalAlpha = 1;
+        
+        // Label
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `bold ${12 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.textBaseline = 'middle';
+        mini3d.ctx.fillText(stage.name, proj.x, proj.y);
+    });
+    
+    // Animate data flow
+    if (textGen3D.animating) {
+        const particleZ = (textGen3D.flowProgress - 0.5) * 600;
+        const rotated = mini3d.rotatePoint(0, 0, particleZ);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 25);
+        gradient.addColorStop(0, '#fff');
+        gradient.addColorStop(0.5, '#50C878');
+        gradient.addColorStop(1, 'transparent');
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 25, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+    }
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('marketing');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

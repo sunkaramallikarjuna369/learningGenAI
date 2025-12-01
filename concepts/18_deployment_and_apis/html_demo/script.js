@@ -5,6 +5,56 @@
  * for GenAI applications.
  */
 
+// Role-based applications data
+const roleApplications = {
+    startup: {
+        title: 'Startup',
+        apps: [
+            { name: 'Cloud APIs', desc: 'Use OpenAI, Anthropic, or Google APIs for quick deployment' },
+            { name: 'Serverless Functions', desc: 'AWS Lambda or Vercel for cost-effective scaling' },
+            { name: 'Managed Services', desc: 'Use platforms like Replicate or Modal for model hosting' },
+            { name: 'Rate Limiting', desc: 'Implement usage limits to control costs' }
+        ]
+    },
+    enterprise: {
+        title: 'Enterprise',
+        apps: [
+            { name: 'Private Cloud', desc: 'Deploy on AWS, Azure, or GCP with VPC isolation' },
+            { name: 'On-Premise', desc: 'Self-hosted models for maximum data control' },
+            { name: 'Load Balancing', desc: 'Distribute traffic across multiple model instances' },
+            { name: 'Monitoring', desc: 'Comprehensive logging, metrics, and alerting' }
+        ]
+    },
+    realtime: {
+        title: 'Real-time',
+        apps: [
+            { name: 'Edge Deployment', desc: 'Run smaller models closer to users for low latency' },
+            { name: 'Streaming', desc: 'Server-sent events for token-by-token responses' },
+            { name: 'Caching', desc: 'Cache common responses to reduce latency' },
+            { name: 'Model Optimization', desc: 'Quantization and distillation for faster inference' }
+        ]
+    },
+    privacy: {
+        title: 'Privacy-First',
+        apps: [
+            { name: 'On-Device', desc: 'Run models locally on user devices' },
+            { name: 'Federated Learning', desc: 'Train models without centralizing data' },
+            { name: 'Differential Privacy', desc: 'Add noise to protect individual data points' },
+            { name: 'Data Anonymization', desc: 'Remove PII before sending to APIs' }
+        ]
+    }
+};
+
+// 3D Deployment visualization state
+let deploy3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    nodes: [],
+    packets: []
+};
+
 // Deployment option details
 const deploymentOptions = {
     cloud: {
@@ -94,11 +144,177 @@ const sampleResponses = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DDeploy();
+    initRoleApplications();
     initAPIFlow();
     initPlayground();
     initDeploymentOptions();
     initCostCalculator();
 });
+
+// ============================================================================
+// 3D Deployment Architecture Visualization
+// ============================================================================
+
+function init3DDeploy() {
+    const canvas = document.getElementById('deploy3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    deploy3D.mini3d = new Mini3D(canvas);
+    
+    // Create deployment nodes
+    const nodeData = [
+        { name: 'Users', color: '#4A90D9', x: -200, y: 0, z: 0 },
+        { name: 'Load Balancer', color: '#9B59B6', x: -80, y: 0, z: 0 },
+        { name: 'API Gateway', color: '#E67E22', x: 40, y: -50, z: 50 },
+        { name: 'Cache', color: '#50C878', x: 40, y: 50, z: -50 },
+        { name: 'Model Server', color: '#E74C3C', x: 160, y: 0, z: 0 }
+    ];
+    
+    nodeData.forEach(n => {
+        deploy3D.nodes.push({
+            x: n.x,
+            y: n.y,
+            z: n.z,
+            name: n.name,
+            color: n.color,
+            active: false,
+            scale: 1
+        });
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        deploy3D.rotationY -= 0.3;
+        render3DDeploy();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        deploy3D.rotationY += 0.3;
+        render3DDeploy();
+    });
+    
+    document.getElementById('animateDeployBtn')?.addEventListener('click', () => {
+        if (!deploy3D.animating) {
+            deploy3D.animating = true;
+            deploy3D.progress = 0;
+            deploy3D.nodes.forEach(n => n.active = false);
+            animateDeploy3D();
+        }
+    });
+    
+    render3DDeploy();
+}
+
+function animateDeploy3D() {
+    if (!deploy3D.animating) return;
+    
+    deploy3D.progress += 0.015;
+    deploy3D.rotationY += 0.005;
+    
+    // Activate nodes progressively
+    const nodeIndex = Math.floor(deploy3D.progress * deploy3D.nodes.length);
+    deploy3D.nodes.forEach((n, i) => {
+        n.active = i <= nodeIndex;
+        n.scale = n.active ? 1.2 : 1;
+    });
+    
+    render3DDeploy();
+    
+    if (deploy3D.progress < 1) {
+        requestAnimationFrame(animateDeploy3D);
+    } else {
+        deploy3D.animating = false;
+    }
+}
+
+function render3DDeploy() {
+    const mini3d = deploy3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0.2, deploy3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw connections
+    const connections = [[0, 1], [1, 2], [1, 3], [2, 4], [3, 4]];
+    connections.forEach(([i, j]) => {
+        const n1 = deploy3D.nodes[i];
+        const n2 = deploy3D.nodes[j];
+        
+        const r1 = mini3d.rotatePoint(n1.x, n1.y, n1.z);
+        const r2 = mini3d.rotatePoint(n2.x, n2.y, n2.z);
+        const p1 = mini3d.project(r1.x + centerX, r1.y + centerY, r1.z);
+        const p2 = mini3d.project(r2.x + centerX, r2.y + centerY, r2.z);
+        
+        mini3d.ctx.strokeStyle = n1.active && n2.active ? '#50C878' : 'rgba(150, 150, 150, 0.3)';
+        mini3d.ctx.lineWidth = n1.active && n2.active ? 3 : 1;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(p1.x, p1.y);
+        mini3d.ctx.lineTo(p2.x, p2.y);
+        mini3d.ctx.stroke();
+    });
+    
+    // Draw nodes
+    deploy3D.nodes.forEach(node => {
+        const rotated = mini3d.rotatePoint(node.x, node.y, node.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        const nodeSize = 40 * node.scale;
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, nodeSize * proj.scale);
+        gradient.addColorStop(0, node.active ? node.color : node.color + '66');
+        gradient.addColorStop(1, 'transparent');
+        
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, nodeSize * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `${9 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.fillText(node.name, proj.x, proj.y + 4);
+    });
+    
+    // Draw title
+    mini3d.ctx.fillStyle = '#ccc';
+    mini3d.ctx.font = '14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('Deployment Architecture', centerX, 30);
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('startup');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

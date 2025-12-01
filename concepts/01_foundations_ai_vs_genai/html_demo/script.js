@@ -1,9 +1,316 @@
 /**
- * AI vs Generative AI - Interactive Demo Script
+ * AI vs Generative AI - Interactive 3D Demo Script
  * 
  * This demo shows the fundamental difference between Traditional AI (classification/prediction)
- * and Generative AI (content creation) through animated scenarios.
+ * and Generative AI (content creation) through 3D animated visualizations and real-time applications.
  */
+
+// Real-time applications by role
+const roleApplications = {
+    teacher: {
+        traditional: [
+            "Grade essays automatically (pass/fail)",
+            "Detect plagiarism in student work",
+            "Predict student performance",
+            "Classify learning styles"
+        ],
+        generative: [
+            "Create lesson plans and curricula",
+            "Generate quiz questions",
+            "Write personalized feedback",
+            "Create educational content"
+        ]
+    },
+    marketer: {
+        traditional: [
+            "Segment customers by behavior",
+            "Predict campaign performance",
+            "Detect ad fraud",
+            "Score leads automatically"
+        ],
+        generative: [
+            "Write ad copy and headlines",
+            "Generate social media posts",
+            "Create email campaigns",
+            "Design marketing content"
+        ]
+    },
+    developer: {
+        traditional: [
+            "Detect bugs and vulnerabilities",
+            "Classify code quality",
+            "Predict build failures",
+            "Identify security threats"
+        ],
+        generative: [
+            "Write code from descriptions",
+            "Generate documentation",
+            "Create unit tests",
+            "Refactor and optimize code"
+        ]
+    },
+    doctor: {
+        traditional: [
+            "Diagnose from medical images",
+            "Predict patient outcomes",
+            "Detect anomalies in scans",
+            "Risk stratification"
+        ],
+        generative: [
+            "Generate patient summaries",
+            "Write clinical notes",
+            "Create treatment explanations",
+            "Draft referral letters"
+        ]
+    },
+    hr: {
+        traditional: [
+            "Screen resumes automatically",
+            "Predict employee turnover",
+            "Match candidates to roles",
+            "Detect policy violations"
+        ],
+        generative: [
+            "Write job descriptions",
+            "Generate interview questions",
+            "Create onboarding materials",
+            "Draft performance reviews"
+        ]
+    }
+};
+
+// 3D Factory visualization
+let factory3D = null;
+let isAutoRotating = false;
+let animationFrame = null;
+
+function init3DFactory() {
+    const canvas = document.getElementById('factory3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    factory3D = new Mini3D(canvas, {
+        focalLength: 500,
+        rotationX: 0.2,
+        rotationY: 0
+    });
+    
+    render3DFactory();
+    
+    // Set up controls
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        factory3D.rotationY -= 0.3;
+        render3DFactory();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        factory3D.rotationY += 0.3;
+        render3DFactory();
+    });
+    
+    document.getElementById('autoRotateBtn')?.addEventListener('click', (e) => {
+        isAutoRotating = !isAutoRotating;
+        e.target.classList.toggle('active', isAutoRotating);
+        if (isAutoRotating) {
+            autoRotate();
+        }
+    });
+    
+    // Mouse drag rotation
+    let isDragging = false;
+    let lastX = 0;
+    
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        lastX = e.clientX;
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const deltaX = e.clientX - lastX;
+            factory3D.rotationY += deltaX * 0.01;
+            lastX = e.clientX;
+            render3DFactory();
+        }
+    });
+    
+    canvas.addEventListener('mouseup', () => isDragging = false);
+    canvas.addEventListener('mouseleave', () => isDragging = false);
+}
+
+function autoRotate() {
+    if (!isAutoRotating) return;
+    factory3D.rotationY += 0.01;
+    render3DFactory();
+    animationFrame = requestAnimationFrame(autoRotate);
+}
+
+function render3DFactory() {
+    if (!factory3D) return;
+    
+    factory3D.clear();
+    const ctx = factory3D.ctx;
+    
+    // Draw Traditional AI Factory (left side)
+    drawFactory(factory3D, -180, 0, 0, '#4A90D9', 'Traditional AI', [
+        { icon: '📧', label: 'Input' },
+        { icon: '🧠', label: 'Classify' },
+        { icon: '🏷️', label: 'Label' }
+    ]);
+    
+    // Draw Generative AI Studio (right side)
+    drawFactory(factory3D, 180, 0, 0, '#7B68EE', 'Generative AI', [
+        { icon: '💬', label: 'Prompt' },
+        { icon: '✨', label: 'Generate' },
+        { icon: '📝', label: 'Content' }
+    ]);
+    
+    // Draw VS badge in center
+    const vsPos = factory3D.project({ x: 0, y: -80, z: 50 });
+    ctx.beginPath();
+    ctx.arc(vsPos.x, vsPos.y, 25 * vsPos.scale, 0, Math.PI * 2);
+    ctx.fillStyle = '#FF9800';
+    ctx.fill();
+    ctx.fillStyle = 'white';
+    ctx.font = `bold ${16 * vsPos.scale}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('VS', vsPos.x, vsPos.y);
+    
+    // Draw data flow particles
+    drawDataParticles(factory3D);
+}
+
+function drawFactory(mini3d, centerX, centerY, centerZ, color, label, stages) {
+    const ctx = mini3d.ctx;
+    
+    // Draw factory base (3D box)
+    const baseWidth = 140;
+    const baseHeight = 180;
+    const baseDepth = 80;
+    
+    // Draw back face
+    const backPoints = [
+        { x: centerX - baseWidth/2, y: centerY - baseHeight/2, z: centerZ + baseDepth/2 },
+        { x: centerX + baseWidth/2, y: centerY - baseHeight/2, z: centerZ + baseDepth/2 },
+        { x: centerX + baseWidth/2, y: centerY + baseHeight/2, z: centerZ + baseDepth/2 },
+        { x: centerX - baseWidth/2, y: centerY + baseHeight/2, z: centerZ + baseDepth/2 }
+    ];
+    mini3d.drawPlane(backPoints, { color, alpha: 0.3 });
+    
+    // Draw front face
+    const frontPoints = [
+        { x: centerX - baseWidth/2, y: centerY - baseHeight/2, z: centerZ - baseDepth/2 },
+        { x: centerX + baseWidth/2, y: centerY - baseHeight/2, z: centerZ - baseDepth/2 },
+        { x: centerX + baseWidth/2, y: centerY + baseHeight/2, z: centerZ - baseDepth/2 },
+        { x: centerX - baseWidth/2, y: centerY + baseHeight/2, z: centerZ - baseDepth/2 }
+    ];
+    mini3d.drawPlane(frontPoints, { color, alpha: 0.6 });
+    
+    // Draw connecting edges
+    for (let i = 0; i < 4; i++) {
+        mini3d.drawLine(frontPoints[i], backPoints[i], { color, width: 2, alpha: 0.8 });
+    }
+    
+    // Draw label
+    mini3d.drawText(label, { x: centerX, y: centerY - baseHeight/2 - 20, z: centerZ }, {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: color
+    });
+    
+    // Draw stages inside factory
+    const stageSpacing = baseHeight / (stages.length + 1);
+    stages.forEach((stage, i) => {
+        const stageY = centerY - baseHeight/2 + stageSpacing * (i + 1);
+        
+        // Draw stage sphere
+        mini3d.drawSphere({ x: centerX, y: stageY, z: centerZ - 20 }, 20, {
+            color: i === 1 ? '#50C878' : color,
+            alpha: 0.9
+        });
+        
+        // Draw stage label
+        const labelPos = mini3d.project({ x: centerX, y: stageY, z: centerZ - 20 });
+        ctx.fillStyle = 'white';
+        ctx.font = `${12 * labelPos.scale}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.fillText(stage.icon, labelPos.x, labelPos.y - 5);
+        ctx.fillStyle = '#333';
+        ctx.font = `${10 * labelPos.scale}px Arial`;
+        ctx.fillText(stage.label, labelPos.x, labelPos.y + 12);
+        
+        // Draw arrows between stages
+        if (i < stages.length - 1) {
+            const nextY = centerY - baseHeight/2 + stageSpacing * (i + 2);
+            mini3d.drawLine(
+                { x: centerX, y: stageY + 25, z: centerZ - 20 },
+                { x: centerX, y: nextY - 25, z: centerZ - 20 },
+                { color: '#50C878', width: 3, alpha: 0.8 }
+            );
+        }
+    });
+}
+
+function drawDataParticles(mini3d) {
+    const time = Date.now() / 1000;
+    const ctx = mini3d.ctx;
+    
+    // Animate particles flowing through traditional AI
+    for (let i = 0; i < 3; i++) {
+        const t = ((time * 0.5 + i * 0.33) % 1);
+        const y = -60 + t * 120;
+        const particle = mini3d.project({ x: -180, y, z: -20 });
+        
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 5 * particle.scale, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(74, 144, 217, ${1 - t})`;
+        ctx.fill();
+    }
+    
+    // Animate particles flowing through generative AI
+    for (let i = 0; i < 3; i++) {
+        const t = ((time * 0.5 + i * 0.33) % 1);
+        const y = -60 + t * 120;
+        const particle = mini3d.project({ x: 180, y, z: -20 });
+        
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 5 * particle.scale, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(123, 104, 238, ${1 - t})`;
+        ctx.fill();
+    }
+}
+
+// Initialize role-based applications
+function initRoleApplications() {
+    const roleBtns = document.querySelectorAll('.role-btn');
+    
+    roleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            roleBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    // Load default role
+    updateApplications('teacher');
+}
+
+function updateApplications(role) {
+    const apps = roleApplications[role];
+    if (!apps) return;
+    
+    const tradList = document.getElementById('tradAppsList');
+    const genList = document.getElementById('genAppsList');
+    
+    if (tradList) {
+        tradList.innerHTML = apps.traditional.map(app => `<li>${app}</li>`).join('');
+    }
+    
+    if (genList) {
+        genList.innerHTML = apps.generative.map(app => `<li>${app}</li>`).join('');
+    }
+}
 
 // Scenarios data - each scenario shows both Traditional and Generative AI handling the same domain
 const scenarios = [
@@ -239,6 +546,12 @@ function initDemo() {
         }
     });
     
+    // Initialize 3D factory visualization
+    init3DFactory();
+    
+    // Initialize role-based applications
+    initRoleApplications();
+    
     // Load first scenario
     loadScenario(0);
     
@@ -252,7 +565,7 @@ function initDemo() {
     });
     
     // Select first card
-    document.querySelector('.example-card').classList.add('selected');
+    document.querySelector('.example-card')?.classList.add('selected');
 }
 
 // Load a scenario

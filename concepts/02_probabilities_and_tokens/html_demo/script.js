@@ -1,9 +1,264 @@
 /**
- * Tokens & Probabilities - Interactive Demo Script
+ * Tokens & Probabilities - Interactive 3D Demo Script
  * 
  * This demo shows how AI tokenizes text and predicts next tokens using probabilities.
- * Features: tokenization visualization, probability bars, temperature control, and generation.
+ * Features: 3D token visualization, probability bars, temperature control, and generation.
  */
+
+// Role-based applications
+const roleApplications = {
+    writer: {
+        token: [
+            "Understand token limits for long documents",
+            "Optimize prompts to fit within context windows",
+            "Know when words get split into subwords",
+            "Estimate costs based on token count"
+        ],
+        probability: [
+            "Use temperature to control creativity",
+            "Understand why AI sometimes repeats phrases",
+            "Guide AI toward specific vocabulary",
+            "Predict when AI might hallucinate"
+        ]
+    },
+    coder: {
+        token: [
+            "Understand code tokenization patterns",
+            "Optimize code prompts for efficiency",
+            "Know how special characters are tokenized",
+            "Manage context for large codebases"
+        ],
+        probability: [
+            "Use low temperature for deterministic code",
+            "Understand code completion confidence",
+            "Debug unexpected code suggestions",
+            "Control randomness in generated tests"
+        ]
+    },
+    analyst: {
+        token: [
+            "Process large datasets within token limits",
+            "Chunk documents for analysis",
+            "Understand tokenization of numbers/dates",
+            "Optimize data extraction prompts"
+        ],
+        probability: [
+            "Interpret confidence in AI predictions",
+            "Use sampling for diverse insights",
+            "Understand uncertainty in analysis",
+            "Calibrate temperature for reports"
+        ]
+    },
+    student: {
+        token: [
+            "Learn how AI 'reads' text differently",
+            "Understand why some words cost more tokens",
+            "See how languages tokenize differently",
+            "Grasp the building blocks of AI"
+        ],
+        probability: [
+            "Understand AI is 'guessing' next words",
+            "See why AI can be creative or focused",
+            "Learn about randomness in AI",
+            "Understand AI confidence levels"
+        ]
+    }
+};
+
+// 3D Token visualization
+let token3D = null;
+let isAnimating = false;
+let animationFrame = null;
+let tokenFlowProgress = 0;
+
+function init3DTokens() {
+    const canvas = document.getElementById('token3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    token3D = new Mini3D(canvas, {
+        focalLength: 500,
+        rotationX: 0.3,
+        rotationY: -0.2
+    });
+    
+    render3DTokens();
+    
+    // Set up controls
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        token3D.rotationY -= 0.3;
+        render3DTokens();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        token3D.rotationY += 0.3;
+        render3DTokens();
+    });
+    
+    document.getElementById('animateBtn')?.addEventListener('click', (e) => {
+        isAnimating = !isAnimating;
+        e.target.classList.toggle('active', isAnimating);
+        e.target.textContent = isAnimating ? 'Stop Animation' : 'Animate Flow';
+        if (isAnimating) {
+            animateTokenFlow();
+        }
+    });
+    
+    // Mouse drag rotation
+    let isDragging = false;
+    let lastX = 0;
+    
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        lastX = e.clientX;
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const deltaX = e.clientX - lastX;
+            token3D.rotationY += deltaX * 0.01;
+            lastX = e.clientX;
+            render3DTokens();
+        }
+    });
+    
+    canvas.addEventListener('mouseup', () => isDragging = false);
+    canvas.addEventListener('mouseleave', () => isDragging = false);
+}
+
+function animateTokenFlow() {
+    if (!isAnimating) return;
+    tokenFlowProgress = (tokenFlowProgress + 0.02) % 1;
+    render3DTokens();
+    animationFrame = requestAnimationFrame(animateTokenFlow);
+}
+
+function render3DTokens() {
+    if (!token3D) return;
+    
+    token3D.clear();
+    const ctx = token3D.ctx;
+    
+    // Draw token sequence as 3D cubes
+    const tokens = ['The', 'quick', 'brown', 'fox', '?'];
+    const spacing = 80;
+    const startX = -spacing * 2;
+    
+    tokens.forEach((token, i) => {
+        const x = startX + i * spacing;
+        const z = Math.sin(tokenFlowProgress * Math.PI * 2 + i * 0.5) * 20;
+        const alpha = 0.6 + Math.sin(tokenFlowProgress * Math.PI * 2 + i * 0.5) * 0.4;
+        
+        // Draw cube for token
+        token3D.drawCube({ x, y: -50, z }, 40, {
+            color: i === tokens.length - 1 ? '#50C878' : '#4A90D9',
+            lineWidth: 2,
+            fillFaces: true
+        });
+        
+        // Draw token text
+        const textPos = token3D.project({ x, y: -50, z: -30 });
+        ctx.fillStyle = 'white';
+        ctx.font = `bold ${14 * textPos.scale}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.fillText(token, textPos.x, textPos.y);
+    });
+    
+    // Draw probability distribution as 3D bars
+    const probs = [
+        { token: 'jumps', prob: 0.35 },
+        { token: 'runs', prob: 0.25 },
+        { token: 'and', prob: 0.15 },
+        { token: 'quickly', prob: 0.10 },
+        { token: 'the', prob: 0.08 }
+    ];
+    
+    const barStartX = -100;
+    const barSpacing = 50;
+    
+    // Draw "Next Token Probabilities" label
+    const labelPos = token3D.project({ x: 0, y: 40, z: 0 });
+    ctx.fillStyle = '#333';
+    ctx.font = `bold ${12 * labelPos.scale}px Arial`;
+    ctx.fillText('Next Token Probabilities', labelPos.x, labelPos.y);
+    
+    probs.forEach((item, i) => {
+        const x = barStartX + i * barSpacing;
+        const height = item.prob * 200;
+        const pulseHeight = height * (1 + Math.sin(tokenFlowProgress * Math.PI * 2 + i) * 0.1);
+        
+        // Draw 3D bar
+        const barColor = i === 0 ? '#50C878' : '#7B68EE';
+        
+        // Front face
+        const frontPoints = [
+            { x: x - 15, y: 60, z: -20 },
+            { x: x + 15, y: 60, z: -20 },
+            { x: x + 15, y: 60 + pulseHeight, z: -20 },
+            { x: x - 15, y: 60 + pulseHeight, z: -20 }
+        ];
+        token3D.drawPlane(frontPoints, { color: barColor, alpha: 0.8 });
+        
+        // Top face
+        const topPoints = [
+            { x: x - 15, y: 60 + pulseHeight, z: -20 },
+            { x: x + 15, y: 60 + pulseHeight, z: -20 },
+            { x: x + 15, y: 60 + pulseHeight, z: 20 },
+            { x: x - 15, y: 60 + pulseHeight, z: 20 }
+        ];
+        token3D.drawPlane(topPoints, { color: barColor, alpha: 0.5 });
+        
+        // Draw label
+        const barLabelPos = token3D.project({ x, y: 60 + pulseHeight + 15, z: 0 });
+        ctx.fillStyle = '#333';
+        ctx.font = `${10 * barLabelPos.scale}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.fillText(item.token, barLabelPos.x, barLabelPos.y);
+        ctx.fillText(`${(item.prob * 100).toFixed(0)}%`, barLabelPos.x, barLabelPos.y + 12);
+    });
+    
+    // Draw flow arrows
+    for (let i = 0; i < tokens.length - 1; i++) {
+        const x1 = startX + i * spacing + 25;
+        const x2 = startX + (i + 1) * spacing - 25;
+        token3D.drawLine(
+            { x: x1, y: -50, z: 0 },
+            { x: x2, y: -50, z: 0 },
+            { color: '#50C878', width: 2, alpha: 0.6 }
+        );
+    }
+}
+
+// Initialize role-based applications
+function initRoleApplications() {
+    const roleBtns = document.querySelectorAll('.role-btn');
+    
+    roleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            roleBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    // Load default role
+    updateApplications('writer');
+}
+
+function updateApplications(role) {
+    const apps = roleApplications[role];
+    if (!apps) return;
+    
+    const tokenList = document.getElementById('tokenAppsList');
+    const probList = document.getElementById('probAppsList');
+    
+    if (tokenList) {
+        tokenList.innerHTML = apps.token.map(app => `<li>${app}</li>`).join('');
+    }
+    
+    if (probList) {
+        probList.innerHTML = apps.probability.map(app => `<li>${app}</li>`).join('');
+    }
+}
 
 // Sample vocabulary for demo (simplified)
 const sampleVocab = [
@@ -50,6 +305,8 @@ let trackToggle = null;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DTokens();
+    initRoleApplications();
     initTokenization();
     initPrediction();
     initTemperature();

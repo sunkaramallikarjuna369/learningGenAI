@@ -21,6 +21,51 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Attention Visualization -->
+        <section class="demo-section">
+            <h2>3D Attention Mechanism</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What You're Seeing</h4>
+                <p>Watch how attention flows between words in 3D! Each word sends out "attention beams" to other words it finds relevant. Thicker, brighter beams mean stronger attention. This is how transformers understand context.</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical View</h4>
+                <p>This visualizes the attention matrix A = softmax(QK^T/√d_k). Each row shows how one token attends to all others. The 3D representation helps visualize the full attention pattern across the sequence simultaneously.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="attention3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">← Rotate</button>
+                    <button class="canvas-btn" id="animateAttentionBtn">Animate Attention</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Transformers Everywhere</h4>
+                <p>Transformers power ChatGPT, Google Search, language translation, and much more. Select your field to see how attention mechanisms are applied.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="nlp">NLP Applications</button>
+                <button class="role-btn" data-role="vision">Computer Vision</button>
+                <button class="role-btn" data-role="audio">Audio Processing</button>
+                <button class="role-btn" data-role="multimodal">Multimodal AI</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+                <!-- Applications will be populated by JavaScript -->
+            </div>
+        </section>
+
         <!-- Section 1: Self-Attention Basics -->
         <section class="demo-section">
             <h2>Step 1: Self-Attention - Words Looking at Words</h2>
@@ -316,6 +361,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

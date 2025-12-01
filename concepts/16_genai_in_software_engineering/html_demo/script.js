@@ -5,6 +5,55 @@
  * generation, explanation, and the development workflow.
  */
 
+// Role-based applications data
+const roleApplications = {
+    frontend: {
+        title: 'Frontend',
+        apps: [
+            { name: 'Component Generation', desc: 'Generate React, Vue, or Angular components from descriptions' },
+            { name: 'CSS Styling', desc: 'Create responsive CSS and animations from mockups' },
+            { name: 'Accessibility Fixes', desc: 'Identify and fix accessibility issues automatically' },
+            { name: 'Test Writing', desc: 'Generate unit and integration tests for UI components' }
+        ]
+    },
+    backend: {
+        title: 'Backend',
+        apps: [
+            { name: 'API Development', desc: 'Generate REST/GraphQL endpoints from specifications' },
+            { name: 'Database Queries', desc: 'Write optimized SQL and NoSQL queries' },
+            { name: 'Error Handling', desc: 'Add comprehensive error handling and logging' },
+            { name: 'Documentation', desc: 'Generate API documentation and OpenAPI specs' }
+        ]
+    },
+    devops: {
+        title: 'DevOps',
+        apps: [
+            { name: 'CI/CD Pipelines', desc: 'Generate GitHub Actions, Jenkins, or GitLab CI configs' },
+            { name: 'Infrastructure as Code', desc: 'Create Terraform, CloudFormation, or Pulumi templates' },
+            { name: 'Docker & K8s', desc: 'Generate Dockerfiles and Kubernetes manifests' },
+            { name: 'Monitoring Setup', desc: 'Configure alerting and observability tools' }
+        ]
+    },
+    data: {
+        title: 'Data Engineering',
+        apps: [
+            { name: 'ETL Pipelines', desc: 'Generate data transformation and loading scripts' },
+            { name: 'Data Validation', desc: 'Create data quality checks and validation rules' },
+            { name: 'Query Optimization', desc: 'Optimize slow queries and suggest indexes' },
+            { name: 'Schema Design', desc: 'Design efficient database schemas from requirements' }
+        ]
+    }
+};
+
+// 3D Code visualization state
+let code3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    stages: []
+};
+
 // Code generation examples
 const codeExamples = {
     validate: `import re
@@ -213,11 +262,187 @@ const workflowDetails = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DCode();
+    initRoleApplications();
     initCodeCompletion();
     initCodeGeneration();
     initCodeExplanation();
     initWorkflowDemo();
 });
+
+// ============================================================================
+// 3D Code Pipeline Visualization
+// ============================================================================
+
+function init3DCode() {
+    const canvas = document.getElementById('code3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    code3D.mini3d = new Mini3D(canvas);
+    
+    // Create pipeline stages
+    const stageData = [
+        { name: 'Input', color: '#4A90D9', x: -200 },
+        { name: 'Tokenize', color: '#9B59B6', x: -100 },
+        { name: 'Embed', color: '#E67E22', x: 0 },
+        { name: 'Generate', color: '#50C878', x: 100 },
+        { name: 'Output', color: '#E74C3C', x: 200 }
+    ];
+    
+    stageData.forEach(s => {
+        code3D.stages.push({
+            x: s.x,
+            y: 0,
+            z: 0,
+            name: s.name,
+            color: s.color,
+            active: false,
+            particles: []
+        });
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        code3D.rotationY -= 0.3;
+        render3DCode();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        code3D.rotationY += 0.3;
+        render3DCode();
+    });
+    
+    document.getElementById('animateCodeBtn')?.addEventListener('click', () => {
+        if (!code3D.animating) {
+            code3D.animating = true;
+            code3D.progress = 0;
+            code3D.stages.forEach(s => s.active = false);
+            animateCodePipeline();
+        }
+    });
+    
+    render3DCode();
+}
+
+function animateCodePipeline() {
+    if (!code3D.animating) return;
+    
+    code3D.progress += 0.015;
+    code3D.rotationY += 0.005;
+    
+    // Activate stages progressively
+    const stageIndex = Math.floor(code3D.progress * code3D.stages.length);
+    code3D.stages.forEach((s, i) => {
+        s.active = i <= stageIndex;
+    });
+    
+    render3DCode();
+    
+    if (code3D.progress < 1) {
+        requestAnimationFrame(animateCodePipeline);
+    } else {
+        code3D.animating = false;
+    }
+}
+
+function render3DCode() {
+    const mini3d = code3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0.2, code3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Draw connections between stages
+    for (let i = 0; i < code3D.stages.length - 1; i++) {
+        const s1 = code3D.stages[i];
+        const s2 = code3D.stages[i + 1];
+        
+        const r1 = mini3d.rotatePoint(s1.x, s1.y, s1.z);
+        const r2 = mini3d.rotatePoint(s2.x, s2.y, s2.z);
+        const p1 = mini3d.project(r1.x + centerX, r1.y + centerY, r1.z);
+        const p2 = mini3d.project(r2.x + centerX, r2.y + centerY, r2.z);
+        
+        mini3d.ctx.strokeStyle = s1.active && s2.active ? '#50C878' : 'rgba(150, 150, 150, 0.3)';
+        mini3d.ctx.lineWidth = s1.active && s2.active ? 3 : 1;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.moveTo(p1.x, p1.y);
+        mini3d.ctx.lineTo(p2.x, p2.y);
+        mini3d.ctx.stroke();
+        
+        // Draw arrow
+        if (s1.active && s2.active) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            mini3d.ctx.fillStyle = '#50C878';
+            mini3d.ctx.beginPath();
+            mini3d.ctx.arc(midX, midY, 5, 0, Math.PI * 2);
+            mini3d.ctx.fill();
+        }
+    }
+    
+    // Draw stages
+    code3D.stages.forEach(stage => {
+        const rotated = mini3d.rotatePoint(stage.x, stage.y, stage.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Draw 3D box
+        const boxSize = stage.active ? 50 : 40;
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, boxSize * proj.scale);
+        gradient.addColorStop(0, stage.active ? stage.color : stage.color + '66');
+        gradient.addColorStop(1, 'transparent');
+        
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, boxSize * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        // Draw label
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `${10 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.fillText(stage.name, proj.x, proj.y + 4);
+    });
+    
+    // Draw title
+    mini3d.ctx.fillStyle = '#ccc';
+    mini3d.ctx.font = '14px Arial';
+    mini3d.ctx.textAlign = 'center';
+    mini3d.ctx.fillText('Code Generation Pipeline', centerX, 30);
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('frontend');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

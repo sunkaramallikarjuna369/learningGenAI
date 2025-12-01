@@ -21,6 +21,51 @@
             <button id="techBtn" class="track-btn tech">For Techies</button>
         </div>
 
+        <!-- 3D Embedding Space Visualization -->
+        <section class="demo-section">
+            <h2>3D Embedding Space</h2>
+            
+            <div class="explanation-panel non-tech-content">
+                <h4>What You're Seeing</h4>
+                <p>This 3D view shows how words are positioned in "meaning space." Similar words cluster together - notice how animals group near each other, and royalty terms form their own cluster. Rotate to explore!</p>
+            </div>
+            
+            <div class="explanation-panel tech-content">
+                <h4>Technical View</h4>
+                <p>Word embeddings map tokens to dense vectors in R^d (typically 100-300 dimensions). This visualization projects high-dimensional embeddings to 3D using techniques like t-SNE or PCA. Cosine similarity between vectors measures semantic relatedness.</p>
+            </div>
+
+            <div class="canvas-3d-container">
+                <canvas id="embedding3DCanvas" width="800" height="500"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn" id="rotateLeftBtn">← Rotate</button>
+                    <button class="canvas-btn" id="autoRotateBtn">Auto Rotate</button>
+                    <button class="canvas-btn" id="rotateRightBtn">Rotate →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-Time Applications -->
+        <section class="demo-section">
+            <h2>Real-Time Applications</h2>
+            
+            <div class="explanation-panel">
+                <h4>Embeddings & Autoencoders in Action</h4>
+                <p>These techniques power search engines, recommendation systems, and data compression. Select your role to see relevant applications.</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="search">Search Engineer</button>
+                <button class="role-btn" data-role="recommender">Recommender Systems</button>
+                <button class="role-btn" data-role="nlp">NLP Engineer</button>
+                <button class="role-btn" data-role="compression">Data Compression</button>
+            </div>
+
+            <div class="applications-grid" id="applicationsGrid">
+                <!-- Applications will be populated by JavaScript -->
+            </div>
+        </section>
+
         <!-- Section 1: Word Embeddings -->
         <section class="demo-section">
             <h2>Step 1: Word Embeddings - GPS for Meaning</h2>
@@ -332,6 +377,7 @@
     </div>
 
     <script src="../../../common/html_toolkit/animation-controller.js"></script>
+    <script src="../../../common/html_toolkit/mini3d.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

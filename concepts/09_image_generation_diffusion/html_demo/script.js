@@ -5,14 +5,212 @@
  * process, text-to-image generation, and latent space concepts.
  */
 
+// Role-based applications data
+const roleApplications = {
+    creative: {
+        title: 'Creative Design',
+        apps: [
+            { name: 'Concept Art Generation', desc: 'Create initial visual concepts for projects in seconds' },
+            { name: 'Style Transfer', desc: 'Apply artistic styles to photos and illustrations' },
+            { name: 'Logo Variations', desc: 'Generate multiple logo concepts from text descriptions' },
+            { name: 'Marketing Visuals', desc: 'Create social media graphics and ad creatives' }
+        ]
+    },
+    ecommerce: {
+        title: 'E-Commerce',
+        apps: [
+            { name: 'Product Photography', desc: 'Generate professional product images without photoshoots' },
+            { name: 'Background Replacement', desc: 'Place products in various lifestyle settings' },
+            { name: 'Virtual Try-On', desc: 'Show products on different models or in different contexts' },
+            { name: 'Catalog Generation', desc: 'Create consistent product imagery at scale' }
+        ]
+    },
+    gaming: {
+        title: 'Gaming',
+        apps: [
+            { name: 'Asset Generation', desc: 'Create textures, sprites, and environment art' },
+            { name: 'Character Design', desc: 'Generate character concepts and variations' },
+            { name: 'World Building', desc: 'Create landscapes, buildings, and scene concepts' },
+            { name: 'UI Elements', desc: 'Design icons, buttons, and interface graphics' }
+        ]
+    },
+    architecture: {
+        title: 'Architecture',
+        apps: [
+            { name: 'Concept Visualization', desc: 'Generate building concepts from descriptions' },
+            { name: 'Interior Design', desc: 'Visualize room layouts and decor options' },
+            { name: 'Landscape Planning', desc: 'Create outdoor space visualizations' },
+            { name: 'Material Exploration', desc: 'Preview different material and finish options' }
+        ]
+    }
+};
+
+// 3D Diffusion visualization state
+let diffusion3D = {
+    mini3d: null,
+    rotationY: 0,
+    animating: false,
+    progress: 0,
+    particles: []
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DDiffusion();
+    initRoleApplications();
     initDiffusionDemo();
     initTextToImage();
     initParameters();
     initLatentDemo();
 });
+
+// ============================================================================
+// 3D Diffusion Visualization
+// ============================================================================
+
+function init3DDiffusion() {
+    const canvas = document.getElementById('diffusion3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    diffusion3D.mini3d = new Mini3D(canvas);
+    
+    // Initialize particles
+    for (let i = 0; i < 200; i++) {
+        diffusion3D.particles.push({
+            x: (Math.random() - 0.5) * 300,
+            y: (Math.random() - 0.5) * 300,
+            z: (Math.random() - 0.5) * 300,
+            targetX: 0,
+            targetY: 0,
+            targetZ: 0,
+            color: `hsl(${Math.random() * 360}, 70%, 60%)`
+        });
+    }
+    
+    // Set target positions (form a sphere)
+    diffusion3D.particles.forEach((p, i) => {
+        const phi = Math.acos(-1 + (2 * i) / diffusion3D.particles.length);
+        const theta = Math.sqrt(diffusion3D.particles.length * Math.PI) * phi;
+        const radius = 100;
+        p.targetX = radius * Math.cos(theta) * Math.sin(phi);
+        p.targetY = radius * Math.sin(theta) * Math.sin(phi);
+        p.targetZ = radius * Math.cos(phi);
+    });
+    
+    document.getElementById('rotateLeftBtn3D')?.addEventListener('click', () => {
+        diffusion3D.rotationY -= 0.3;
+        render3DDiffusion();
+    });
+    
+    document.getElementById('rotateRightBtn3D')?.addEventListener('click', () => {
+        diffusion3D.rotationY += 0.3;
+        render3DDiffusion();
+    });
+    
+    document.getElementById('animateDiffusionBtn')?.addEventListener('click', () => {
+        if (!diffusion3D.animating) {
+            diffusion3D.animating = true;
+            diffusion3D.progress = 0;
+            animateDiffusion3D();
+        }
+    });
+    
+    render3DDiffusion();
+}
+
+function animateDiffusion3D() {
+    if (!diffusion3D.animating) return;
+    
+    diffusion3D.progress += 0.01;
+    diffusion3D.rotationY += 0.02;
+    
+    // Interpolate particles from random to target positions
+    diffusion3D.particles.forEach(p => {
+        p.x = p.x * (1 - diffusion3D.progress * 0.02) + p.targetX * diffusion3D.progress * 0.02;
+        p.y = p.y * (1 - diffusion3D.progress * 0.02) + p.targetY * diffusion3D.progress * 0.02;
+        p.z = p.z * (1 - diffusion3D.progress * 0.02) + p.targetZ * diffusion3D.progress * 0.02;
+    });
+    
+    render3DDiffusion();
+    
+    if (diffusion3D.progress < 1) {
+        requestAnimationFrame(animateDiffusion3D);
+    } else {
+        diffusion3D.animating = false;
+    }
+}
+
+function render3DDiffusion() {
+    const mini3d = diffusion3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, diffusion3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    // Sort particles by z for proper depth rendering
+    const sortedParticles = [...diffusion3D.particles].sort((a, b) => {
+        const aRotated = mini3d.rotatePoint(a.x, a.y, a.z);
+        const bRotated = mini3d.rotatePoint(b.x, b.y, b.z);
+        return bRotated.z - aRotated.z;
+    });
+    
+    // Draw particles
+    sortedParticles.forEach(p => {
+        const rotated = mini3d.rotatePoint(p.x, p.y, p.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        mini3d.ctx.fillStyle = p.color;
+        mini3d.ctx.globalAlpha = 0.7 * proj.scale;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 5 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+    });
+    
+    mini3d.ctx.globalAlpha = 1;
+    
+    // Draw progress label
+    mini3d.ctx.fillStyle = '#fff';
+    mini3d.ctx.font = 'bold 16px Arial';
+    mini3d.ctx.textAlign = 'center';
+    const label = diffusion3D.progress < 0.5 ? 'Noise (Random)' : 'Structure (Denoised)';
+    mini3d.ctx.fillText(label, centerX, 30);
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('creative');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {

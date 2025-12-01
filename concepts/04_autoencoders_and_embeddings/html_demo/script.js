@@ -5,6 +5,54 @@
  * compress and reconstruct data.
  */
 
+// Role-based applications data
+const roleApplications = {
+    search: {
+        title: 'Search Engineering',
+        apps: [
+            { name: 'Semantic Search', desc: 'Find documents by meaning, not just keywords - "car problems" finds "automobile issues"' },
+            { name: 'Similar Item Retrieval', desc: 'Find products, images, or documents similar to a query item' },
+            { name: 'Query Understanding', desc: 'Understand user intent even with typos or different phrasings' },
+            { name: 'Cross-lingual Search', desc: 'Search in one language, find results in another' }
+        ]
+    },
+    recommender: {
+        title: 'Recommender Systems',
+        apps: [
+            { name: 'Content-Based Filtering', desc: 'Recommend items similar to what users liked before' },
+            { name: 'User Embeddings', desc: 'Represent user preferences as vectors for personalization' },
+            { name: 'Cold Start Solutions', desc: 'Recommend to new users based on item embeddings' },
+            { name: 'Hybrid Recommendations', desc: 'Combine collaborative and content-based approaches' }
+        ]
+    },
+    nlp: {
+        title: 'NLP Engineering',
+        apps: [
+            { name: 'Named Entity Recognition', desc: 'Identify people, places, organizations in text' },
+            { name: 'Sentiment Analysis', desc: 'Classify text as positive, negative, or neutral' },
+            { name: 'Text Classification', desc: 'Categorize documents into predefined topics' },
+            { name: 'Word Sense Disambiguation', desc: 'Determine which meaning of a word is intended' }
+        ]
+    },
+    compression: {
+        title: 'Data Compression',
+        apps: [
+            { name: 'Image Compression', desc: 'Reduce image file sizes while preserving quality' },
+            { name: 'Anomaly Detection', desc: 'Find unusual patterns by measuring reconstruction error' },
+            { name: 'Feature Extraction', desc: 'Extract meaningful features from raw data' },
+            { name: 'Denoising', desc: 'Remove noise from images or signals using autoencoders' }
+        ]
+    }
+};
+
+// 3D Embedding visualization state
+let embedding3D = {
+    mini3d: null,
+    rotationY: 0,
+    autoRotate: false,
+    animationId: null
+};
+
 // Simulated word embeddings (2D for visualization)
 const wordEmbeddings = {
     // Royalty
@@ -56,11 +104,170 @@ let autoencoderState = {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTrackToggle();
+    init3DEmbeddings();
+    initRoleApplications();
     initEmbeddingVisualization();
     initWordArithmetic();
     initAutoencoder();
     initLatentExplorer();
 });
+
+// ============================================================================
+// 3D Embedding Space Visualization
+// ============================================================================
+
+function init3DEmbeddings() {
+    const canvas = document.getElementById('embedding3DCanvas');
+    if (!canvas || typeof Mini3D === 'undefined') return;
+    
+    embedding3D.mini3d = new Mini3D(canvas);
+    
+    document.getElementById('rotateLeftBtn')?.addEventListener('click', () => {
+        embedding3D.rotationY -= 0.3;
+        render3DEmbeddings();
+    });
+    
+    document.getElementById('rotateRightBtn')?.addEventListener('click', () => {
+        embedding3D.rotationY += 0.3;
+        render3DEmbeddings();
+    });
+    
+    document.getElementById('autoRotateBtn')?.addEventListener('click', (e) => {
+        embedding3D.autoRotate = !embedding3D.autoRotate;
+        e.target.classList.toggle('active', embedding3D.autoRotate);
+        if (embedding3D.autoRotate) {
+            autoRotateEmbeddings();
+        }
+    });
+    
+    render3DEmbeddings();
+}
+
+function autoRotateEmbeddings() {
+    if (!embedding3D.autoRotate) return;
+    embedding3D.rotationY += 0.02;
+    render3DEmbeddings();
+    embedding3D.animationId = requestAnimationFrame(autoRotateEmbeddings);
+}
+
+function render3DEmbeddings() {
+    const mini3d = embedding3D.mini3d;
+    if (!mini3d) return;
+    
+    mini3d.clear();
+    mini3d.setRotation(0, embedding3D.rotationY, 0);
+    
+    const centerX = mini3d.canvas.width / 2;
+    const centerY = mini3d.canvas.height / 2;
+    
+    const categoryColors = {
+        royalty: '#9B59B6',
+        animals: '#E67E22',
+        food: '#27AE60',
+        places: '#3498DB',
+        people: '#E74C3C',
+        verbs: '#95A5A6'
+    };
+    
+    // Convert 2D embeddings to 3D positions
+    const words3D = Object.entries(wordEmbeddings).map(([word, data]) => ({
+        word,
+        x: (data.x - 0.5) * 300,
+        y: (data.y - 0.5) * 300,
+        z: (Math.random() - 0.5) * 150,
+        color: categoryColors[data.category] || '#666',
+        category: data.category
+    }));
+    
+    // Draw connections between similar words (same category)
+    words3D.forEach((w1, i) => {
+        words3D.forEach((w2, j) => {
+            if (i < j && w1.category === w2.category) {
+                const p1 = mini3d.rotatePoint(w1.x, w1.y, w1.z);
+                const p2 = mini3d.rotatePoint(w2.x, w2.y, w2.z);
+                
+                const proj1 = mini3d.project(p1.x + centerX, p1.y + centerY, p1.z);
+                const proj2 = mini3d.project(p2.x + centerX, p2.y + centerY, p2.z);
+                
+                mini3d.ctx.strokeStyle = w1.color;
+                mini3d.ctx.globalAlpha = 0.2;
+                mini3d.ctx.lineWidth = 1;
+                mini3d.ctx.beginPath();
+                mini3d.ctx.moveTo(proj1.x, proj1.y);
+                mini3d.ctx.lineTo(proj2.x, proj2.y);
+                mini3d.ctx.stroke();
+            }
+        });
+    });
+    
+    mini3d.ctx.globalAlpha = 1;
+    
+    // Sort by z for proper depth rendering
+    words3D.sort((a, b) => {
+        const az = mini3d.rotatePoint(a.x, a.y, a.z).z;
+        const bz = mini3d.rotatePoint(b.x, b.y, b.z).z;
+        return az - bz;
+    });
+    
+    // Draw word points
+    words3D.forEach(w => {
+        const rotated = mini3d.rotatePoint(w.x, w.y, w.z);
+        const proj = mini3d.project(rotated.x + centerX, rotated.y + centerY, rotated.z);
+        
+        // Draw glow
+        const gradient = mini3d.ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 20 * proj.scale);
+        gradient.addColorStop(0, w.color);
+        gradient.addColorStop(1, 'transparent');
+        mini3d.ctx.fillStyle = gradient;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 20 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        // Draw point
+        mini3d.ctx.fillStyle = w.color;
+        mini3d.ctx.beginPath();
+        mini3d.ctx.arc(proj.x, proj.y, 8 * proj.scale, 0, Math.PI * 2);
+        mini3d.ctx.fill();
+        
+        // Draw label
+        mini3d.ctx.fillStyle = '#fff';
+        mini3d.ctx.font = `${12 * proj.scale}px Arial`;
+        mini3d.ctx.textAlign = 'center';
+        mini3d.ctx.fillText(w.word, proj.x, proj.y - 15 * proj.scale);
+    });
+}
+
+// ============================================================================
+// Role-based Applications
+// ============================================================================
+
+function initRoleApplications() {
+    const buttons = document.querySelectorAll('.role-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateApplications(btn.dataset.role);
+        });
+    });
+    
+    updateApplications('search');
+}
+
+function updateApplications(role) {
+    const grid = document.getElementById('applicationsGrid');
+    if (!grid || !roleApplications[role]) return;
+    
+    const data = roleApplications[role];
+    
+    grid.innerHTML = data.apps.map(app => `
+        <div class="app-card">
+            <h4>${app.name}</h4>
+            <p>${app.desc}</p>
+        </div>
+    `).join('');
+}
 
 // Track Toggle
 function initTrackToggle() {
